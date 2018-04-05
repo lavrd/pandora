@@ -3,12 +3,12 @@ package mail
 import (
 	"bytes"
 	"encoding/json"
-	`errors`
-	`fmt`
+	"errors"
+	"fmt"
 	"net/http"
 
-	`github.com/spacelavr/pandora/pkg/log`
-	`github.com/spf13/viper`
+	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spf13/viper"
 )
 
 type mail struct {
@@ -34,8 +34,6 @@ type email struct {
 
 // Send send mail to email address
 func Send(to, subject, html string) error {
-
-	log.Debugf("send mail to %s", to)
 
 	var mail = &mail{
 		Personalizations: []*personalizations{

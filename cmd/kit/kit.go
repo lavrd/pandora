@@ -7,7 +7,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/api"
 	"github.com/spacelavr/pandora/pkg/core"
 	"github.com/spacelavr/pandora/pkg/discovery"
-	`github.com/spacelavr/pandora/pkg/log`
+	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,7 +20,7 @@ var (
 
 			abs, err := filepath.Abs(config)
 			if err != nil {
-				log.Error(err)
+				log.Fatal(err)
 			}
 
 			// get the config name
@@ -32,7 +32,7 @@ var (
 			viper.AddConfigPath(path)
 
 			if err := viper.ReadInConfig(); err != nil {
-				log.Error(err)
+				log.Fatal(err)
 			}
 
 			log.Init(viper.GetBool("verbose"))
@@ -90,6 +90,6 @@ func init() {
 
 func main() {
 	if err := CLI.Execute(); err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 }

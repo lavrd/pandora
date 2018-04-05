@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	`github.com/spacelavr/pandora/pkg/log`
+	"github.com/spacelavr/pandora/pkg/log"
 )
 
 // Daemon start node daemon

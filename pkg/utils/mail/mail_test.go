@@ -2,9 +2,9 @@ package mail_test
 
 import (
 	"errors"
-	`net/http`
-	`net/http/httptest`
-	`testing`
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 	"github.com/spf13/viper"
@@ -12,6 +12,8 @@ import (
 )
 
 func TestSend(t *testing.T) {
+
+	t.Parallel()
 
 	cases := []struct {
 		status   int

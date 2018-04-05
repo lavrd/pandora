@@ -20,6 +20,28 @@ func init() {
 	log.Init(true)
 }
 
+func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {
+
+	stdout := os.Stdout
+	r, w, err := os.Pipe()
+	assert.NoError(t, err)
+	os.Stdout = w
+
+	return r, w, func(t *testing.T) {
+		os.Stdout = stdout
+	}
+}
+
+func read(r *os.File) string {
+	outC := make(chan string)
+	go func() {
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		outC <- buf.String()
+	}()
+	return <-outC
+}
+
 func TestDebug(t *testing.T) {
 
 	r, w, teardown := setup(t)
@@ -73,26 +95,4 @@ func TestDebugf(t *testing.T) {
 	out := read(r)
 
 	assert.Equal(t, "level=debug msg=\"formatted debug log\"", out[33:70])
-}
-
-func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {
-
-	stdout := os.Stdout
-	r, w, err := os.Pipe()
-	assert.NoError(t, err)
-	os.Stdout = w
-
-	return r, w, func(t *testing.T) {
-		os.Stdout = stdout
-	}
-}
-
-func read(r *os.File) string {
-	outC := make(chan string)
-	go func() {
-		var buf bytes.Buffer
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-	return <-outC
 }

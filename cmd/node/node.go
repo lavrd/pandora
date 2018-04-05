@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	`github.com/spacelavr/pandora/pkg/log`
+	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/node"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,7 +19,7 @@ var (
 
 			abs, err := filepath.Abs(config)
 			if err != nil {
-				logrus.Error(err)
+				logrus.Fatal(err)
 			}
 
 			// get the config name
@@ -31,7 +31,7 @@ var (
 			viper.AddConfigPath(path)
 
 			if err := viper.ReadInConfig(); err != nil {
-				logrus.Error(err)
+				logrus.Fatal(err)
 			}
 
 			log.Init(viper.GetBool("verbose"))
@@ -49,6 +49,6 @@ func init() {
 
 func main() {
 	if err := CLI.Execute(); err != nil {
-		logrus.Error(err)
+		logrus.Fatal(err)
 	}
 }

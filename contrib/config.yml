@@ -7,3 +7,7 @@ sendgrid:
   endpoint: 'https://api.sendgrid.com/v3/mail/send'
   email: 'pandora@mail.system'
   name: 'Pandora'
+
+# rsa
+rsa:
+  PSSMessage: 'secret'

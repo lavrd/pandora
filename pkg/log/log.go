@@ -16,7 +16,7 @@ func init() {
 	logger.SetLevel(logrus.PanicLevel)
 }
 
-// Init initialize logger
+// Init set debug logger output
 func Init(verbose bool) {
 	if verbose {
 		logger.SetLevel(logrus.DebugLevel)
@@ -29,8 +29,8 @@ func SetOut(out io.Writer) {
 }
 
 // Debug print debug log
-func Debug(args interface{}) {
-	prepare().Debug(args)
+func Debug(args ...interface{}) {
+	prepare().Debug(args...)
 }
 
 // Debugf print formatted debug log
@@ -44,8 +44,13 @@ func Errorf(format string, args ...interface{}) {
 }
 
 // Error print error log
-func Error(args interface{}) {
-	prepare().Error(args)
+func Error(args ...interface{}) {
+	prepare().Error(args...)
+}
+
+// Fatal print fatal log
+func Fatal(args ...interface{}) {
+	prepare().Fatal(args...)
 }
 
 func prepare() *logrus.Entry {
