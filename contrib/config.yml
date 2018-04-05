@@ -11,3 +11,7 @@ sendgrid:
 # rsa
 rsa:
   PSSMessage: 'secret'
+
+# database
+db:
+  file: './contrib/pandora.db'
