@@ -1,2 +1,9 @@
 # runtime
 verbose: true
+
+# sendgrid
+sendgrid:
+  token: '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'
+  endpoint: 'https://api.sendgrid.com/v3/mail/send'
+  email: 'pandora@mail.system'
+  name: 'Pandora'

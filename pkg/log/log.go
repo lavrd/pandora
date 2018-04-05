@@ -11,11 +11,13 @@ import (
 
 var logger *logrus.Logger
 
+func init() {
+	logger = logrus.New()
+	logger.SetLevel(logrus.PanicLevel)
+}
+
 // Init initialize logger
 func Init(verbose bool) {
-
-	logger = logrus.New()
-
 	if verbose {
 		logger.SetLevel(logrus.DebugLevel)
 	}
@@ -27,12 +29,22 @@ func SetOut(out io.Writer) {
 }
 
 // Debug print debug log
-func Debug(args ...interface{}) {
+func Debug(args interface{}) {
 	prepare().Debug(args)
 }
 
+// Debugf print formatted debug log
+func Debugf(format string, args ...interface{}) {
+	prepare().Debugf(format, args...)
+}
+
+// Errorf print formatted error log
+func Errorf(format string, args ...interface{}) {
+	prepare().Errorf(format, args...)
+}
+
 // Error print error log
-func Error(args ...interface{}) {
+func Error(args interface{}) {
 	prepare().Error(args)
 }
 

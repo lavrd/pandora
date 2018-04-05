@@ -31,7 +31,7 @@ func TestDebug(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=debug msg=\"[debug log]\"", out[33:62])
+	assert.Equal(t, "level=debug msg=\"debug log\"", out[33:60])
 }
 
 func TestError(t *testing.T) {
@@ -45,7 +45,34 @@ func TestError(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=error msg=\"[error log]\"", out[33:62])
+	assert.Equal(t, "level=error msg=\"error log\"", out[33:60])
+}
+
+func TestErrorf(t *testing.T) {
+
+	r, w, teardown := setup(t)
+	defer teardown(t)
+
+	log.SetOut(w)
+	log.Errorf("%s", "formatted error log")
+
+	w.Close()
+	out := read(r)
+
+	assert.Equal(t, "level=error msg=\"formatted error log\"", out[33:70])
+}
+
+func TestDebugf(t *testing.T) {
+	r, w, teardown := setup(t)
+	defer teardown(t)
+
+	log.SetOut(w)
+	log.Debugf("%s", "formatted debug log")
+
+	w.Close()
+	out := read(r)
+
+	assert.Equal(t, "level=debug msg=\"formatted debug log\"", out[33:70])
 }
 
 func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {
