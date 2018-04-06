@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/node"
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ var (
 
 			abs, err := filepath.Abs(config)
 			if err != nil {
-				logrus.Fatal(err)
+				log.Fatal(err)
 			}
 
 			// get the config name
@@ -31,10 +30,10 @@ var (
 			viper.AddConfigPath(path)
 
 			if err := viper.ReadInConfig(); err != nil {
-				logrus.Fatal(err)
+				log.Fatal(err)
 			}
 
-			log.Init(viper.GetBool("verbose"))
+			log.SetVerbose(viper.GetBool("verbose"))
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
@@ -49,6 +48,6 @@ func init() {
 
 func main() {
 	if err := CLI.Execute(); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 }

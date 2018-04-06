@@ -32,7 +32,7 @@ type email struct {
 	Email string `json:"email"`
 }
 
-// Send send mail to email address
+// Send send mail to email
 func Send(to, subject, html string) error {
 
 	var mail = &mail{

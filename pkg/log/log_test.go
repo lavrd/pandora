@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	log.Init(true)
+	log.SetVerbose(true)
 }
 
 func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {

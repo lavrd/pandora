@@ -35,7 +35,7 @@ var (
 				log.Fatal(err)
 			}
 
-			log.Init(viper.GetBool("verbose"))
+			log.SetVerbose(viper.GetBool("verbose"))
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {

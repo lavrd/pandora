@@ -16,8 +16,8 @@ func init() {
 	logger.SetLevel(logrus.PanicLevel)
 }
 
-// Init set debug logger output
-func Init(verbose bool) {
+// SetVerbose set verbose output
+func SetVerbose(verbose bool) {
 	if verbose {
 		logger.SetLevel(logrus.DebugLevel)
 	}
@@ -64,5 +64,6 @@ func prepare() *logrus.Entry {
 			"line":  line,
 		})
 	}
+
 	return logger.WithFields(logrus.Fields{})
 }

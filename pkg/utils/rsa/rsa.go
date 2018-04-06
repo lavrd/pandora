@@ -52,6 +52,6 @@ func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
 
 // VerifyPSS verify signature
 func VerifyPSS(key *rsa.PublicKey, signature []byte) error {
-	// dont need error log because error only if verification failed
+	// do not need error log because error only if verification failed
 	return rsa.VerifyPSS(key, hash, hashed, signature, opts)
 }
