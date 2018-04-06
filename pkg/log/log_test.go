@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spacelavr/pandora/pkg/log"
@@ -42,6 +43,12 @@ func read(r *os.File) string {
 	return <-outC
 }
 
+func find(out string, offset int) string {
+	start := strings.Index(out, "level")
+	stop := start + offset
+	return out[start:stop]
+}
+
 func TestDebug(t *testing.T) {
 
 	r, w, teardown := setup(t)
@@ -53,7 +60,7 @@ func TestDebug(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=debug msg=\"debug log\"", out[33:60])
+	assert.Equal(t, "level=debug msg=\"debug log\"", find(out, 27))
 }
 
 func TestError(t *testing.T) {
@@ -67,7 +74,7 @@ func TestError(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=error msg=\"error log\"", out[33:60])
+	assert.Equal(t, "level=error msg=\"error log\"", find(out, 27))
 }
 
 func TestErrorf(t *testing.T) {
@@ -81,7 +88,7 @@ func TestErrorf(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=error msg=\"formatted error log\"", out[33:70])
+	assert.Equal(t, "level=error msg=\"formatted error log\"", find(out, 37))
 }
 
 func TestDebugf(t *testing.T) {
@@ -94,5 +101,5 @@ func TestDebugf(t *testing.T) {
 	w.Close()
 	out := read(r)
 
-	assert.Equal(t, "level=debug msg=\"formatted debug log\"", out[33:70])
+	assert.Equal(t, "level=debug msg=\"formatted debug log\"", find(out, 37))
 }
