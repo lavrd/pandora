@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"path/filepath"
 	"runtime"
@@ -9,11 +10,15 @@ import (
 	ufp "github.com/spacelavr/pandora/pkg/utils/filepath"
 )
 
-var logger *logrus.Logger
+var (
+	logger *logrus.Logger
+	// 127.0.0.1 - - [Sun, 08 Apr 2018 06:50:15 +0000] "GET /health HTTP/1.1" 501 40 1.0019ms curl
+	CommonLogFormat = "%s %s %s [%s] \"%s %s %v\" %d %d %s %s\n"
+)
 
 func init() {
 	logger = logrus.New()
-	logger.SetLevel(logrus.PanicLevel)
+	logger.SetLevel(logrus.FatalLevel)
 }
 
 // SetVerbose set verbose output
@@ -51,6 +56,16 @@ func Error(args ...interface{}) {
 // Fatal print fatal log
 func Fatal(args ...interface{}) {
 	prepare().Fatal(args...)
+}
+
+// Http print http log in common log format to out stream
+func Http(out io.Writer, ip, time, method, route, proto, duration, userAgent string, code, size int) {
+	fmt.Fprintf(out, CommonLogFormat, ip, "-", "-", time, method, route, proto, code, size, duration, userAgent)
+}
+
+// Fatalf print formatted fatal log
+func Fatalf(format string, args ...interface{}) {
+	prepare().Fatalf(format, args...)
 }
 
 func prepare() *logrus.Entry {

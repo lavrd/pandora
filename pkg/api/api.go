@@ -5,7 +5,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/spacelavr/pandora/pkg/api/routes"
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/http"
+	"github.com/spf13/viper"
 )
 
 // Daemon start api daemon
@@ -14,23 +17,22 @@ func Daemon() bool {
 	log.Debug("start api daemon")
 
 	var (
-		sig  = make(chan os.Signal, 1)
-		done = make(chan bool, 1)
+		sig = make(chan os.Signal, 1)
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		for {
-			select {
-			case <-sig:
-				done <- true
-				return
-			}
+		if err := http.Listen(
+			viper.GetString("api.host"),
+			viper.GetInt("api.port"),
+			routes.Routes,
+		); err != nil {
+			log.Fatalf("api server start error: %v", err)
 		}
 	}()
 
-	<-done
+	<-sig
 	log.Debug("handle SIGINT and SIGTERM")
 	return true
 }

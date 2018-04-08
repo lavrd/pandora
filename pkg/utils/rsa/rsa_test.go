@@ -49,16 +49,22 @@ func TestVerifyPSS(t *testing.T) {
 	cases := []struct {
 		error     error
 		signature []byte
+		name      string
 	}{{
+		name:      "verifying sugnature success",
 		error:     nil,
 		signature: signature,
 	}, {
+		name:      "verifying signature failed",
 		error:     rsa.ErrVerification,
 		signature: []byte("signature"),
 	}}
 
 	for _, c := range cases {
-		err = ursa.VerifyPSS(public, c.signature)
-		assert.Equal(t, c.error, err)
+		t.Run(c.name, func(t *testing.T) {
+
+			err = ursa.VerifyPSS(public, c.signature)
+			assert.Equal(t, c.error, err)
+		})
 	}
 }

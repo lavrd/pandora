@@ -8,6 +8,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/core"
 	"github.com/spacelavr/pandora/pkg/discovery"
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/node"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -48,6 +49,7 @@ var (
 					"api":       api.Daemon,
 					"core":      core.Daemon,
 					"discovery": discovery.Daemon,
+					"node":      node.Daemon,
 				}
 			)
 

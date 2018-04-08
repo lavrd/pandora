@@ -3,9 +3,9 @@ verbose: true
 
 # sendgrid
 sendgrid:
-  token: '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'
+  token: ''
   endpoint: 'https://api.sendgrid.com/v3/mail/send'
-  email: 'pandora@mail.system'
+  email: 'pandora@doesnotexist.system'
   name: 'Pandora'
 
 # rsa
@@ -15,3 +15,8 @@ rsa:
 # database
 db:
   file: './contrib/pandora.db'
+
+# api
+api:
+  host: 'localhost'
+  port: 2001

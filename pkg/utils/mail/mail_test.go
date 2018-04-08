@@ -19,25 +19,31 @@ func TestSend(t *testing.T) {
 		status   int
 		expected error
 		endpoint string
+		name     string
 	}{
 		{
+			name:     "error sending mail",
 			status:   http.StatusBadRequest,
 			expected: errors.New("send mail error"),
 		}, {
+			name:     "success sending mail",
 			status:   http.StatusAccepted,
 			expected: nil,
 		},
 	}
 
 	for _, c := range cases {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(c.status)
-		}))
-		defer ts.Close()
+		t.Run(c.name, func(t *testing.T) {
 
-		viper.Set("sendgrid.endpoint", ts.URL)
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(c.status)
+			}))
+			defer ts.Close()
 
-		err := mail.Send("", "", "")
-		assert.Equal(t, c.expected, err)
+			viper.Set("sendgrid.endpoint", ts.URL)
+
+			err := mail.Send("", "", "")
+			assert.Equal(t, c.expected, err)
+		})
 	}
 }

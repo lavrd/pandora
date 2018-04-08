@@ -6,6 +6,13 @@ import (
 
 // PKG returns file pkg
 func PKG(path string) string {
-	index := strings.Index(path, "/pkg")
-	return path[index:]
+
+	var (
+		pattern = "/pkg"
+		length  = len(pattern)
+	)
+
+	index := strings.Index(path, pattern)
+
+	return path[index+length:]
 }
