@@ -14,10 +14,9 @@ type loggedResponseWriter struct {
 	size   int
 }
 
-// Loggig logging middleware
-func Logging(h http.Handler) http.Handler {
+// Logger logger middleware
+func Logger(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		start := time.Now()
 
 		lrw := newLoggedResponseWriter(w)

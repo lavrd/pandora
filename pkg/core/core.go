@@ -10,7 +10,6 @@ import (
 
 // Daemon start core daemon
 func Daemon() bool {
-
 	log.Debug("start core daemon")
 
 	var (

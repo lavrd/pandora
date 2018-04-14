@@ -10,7 +10,6 @@ import (
 
 // Daemon start node daemon
 func Daemon() bool {
-
 	log.Debug("start node daemon")
 
 	var (

@@ -4,12 +4,11 @@ import (
 	"crypto/rsa"
 	"testing"
 
-	ursa "github.com/spacelavr/pandora/pkg/utils/rsa"
+	ursa "github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup(t *testing.T) (*rsa.PrivateKey, *rsa.PublicKey) {
-
 	private, public, err := ursa.GenerateKeys()
 	assert.NoError(t, err)
 	assert.NotNil(t, private)
@@ -19,16 +18,10 @@ func setup(t *testing.T) (*rsa.PrivateKey, *rsa.PublicKey) {
 }
 
 func TestGenerateKeys(t *testing.T) {
-
-	t.Parallel()
-
 	_, _ = setup(t)
 }
 
 func TestSignPSS(t *testing.T) {
-
-	t.Parallel()
-
 	private, _ := setup(t)
 
 	signature, err := ursa.SignPSS(private)
@@ -37,9 +30,6 @@ func TestSignPSS(t *testing.T) {
 }
 
 func TestVerifyPSS(t *testing.T) {
-
-	t.Parallel()
-
 	private, public := setup(t)
 
 	signature, err := ursa.SignPSS(private)
@@ -62,7 +52,6 @@ func TestVerifyPSS(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-
 			err = ursa.VerifyPSS(public, c.signature)
 			assert.Equal(t, c.error, err)
 		})

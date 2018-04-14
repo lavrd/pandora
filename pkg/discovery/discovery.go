@@ -10,7 +10,6 @@ import (
 
 // Daemon start discovery daemon
 func Daemon() bool {
-
 	log.Debug("start discovery daemon")
 
 	var (

@@ -2,6 +2,7 @@ package errors
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/log"
@@ -17,6 +18,52 @@ type Response struct {
 // NotImplemented returns not implemented response
 func NotImplemented() *Response {
 	return &Response{Code: http.StatusNotImplemented, Status: http.StatusText(http.StatusNotImplemented)}
+}
+
+// Unauthorized returns unauthorized response
+func Unauthorized() *Response {
+	return &Response{Code: http.StatusUnauthorized, Status: http.StatusText(http.StatusUnauthorized)}
+}
+
+// InvalidJSON returns invalid json response
+func InvalidJSON() *Response {
+	return &Response{
+		Code:    http.StatusUnprocessableEntity,
+		Status:  http.StatusText(http.StatusUnprocessableEntity),
+		Message: "invalid json",
+	}
+}
+
+// NotFound returns not found response
+func NotFound(what string) *Response {
+	return &Response{
+		Code:    http.StatusNotFound,
+		Status:  http.StatusText(http.StatusNotFound),
+		Message: fmt.Sprintf("%s not found", what),
+	}
+}
+
+// AlreadyExists returns already exists response
+func AlreadyExists(what string) *Response {
+	return &Response{
+		Code:    http.StatusConflict,
+		Status:  http.StatusText(http.StatusConflict),
+		Message: fmt.Sprintf("%s already exists", what),
+	}
+}
+
+// InternalServerError returns internal server error response
+func InternalServerError() *Response {
+	return &Response{Code: http.StatusInternalServerError, Status: http.StatusText(http.StatusInternalServerError)}
+}
+
+// BadParameter returns bad parameter response
+func BadParameter(parameter string) *Response {
+	return &Response{
+		Code:    http.StatusUnprocessableEntity,
+		Status:  http.StatusText(http.StatusUnprocessableEntity),
+		Message: fmt.Sprintf("bad %s parameter", parameter),
+	}
 }
 
 // Http send http response

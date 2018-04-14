@@ -2,3 +2,4 @@
 
 vendor/
 contrib/pandora.db
+contrib/pandora.db.lock

@@ -7,13 +7,13 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/api/routes"
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spf13/viper"
 )
 
 // Daemon start api daemon
 func Daemon() bool {
-
 	log.Debug("start api daemon")
 
 	var (
@@ -21,6 +21,22 @@ func Daemon() bool {
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+	err := storage.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := storage.Close(); err != nil {
+			log.Error(err)
+		}
+
+		if viper.GetBool("clean") {
+			if err := os.RemoveAll(viper.GetString("db.file")); err != nil {
+				log.Error(err)
+			}
+		}
+	}()
 
 	go func() {
 		if err := http.Listen(

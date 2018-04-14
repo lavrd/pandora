@@ -16,17 +16,15 @@ import (
 var (
 	config string
 
+	// CLI main command
 	CLI = &cobra.Command{
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-
 			abs, err := filepath.Abs(config)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			// get the config name
 			base := filepath.Base(abs)
-			// get the path
 			path := filepath.Dir(abs)
 
 			viper.SetConfigName(strings.Split(base, ".")[0])
@@ -40,9 +38,8 @@ var (
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
-
 			var (
-				done    = make(chan bool, 1)
+				done    = make(chan bool)
 				apps    = make(chan bool)
 				wait    = 0
 				daemons = map[string]func() bool{
@@ -53,7 +50,7 @@ var (
 				}
 			)
 
-			components := []string{"api", "core", "discovery"}
+			components := []string{"api", "core", "discovery", "node"}
 
 			if len(args) > 0 {
 				components = args

@@ -9,94 +9,99 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Store
-type Store struct {
-	*bolt.DB
-}
+const (
+	BucketAccount = "account"
+)
 
-// Open connect to Store
-func Open() (*Store, error) {
+var (
+	db = &bolt.DB{}
+)
 
-	opts := &bolt.Options{
-		Timeout: 1 * time.Second,
+// Open open database
+func Open() (err error) {
+	var (
+		opts = &bolt.Options{
+			Timeout: 1 * time.Second,
+		}
+	)
+
+	if db, err = bolt.Open(viper.GetString("db.file"), 0600, opts); err != nil {
+		log.Error(err)
+		return
 	}
 
-	db, err := bolt.Open(viper.GetString("db.file"), 0600, opts)
+	if err = initBuckets(); err != nil {
+		return
+	}
+
+	return
+}
+
+func initBuckets() error {
+	if err := createBucket(BucketAccount); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Close close database
+func Close() error {
+	return db.Close()
+}
+
+func createBucket(bucket string) error {
+	err := db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte(bucket))
+		return err
+	})
 	if err != nil {
 		log.Error(err)
-		return nil, err
 	}
-
-	return &Store{db}, nil
+	return err
 }
 
-// CreateBucket create bucket
-func (s *Store) CreateBucket(bucket string) error {
-	return s.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucket([]byte(bucket))
-		if err != nil {
-			log.Error(err)
-		}
-		return err
-	})
-}
-
-// DeleteBucket bucket delete bucket
-func (s *Store) DeleteBucket(bucket string) error {
-	return s.Update(func(tx *bolt.Tx) error {
-		err := tx.DeleteBucket([]byte(bucket))
-		if err != nil {
-			log.Error(err)
-		}
-		return err
-	})
-}
-
-// Delete delete key from bucket
-func (s *Store) Delete(bucket, key string) error {
-	return s.Update(func(tx *bolt.Tx) error {
+func delete(bucket, key string) error {
+	err := db.Update(func(tx *bolt.Tx) error {
 		if b := tx.Bucket([]byte(bucket)); b != nil {
-			err := b.Delete([]byte(key))
-			if err != nil {
-				log.Error(err)
-			}
-			return err
+			return b.Delete([]byte(key))
 		}
 		return nil
 	})
+	if err != nil {
+		log.Error(err)
+	}
+	return err
 }
 
-// Get unmarshal value by bucket and key
-func (s *Store) Get(bucket, key string, data interface{}) error {
-	return s.View(func(tx *bolt.Tx) error {
+func get(bucket, key string, data interface{}) error {
+	err := db.View(func(tx *bolt.Tx) error {
 		if b := tx.Bucket([]byte(bucket)); b != nil {
 			if v := b.Get([]byte(key)); v != nil {
-				err := json.Unmarshal(v, data)
-				if err != nil {
-					log.Error(err)
-				}
-				return err
+				return json.Unmarshal(v, data)
 			}
 			return nil
 		}
 		return nil
 	})
+	if err != nil {
+		log.Error(err)
+	}
+	return err
 }
 
-// Put put value in Store by bucket and key
-func (s *Store) Put(bucket, key string, value interface{}) error {
+func put(bucket, key string, value interface{}) error {
 	if data, err := json.Marshal(value); err == nil {
-		return s.Update(func(tx *bolt.Tx) error {
-			if b := tx.Bucket([]byte(bucket)); b != nil {
-				err := b.Put([]byte(key), data)
-				if err != nil {
-					log.Error(err)
-				}
-				return err
-			}
-			return nil
+		err = db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte(bucket))
+			err := b.Put([]byte(key), data)
+			return err
 		})
+		if err != nil {
+			log.Error(err)
+		}
+		return err
 	} else {
+		log.Error(err)
 		return err
 	}
 }

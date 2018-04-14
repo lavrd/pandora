@@ -1,49 +1,43 @@
-package mail_test
+package mail
 
 import (
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/spacelavr/pandora/pkg/utils/mail"
+	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSend(t *testing.T) {
+func setup(t *testing.T, status int) (string, func(t *testing.T)) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(status)
+	}))
 
-	t.Parallel()
-
-	cases := []struct {
-		status   int
-		expected error
-		endpoint string
-		name     string
-	}{
-		{
-			name:     "error sending mail",
-			status:   http.StatusBadRequest,
-			expected: errors.New("send mail error"),
-		}, {
-			name:     "success sending mail",
-			status:   http.StatusAccepted,
-			expected: nil,
-		},
+	return ts.URL, func(t *testing.T) {
+		ts.Close()
 	}
+}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
+func TestBadRequst(t *testing.T) {
+	url, teardown := setup(t, http.StatusBadRequest)
+	defer teardown(t)
 
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				w.WriteHeader(c.status)
-			}))
-			defer ts.Close()
+	viper.Set("mail.endpoint", url)
 
-			viper.Set("sendgrid.endpoint", ts.URL)
+	err := send("", "", "")
+	assert.Equal(t, errors.SendMailError, err)
+}
 
-			err := mail.Send("", "", "")
-			assert.Equal(t, c.expected, err)
-		})
-	}
+func TestBadEndpoint(t *testing.T) {
+	viper.Set("mail.endpoint", "invalid endpoint")
+
+	err := send("", "", "")
+	assert.Error(t, err)
+}
+
+func TestBadTemplatePath(t *testing.T) {
+	err := execute("", "", "", "")
+	assert.Error(t, err)
 }

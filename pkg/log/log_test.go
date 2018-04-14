@@ -1,9 +1,3 @@
-//
-// do not run these tests in parallel
-// because threads of stdout intersect
-// and the data is distorted
-//
-
 package log_test
 
 import (
@@ -24,7 +18,6 @@ func init() {
 }
 
 func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {
-
 	stdout := os.Stdout
 	r, w, err := os.Pipe()
 	assert.NoError(t, err)
@@ -54,7 +47,6 @@ func find(out, pattern string, offset int) string {
 }
 
 func TestHttp(t *testing.T) {
-
 	r, w, teardown := setup(t)
 	defer teardown(t)
 
@@ -84,7 +76,6 @@ func TestHttp(t *testing.T) {
 }
 
 func TestDebug(t *testing.T) {
-
 	r, w, teardown := setup(t)
 	defer teardown(t)
 
@@ -98,7 +89,6 @@ func TestDebug(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
-
 	r, w, teardown := setup(t)
 	defer teardown(t)
 
@@ -112,7 +102,6 @@ func TestError(t *testing.T) {
 }
 
 func TestErrorf(t *testing.T) {
-
 	r, w, teardown := setup(t)
 	defer teardown(t)
 

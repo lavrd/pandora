@@ -69,7 +69,6 @@ func Fatalf(format string, args ...interface{}) {
 }
 
 func prepare() *logrus.Entry {
-
 	if pc, file, line, ok := runtime.Caller(2); ok {
 		fname := runtime.FuncForPC(pc).Name()
 

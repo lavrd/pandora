@@ -1,20 +1,30 @@
 # runtime
 verbose: true
+clean: true
 
-# sendgrid
-sendgrid:
-  token: ''
+# mail
+mail:
+  token: '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'
   endpoint: 'https://api.sendgrid.com/v3/mail/send'
   email: 'pandora@doesnotexist.system'
   name: 'Pandora'
-
-# rsa
-rsa:
-  PSSMessage: 'secret'
+  templates:
+    account:
+      created: './pkg/utils/mail/templates/account/created.html'
+      recovery: './pkg/utils/mail/templates/account/recovery.html'
+  subjects:
+    account:
+      created: 'Pandora account is created'
+      recovery: 'Recovery Pandora account'
 
 # database
 db:
   file: './contrib/pandora.db'
+
+# secure
+secure:
+  PSSMessage: 'secret'
+  JWTSecret: 'secret'
 
 # api
 api:

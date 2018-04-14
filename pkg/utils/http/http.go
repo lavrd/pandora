@@ -21,12 +21,12 @@ type Route struct {
 type Middleware func(http.HandlerFunc) http.HandlerFunc
 
 var (
-	MethodGet = http.MethodGet
+	GET  = http.MethodGet
+	POST = http.MethodPost
 )
 
 // Handle prepare handler
 func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
-
 	headers := func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			DefaultHeaders(w, r)
@@ -44,7 +44,6 @@ func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 
 // Listen start listen http requests
 func Listen(host string, port int, routes []Route) error {
-
 	log.Debugf("listen http server on %s:%d", host, port)
 
 	router := mux.NewRouter()
@@ -54,7 +53,7 @@ func Listen(host string, port int, routes []Route) error {
 		router.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
 	}
 
-	return http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), middleware.Logging(router))
+	return http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), middleware.Logger(router))
 }
 
 // DefaultHeaders add default headers

@@ -3,15 +3,16 @@ package mail
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spf13/viper"
 )
 
-type mail struct {
+// Mail
+type Mail struct {
 	Personalizations []*personalizations `json:"personalizations"`
 	Subject          string              `json:"subject"`
 	From             *email              `json:"from"`
@@ -32,10 +33,8 @@ type email struct {
 	Email string `json:"email"`
 }
 
-// Send send mail to email
-func Send(to, subject, html string) error {
-
-	var mail = &mail{
+func send(to, subject, html string) error {
+	mail := &Mail{
 		Personalizations: []*personalizations{
 			{
 				To: []*email{
@@ -47,8 +46,8 @@ func Send(to, subject, html string) error {
 		},
 		Subject: subject,
 		From: &email{
-			Name:  viper.GetString("sendgrid.name"),
-			Email: viper.GetString("sendgrid.email"),
+			Name:  viper.GetString("mail.name"),
+			Email: viper.GetString("mail.email"),
 		},
 		Content: []*content{
 			{
@@ -64,14 +63,14 @@ func Send(to, subject, html string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", viper.GetString("sendgrid.endpoint"), bytes.NewBuffer(buf))
+	req, err := http.NewRequest("POST", viper.GetString("mail.endpoint"), bytes.NewBuffer(buf))
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	defer req.Body.Close()
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", viper.GetString("sendgrid.token")))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", viper.GetString("mail.token")))
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := (&http.Client{}).Do(req)
@@ -83,7 +82,7 @@ func Send(to, subject, html string) error {
 
 	if res.StatusCode != http.StatusAccepted {
 		log.Errorf("mail doesn't send. http status: %d", res.StatusCode)
-		return errors.New("send mail error")
+		return errors.SendMailError
 	}
 
 	return nil

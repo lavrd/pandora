@@ -1,9 +1,11 @@
 package rsa
 
+// why without (_ "crypto/sha256") import sha256 is unavailable?
 import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
+	_ "crypto/sha256"
 
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spf13/viper"
@@ -18,16 +20,14 @@ var (
 )
 
 func init() {
-	PSSMessage := []byte(viper.GetString("rsa.PSSMessage"))
-	hash := crypto.SHA256
+	hash := hash
 	pssh := hash.New()
-	pssh.Write(PSSMessage)
+	pssh.Write([]byte(viper.GetString("secure.PSSMessage")))
 	hashed = pssh.Sum(nil)
 }
 
 // GenerateKeys generate rsa keys
 func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
-
 	private, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		log.Error(err)
@@ -38,9 +38,8 @@ func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	return private, public, nil
 }
 
-// SignPSS create signature
+// SignPSS calculates signature
 func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
-
 	signature, err := rsa.SignPSS(rand.Reader, key, hash, hashed, opts)
 	if err != nil {
 		log.Error(err)
@@ -52,6 +51,5 @@ func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
 
 // VerifyPSS verify signature
 func VerifyPSS(key *rsa.PublicKey, signature []byte) error {
-	// do not need error log because error only if verification failed
 	return rsa.VerifyPSS(key, hash, hashed, signature, opts)
 }
