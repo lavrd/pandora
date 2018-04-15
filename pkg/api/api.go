@@ -5,7 +5,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/spacelavr/pandora/pkg/api/env"
 	"github.com/spacelavr/pandora/pkg/api/routes"
+	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
@@ -22,21 +24,18 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	err := storage.Open()
+	stg, err := storage.Open(viper.GetString("db.file"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer func() {
-		if err := storage.Close(); err != nil {
-			log.Error(err)
-		}
 
-		if viper.GetBool("clean") {
-			if err := os.RemoveAll(viper.GetString("db.file")); err != nil {
-				log.Error(err)
-			}
-		}
-	}()
+	brk, err := broker.Connect(viper.GetString("broker.url"), viper.GetInt("broker.port"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	env.SetStorage(stg)
+	env.SetBroker(brk)
 
 	go func() {
 		if err := http.Listen(
@@ -45,6 +44,20 @@ func Daemon() bool {
 			routes.Routes,
 		); err != nil {
 			log.Fatalf("api server start error: %v", err)
+		}
+	}()
+
+	defer func() {
+		if err := stg.Close(); err != nil {
+			log.Error(err)
+		}
+
+		brk.Close()
+
+		if viper.GetBool("clean") {
+			if err := os.RemoveAll(viper.GetString("db.file")); err != nil {
+				log.Error(err)
+			}
 		}
 	}()
 

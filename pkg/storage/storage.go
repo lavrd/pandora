@@ -6,51 +6,51 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/spacelavr/pandora/pkg/log"
-	"github.com/spf13/viper"
 )
 
-const (
-	BucketAccount = "account"
-)
-
-var (
-	db = &bolt.DB{}
-)
+// Storage
+type Storage struct {
+	*bolt.DB
+}
 
 // Open open database
-func Open() (err error) {
+func Open(path string) (*Storage, error) {
 	var (
 		opts = &bolt.Options{
 			Timeout: 1 * time.Second,
 		}
 	)
 
-	if db, err = bolt.Open(viper.GetString("db.file"), 0600, opts); err != nil {
+	db, err := bolt.Open(path, 0600, opts)
+	if err != nil {
 		log.Error(err)
-		return
+		return nil, err
 	}
 
-	if err = initBuckets(); err != nil {
-		return
+	s := &Storage{db}
+
+	if err = s.InitBuckets(); err != nil {
+		return nil, err
 	}
 
-	return
+	return s, nil
 }
 
-func initBuckets() error {
-	if err := createBucket(BucketAccount); err != nil {
+func (s *Storage) InitBuckets() error {
+	if err := s.CreateBucket(BucketAccount); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Close close database
-func Close() error {
-	return db.Close()
+func (s *Storage) Close() error {
+	return s.Close()
 }
 
-func createBucket(bucket string) error {
-	err := db.Update(func(tx *bolt.Tx) error {
+// CreateBucket create bucket
+func (s *Storage) CreateBucket(bucket string) error {
+	err := s.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		return err
 	})
@@ -60,8 +60,9 @@ func createBucket(bucket string) error {
 	return err
 }
 
-func delete(bucket, key string) error {
-	err := db.Update(func(tx *bolt.Tx) error {
+// Delete delete key from bucket
+func (s *Storage) Delete(bucket, key string) error {
+	err := s.Update(func(tx *bolt.Tx) error {
 		if b := tx.Bucket([]byte(bucket)); b != nil {
 			return b.Delete([]byte(key))
 		}
@@ -73,11 +74,12 @@ func delete(bucket, key string) error {
 	return err
 }
 
-func get(bucket, key string, data interface{}) error {
-	err := db.View(func(tx *bolt.Tx) error {
+// Get get value by key and bucket
+func (s *Storage) Get(bucket, key string, value interface{}) error {
+	err := s.View(func(tx *bolt.Tx) error {
 		if b := tx.Bucket([]byte(bucket)); b != nil {
 			if v := b.Get([]byte(key)); v != nil {
-				return json.Unmarshal(v, data)
+				return json.Unmarshal(v, value)
 			}
 			return nil
 		}
@@ -89,9 +91,10 @@ func get(bucket, key string, data interface{}) error {
 	return err
 }
 
-func put(bucket, key string, value interface{}) error {
+// Put put value by key and bucket
+func (s *Storage) Put(bucket, key string, value interface{}) error {
 	if data, err := json.Marshal(value); err == nil {
-		err = db.Update(func(tx *bolt.Tx) error {
+		err = s.Update(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte(bucket))
 			err := b.Put([]byte(key), data)
 			return err

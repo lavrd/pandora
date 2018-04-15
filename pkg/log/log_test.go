@@ -18,9 +18,10 @@ func init() {
 }
 
 func setup(t *testing.T) (*os.File, *os.File, func(t *testing.T)) {
-	stdout := os.Stdout
 	r, w, err := os.Pipe()
 	assert.NoError(t, err)
+
+	stdout := os.Stdout
 	os.Stdout = w
 
 	return r, w, func(t *testing.T) {

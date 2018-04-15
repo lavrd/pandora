@@ -1,7 +1,6 @@
 package distribution
 
 import (
-	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/bcrypt"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/jwt"
@@ -10,9 +9,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 )
 
-// CreateAccount create account
-func CreateAccount(email string) (string, error) {
-	acc, err := storage.AccountFetch(email)
+// AccountCreate generate password, create account, save then,
+// send mail with credentials and returns jwt token
+func (d *Distribution) AccountCreate(email string) (string, error) {
+	acc, err := d.AccountFetch(email)
 	if err != nil {
 		return "", err
 	}
@@ -31,7 +31,7 @@ func CreateAccount(email string) (string, error) {
 		Password: hashed,
 	}
 
-	if err = storage.AccountPut(acc); err != nil {
+	if err = d.AccountPut(acc); err != nil {
 		return "", err
 	}
 
@@ -39,11 +39,12 @@ func CreateAccount(email string) (string, error) {
 		return "", err
 	}
 
-	return jwt.New(acc);
+	return jwt.New(acc)
 }
 
-func CreateSession(email, password string) (string, error) {
-	acc, err := storage.AccountFetch(email)
+// SessionNew create new session and returns jwt token
+func (d *Distribution) SessionNew(email, password string) (string, error) {
+	acc, err := d.AccountFetch(email)
 	if err != nil {
 		return "", err
 	}
@@ -58,8 +59,10 @@ func CreateSession(email, password string) (string, error) {
 	return jwt.New(acc)
 }
 
-func AccountRecovery(email string) error {
-	acc, err := storage.AccountFetch(email)
+// AccountRecovery recovery account, generate new password,
+// save them and send recovery mail
+func (d *Distribution) AccountRecovery(email string) error {
+	acc, err := d.AccountFetch(email)
 	if err != nil {
 		return err
 	}
@@ -75,7 +78,7 @@ func AccountRecovery(email string) error {
 
 	acc.Password = hashed
 
-	err = storage.AccountPut(acc)
+	err = d.AccountPut(acc)
 	if err != nil {
 		return err
 	}

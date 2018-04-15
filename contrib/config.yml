@@ -4,29 +4,33 @@ clean: true
 
 # mail
 mail:
-  token: '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'
-  endpoint: 'https://api.sendgrid.com/v3/mail/send'
-  email: 'pandora@doesnotexist.system'
-  name: 'Pandora'
+  token: ''
+  endpoint: https://api.sendgrid.com/v3/mail/send
+  email: pandora@doesnotexist.system
+  name: Pandora
   templates:
     account:
-      created: './pkg/utils/mail/templates/account/created.html'
-      recovery: './pkg/utils/mail/templates/account/recovery.html'
+      created: ./pkg/utils/mail/templates/account/created.html
+      recovery: ./pkg/utils/mail/templates/account/recovery.html
   subjects:
     account:
-      created: 'Pandora account is created'
-      recovery: 'Recovery Pandora account'
+      created: Pandora account is created
+      recovery: Recovery Pandora account
 
 # database
 db:
-  file: './contrib/pandora.db'
+  file: ./contrib/pandora.db
+
+# broker
+broker:
+  url: nats://localhost
+  port: 4222
 
 # secure
 secure:
-  PSSMessage: 'secret'
-  JWTSecret: 'secret'
+  PSSMessage: secret
+  JWTKey: secret
 
 # api
 api:
-  host: 'localhost'
   port: 2001

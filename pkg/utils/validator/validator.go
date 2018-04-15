@@ -3,13 +3,17 @@ package validator
 import (
 	"regexp"
 
+	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/types"
 )
 
 // IsEmail checking for valid email
 func IsEmail(email string) bool {
 	const pattern = "[^@]+@[^\\.]+\\..+"
-	matched, _ := regexp.MatchString(pattern, email)
+	matched, err := regexp.MatchString(pattern, email)
+	if err != nil {
+		log.Error(err)
+	}
 	return matched
 }
 

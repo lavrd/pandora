@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/spacelavr/pandora/pkg/storage"
+	"github.com/spacelavr/pandora/pkg/api/env"
+	"github.com/spacelavr/pandora/pkg/distribution"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/jwt"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
@@ -42,8 +43,10 @@ func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		dist := distribution.Distribution{env.GetStorage()}
+
 		// fetch account
-		acc, err := storage.AccountFetch(email)
+		acc, err := dist.AccountFetch(email)
 		if err != nil {
 			errors.InternalServerError().Http(w)
 			return

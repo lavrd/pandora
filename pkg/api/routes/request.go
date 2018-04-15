@@ -8,10 +8,12 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/validator"
 )
 
+// SignUp
 type SignUp struct {
 	Email *string `json:"email"`
 }
 
+// Validate validate incoming data for sign up
 func (s *SignUp) Validate() *errors.Response {
 	switch {
 	case !validator.IsEmail(*s.Email):
@@ -21,6 +23,7 @@ func (s *SignUp) Validate() *errors.Response {
 	}
 }
 
+// DecodeAndValidate decode and validate incoming data for sign up
 func (s *SignUp) DecodeAndValidate(reader io.Reader) *errors.Response {
 	if err := json.NewDecoder(reader).Decode(s); err != nil {
 		return errors.InvalidJSON()
@@ -28,11 +31,13 @@ func (s *SignUp) DecodeAndValidate(reader io.Reader) *errors.Response {
 	return s.Validate()
 }
 
+// SignIn
 type SignIn struct {
 	Email    *string `json:"email"`
 	Password *string `json:"password"`
 }
 
+// Validate validate incoming data for sign in
 func (s *SignIn) Validate() *errors.Response {
 	switch {
 	case !validator.IsEmail(*s.Email):
@@ -44,6 +49,7 @@ func (s *SignIn) Validate() *errors.Response {
 	}
 }
 
+// DecodeAndValidate decode and validate incoming data for sign in
 func (s *SignIn) DecodeAndValidate(reader io.Reader) *errors.Response {
 	if err := json.NewDecoder(reader).Decode(s); err != nil {
 		return errors.InvalidJSON()
@@ -51,10 +57,12 @@ func (s *SignIn) DecodeAndValidate(reader io.Reader) *errors.Response {
 	return s.Validate()
 }
 
+// AccountRecovery
 type AccountRecovery struct {
 	Email *string
 }
 
+// Validate validate incoming data for account recovery
 func (ar *AccountRecovery) Validate() *errors.Response {
 	switch {
 	case !validator.IsEmail(*ar.Email):
@@ -64,6 +72,7 @@ func (ar *AccountRecovery) Validate() *errors.Response {
 	}
 }
 
+// DecodeAndValidate decode and validate incoming data for account recovery
 func (ar *AccountRecovery) DecodeAndValidate(reader io.Reader) *errors.Response {
 	if err := json.NewDecoder(reader).Decode(ar); err != nil {
 		return errors.InvalidJSON()

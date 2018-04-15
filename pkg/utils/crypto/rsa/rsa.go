@@ -33,6 +33,7 @@ func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 		log.Error(err)
 		return nil, nil, err
 	}
+
 	public := &private.PublicKey
 
 	return private, public, nil
@@ -43,13 +44,15 @@ func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
 	signature, err := rsa.SignPSS(rand.Reader, key, hash, hashed, opts)
 	if err != nil {
 		log.Error(err)
-		return nil, err
 	}
-
-	return signature, nil
+	return signature, err
 }
 
 // VerifyPSS verify signature
 func VerifyPSS(key *rsa.PublicKey, signature []byte) error {
-	return rsa.VerifyPSS(key, hash, hashed, signature, opts)
+	err := rsa.VerifyPSS(key, hash, hashed, signature, opts)
+	if err != nil {
+		log.Error(err)
+	}
+	return err
 }

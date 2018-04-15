@@ -10,12 +10,15 @@ func Encode(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error(err)
-		return "", err
 	}
 	return string(hash), nil
 }
 
 // Validate that hash and password are compared
 func Validate(hashed, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
+	if err != nil {
+		log.Error()
+	}
+	return err
 }

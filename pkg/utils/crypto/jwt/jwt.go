@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	hmac = []byte(viper.GetString("secure.JWTSecret"))
+	key = []byte(viper.GetString("secure.JWTKey"))
 )
 
 // New generate new jwt token
@@ -20,12 +20,10 @@ func New(acc *types.Account) (string, error) {
 		"email": acc.Email,
 	})
 
-	signed, err := token.SignedString(hmac)
+	signed, err := token.SignedString(key)
 	if err != nil {
 		log.Error(err)
-		return "", err
 	}
-
 	return signed, nil
 }
 
@@ -35,7 +33,7 @@ func Validate(tkn string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New(fmt.Sprintf("unexpected signing method: %v", token.Header["alg"]))
 		}
-		return hmac, nil
+		return key, nil
 	})
 	if err != nil {
 		log.Error(err)

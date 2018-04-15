@@ -18,7 +18,6 @@ var (
 
 func init() {
 	logger = logrus.New()
-	logger.SetLevel(logrus.FatalLevel)
 }
 
 // SetVerbose set verbose output

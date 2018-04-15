@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/spacelavr/pandora/pkg/api/env"
 	"github.com/spacelavr/pandora/pkg/distribution"
-	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
@@ -23,12 +23,14 @@ func SignUpH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if token, err := distribution.CreateAccount(*opts.Email); err == nil {
+	dist := distribution.Distribution{env.GetStorage()}
+
+	token, err := dist.AccountCreate(*opts.Email)
+	if err == nil {
 		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
 			errors.InternalServerError().Http(w)
 		}
 	} else {
-		log.Debug(err)
 		if err == errors.AccountAlreadyExists {
 			errors.AlreadyExists("account").Http(w)
 		} else {
@@ -45,7 +47,10 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if token, err := distribution.CreateSession(*opts.Email, *opts.Password); err == nil {
+	dist := distribution.Distribution{env.GetStorage()}
+
+	token, err := dist.SessionNew(*opts.Email, *opts.Password)
+	if err == nil {
 		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
 			errors.InternalServerError().Http(w)
 		}
@@ -68,7 +73,10 @@ func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := distribution.AccountRecovery(*opts.Email); err != nil {
+	dist := distribution.Distribution{env.GetStorage()}
+
+	err := dist.AccountRecovery(*opts.Email)
+	if err != nil {
 		if err == errors.AccountNotFound {
 			errors.NotFound("account").Http(w)
 		} else {
