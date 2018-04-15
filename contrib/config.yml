@@ -4,7 +4,7 @@ clean: true
 
 # mail
 mail:
-  token: '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'
+  token: ''
   endpoint: 'https://api.sendgrid.com/v3/mail/send'
   email: 'pandora@doesnotexist.system'
   name: 'Pandora'
