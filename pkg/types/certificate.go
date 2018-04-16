@@ -7,13 +7,13 @@ import (
 
 // Certificate
 type Certificate struct {
-	Meta      *Meta      `json:"meta"`
-	Issuer    *Issuer    `json:"issuer"`
-	Recipient *Recipient `json:"recipient"`
+	Meta      *CertificateMeta `json:"meta"`
+	Issuer    *Issuer          `json:"issuer"`
+	Recipient *Recipient       `json:"recipient"`
 }
 
-// Meta
-type Meta struct {
+// CertificateMeta
+type CertificateMeta struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Date        time.Time `json:"date"`

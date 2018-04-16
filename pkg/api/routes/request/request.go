@@ -82,3 +82,33 @@ func (ar *AccountRecovery) DecodeAndValidate(reader io.Reader) *errors.Response 
 	}
 	return ar.Validate()
 }
+
+// CertificateIssue
+type CertificateIssue struct {
+	IssuerEmail    *string `json:"issuer_email"`
+	RecipientEmail *string `json:"recipient_email"`
+	Title          *string `json:"title"`
+	Description    *string `json:"description"`
+}
+
+// Validate validate incoming data for issue certificate
+func (si *CertificateIssue) Validate() *errors.Response {
+	switch {
+	case !validator.IsEmail(*si.IssuerEmail):
+		return errors.BadParameter("issuer email")
+	case !validator.IsEmail(*si.RecipientEmail):
+		return errors.BadParameter("recipient email")
+	case len(*si.Title) == 0:
+		return errors.BadParameter("title")
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for issue certificate
+func (si *CertificateIssue) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(si); err != nil {
+		return errors.InvalidJSON()
+	}
+	return si.Validate()
+}

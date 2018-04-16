@@ -98,8 +98,22 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 }
 
 // CertificateCreateH issue certificate handler
-func CertificateIssueH(w http.ResponseWriter, _ *http.Request) {
-	errors.NotImplemented().Http(w)
+func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertificateIssue{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	dist := distribution.Distribution{env.GetStorage()}
+
+	if cert, err := dist.CertificateIssue(opts); err == nil {
+		if err = json.NewEncoder(w).Encode(cert.Public()); err != nil {
+			errors.InternalServerError().Http(w)
+		}
+	} else {
+		errors.InternalServerError().Http(w)
+	}
 }
 
 // CertificateViewH view certificate handler
