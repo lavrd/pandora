@@ -17,9 +17,9 @@ type SignUp struct {
 // Validate validate incoming data for sign up
 func (s *SignUp) Validate() *errors.Response {
 	switch {
-	case !validator.IsEmail(*s.Email):
+	case s.Email == nil || !validator.IsEmail(*s.Email):
 		return errors.BadParameter("email")
-	case !validator.IsAccountType(*s.Type):
+	case s.Type == nil || !validator.IsAccountType(*s.Type):
 		return errors.BadParameter("type")
 	default:
 		return nil
@@ -43,9 +43,9 @@ type SignIn struct {
 // Validate validate incoming data for sign in
 func (s *SignIn) Validate() *errors.Response {
 	switch {
-	case !validator.IsEmail(*s.Email):
+	case s.Email == nil || !validator.IsEmail(*s.Email):
 		return errors.BadParameter("email")
-	case !validator.IsPassword(*s.Password):
+	case s.Password == nil || !validator.IsPassword(*s.Password):
 		return errors.BadParameter("password")
 	default:
 		return nil
@@ -62,13 +62,13 @@ func (s *SignIn) DecodeAndValidate(reader io.Reader) *errors.Response {
 
 // AccountRecovery
 type AccountRecovery struct {
-	Email *string
+	Email *string `json:"email"`
 }
 
 // Validate validate incoming data for account recovery
 func (ar *AccountRecovery) Validate() *errors.Response {
 	switch {
-	case !validator.IsEmail(*ar.Email):
+	case ar.Email == nil || !validator.IsEmail(*ar.Email):
 		return errors.BadParameter("email")
 	default:
 		return nil
@@ -92,13 +92,13 @@ type CertificateIssue struct {
 }
 
 // Validate validate incoming data for issue certificate
-func (si *CertificateIssue) Validate() *errors.Response {
+func (ci *CertificateIssue) Validate() *errors.Response {
 	switch {
-	case !validator.IsEmail(*si.IssuerEmail):
+	case ci.IssuerEmail == nil || !validator.IsEmail(*ci.IssuerEmail):
 		return errors.BadParameter("issuer email")
-	case !validator.IsEmail(*si.RecipientEmail):
+	case ci.RecipientEmail == nil || !validator.IsEmail(*ci.RecipientEmail):
 		return errors.BadParameter("recipient email")
-	case len(*si.Title) == 0:
+	case ci.Title == nil || len(*ci.Title) == 0:
 		return errors.BadParameter("title")
 	default:
 		return nil

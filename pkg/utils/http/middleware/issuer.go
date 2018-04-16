@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/types"
@@ -12,7 +11,7 @@ import (
 func Issuer(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			acc = r.Context().Value("acc").(types.Account)
+			acc = r.Context().Value("acc").(*types.Account)
 		)
 
 		if acc.Type != types.TypeIssuer {
@@ -20,6 +19,6 @@ func Issuer(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		h.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "acc", acc)))
+		h.ServeHTTP(w, r)
 	}
 }

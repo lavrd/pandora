@@ -32,14 +32,15 @@ func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	pri, pub := rsa.Marshal(private, public)
 
 	acc = &types.Account{
 		Email:     *opts.Email,
 		Type:      *opts.Type,
-		PublicKey: public,
+		PublicKey: pub,
 		Secure: &types.AccountSecure{
 			Password:   hashed,
-			PrivateKey: private,
+			PrivateKey: pri,
 		},
 	}
 

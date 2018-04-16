@@ -1,9 +1,5 @@
 package types
 
-import (
-	"crypto/rsa"
-)
-
 // Session
 type Session struct {
 	Token string `json:"token"`
@@ -13,13 +9,13 @@ type Session struct {
 type Account struct {
 	Email     string         `json:"email"`
 	Type      int            `json:"type"`
-	PublicKey *rsa.PublicKey `json:"public_key"`
+	PublicKey string         `json:"public_key"`
 	Secure    *AccountSecure `json:"secure,omitempty"`
 }
 
 type AccountSecure struct {
-	Password   string          `json:"password,omitempty"`
-	PrivateKey *rsa.PrivateKey `json:"private_key"`
+	Password   string `json:"password,omitempty"`
+	PrivateKey string `json:"private_key"`
 }
 
 // Public returns public account info

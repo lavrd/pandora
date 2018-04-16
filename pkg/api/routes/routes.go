@@ -16,7 +16,7 @@ var (
 		{Path: "/recovery", Method: http.POST, Middleware: nil, Handler: handlers.AccountRecoveryH},
 		{Path: "/account", Method: http.GET, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.AccountFetchH},
 
-		{Path: "/issue", Method: http.POST, Middleware: []http.Middleware{middleware.Authenticate, middleware.Issuer}, Handler: handlers.CertificateIssueH},
+		{Path: "/issue", Method: http.POST, Middleware: []http.Middleware{middleware.Issuer, middleware.Authenticate}, Handler: handlers.CertificateIssueH},
 		{Path: "/view", Method: http.GET, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.CertificateViewH},
 		{Path: "/verify", Method: http.POST, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.CertificateVerifyH},
 	}

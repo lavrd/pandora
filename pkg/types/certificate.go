@@ -15,7 +15,7 @@ type Certificate struct {
 // CertificateMeta
 type CertificateMeta struct {
 	Title       string    `json:"title"`
-	Description string    `json:"description"`
+	Description string    `json:"description,omitempty"`
 	Date        time.Time `json:"date"`
 }
 

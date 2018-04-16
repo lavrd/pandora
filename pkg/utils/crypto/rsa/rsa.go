@@ -1,13 +1,15 @@
 package rsa
 
-// why without (_ "crypto/sha256") import sha256 is unavailable?
 import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	_ "crypto/sha256"
+	"crypto/x509"
+	"encoding/pem"
 
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spf13/viper"
 )
 
@@ -35,6 +37,50 @@ func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	}
 
 	public := &private.PublicKey
+
+	return private, public, nil
+}
+
+// Marshal marshal rsa keys
+func Marshal(pri *rsa.PrivateKey, pub *rsa.PublicKey) (string, string) {
+	block := &pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(pri),
+	}
+	private := pem.EncodeToMemory(block)
+
+	block = &pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: x509.MarshalPKCS1PublicKey(pub),
+	}
+	public := pem.EncodeToMemory(block)
+
+	return string(private), string(public)
+}
+
+// Unmarshal unmarshal rsa keys
+func Unmarshal(pri, pub string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
+	block, _ := pem.Decode([]byte(pri))
+	if block == nil {
+		log.Error(errors.PemBlockParseFailed)
+		return nil, nil, errors.PemBlockParseFailed
+	}
+	private, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
+
+	block, _ = pem.Decode([]byte(pub))
+	if block == nil {
+		log.Error(errors.PemBlockParseFailed)
+		return nil, nil, errors.PemBlockParseFailed
+	}
+	public, err := x509.ParsePKCS1PublicKey(block.Bytes)
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
 
 	return private, public, nil
 }
