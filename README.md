@@ -1,3 +1,3 @@
 # pandora
 
-Blockchain-based decentralized platform for creating, issuing, viewing, and verifying certificates
+Blockchain-based decentralized platform for issuing, viewing, and verifying certificates
