@@ -36,6 +36,11 @@ func TestResponses(t *testing.T) {
 			http.StatusUnauthorized,
 		},
 		{
+			errors.Forbidden(),
+			"Forbidden",
+			http.StatusForbidden,
+		},
+		{
 			errors.InvalidJSON(),
 			"InvalidJSON",
 			http.StatusUnprocessableEntity,

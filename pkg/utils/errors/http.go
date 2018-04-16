@@ -34,6 +34,11 @@ func InvalidJSON() *Response {
 	}
 }
 
+// Forbidden returns forbidden response
+func Forbidden() *Response {
+	return &Response{Code: http.StatusForbidden, Status: http.StatusText(http.StatusForbidden)}
+}
+
 // NotFound returns not found response
 func NotFound(what string) *Response {
 	return &Response{

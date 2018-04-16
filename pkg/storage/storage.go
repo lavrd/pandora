@@ -45,7 +45,7 @@ func (s *Storage) InitBuckets() error {
 
 // Close close database
 func (s *Storage) Close() error {
-	return s.Close()
+	return s.DB.Close()
 }
 
 // CreateBucket create bucket
@@ -74,7 +74,7 @@ func (s *Storage) Delete(bucket, key string) error {
 	return err
 }
 
-// Get get value by key and bucket
+// Get returns value by key and bucket
 func (s *Storage) Get(bucket, key string, value interface{}) error {
 	err := s.View(func(tx *bolt.Tx) error {
 		if b := tx.Bucket([]byte(bucket)); b != nil {

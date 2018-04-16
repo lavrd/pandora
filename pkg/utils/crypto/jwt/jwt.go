@@ -24,7 +24,7 @@ func New(acc *types.Account) (string, error) {
 	if err != nil {
 		log.Error(err)
 	}
-	return signed, nil
+	return signed, err
 }
 
 // Validate validate jwt token and returns token email

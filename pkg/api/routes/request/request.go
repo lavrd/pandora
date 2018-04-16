@@ -1,4 +1,4 @@
-package routes
+package request
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 // SignUp
 type SignUp struct {
 	Email *string `json:"email"`
+	Type  *int    `json:"type"`
 }
 
 // Validate validate incoming data for sign up
@@ -18,6 +19,8 @@ func (s *SignUp) Validate() *errors.Response {
 	switch {
 	case !validator.IsEmail(*s.Email):
 		return errors.BadParameter("email")
+	case !validator.IsAccountType(*s.Type):
+		return errors.BadParameter("type")
 	default:
 		return nil
 	}

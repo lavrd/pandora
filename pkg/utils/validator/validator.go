@@ -17,6 +17,11 @@ func IsEmail(email string) bool {
 	return matched
 }
 
+// IsAccountType checking for valid account type
+func IsAccountType(t int) bool {
+	return t > 0 && t < types.MaxAccountType
+}
+
 // IsPassword checking for valid password
 func IsPassword(password string) bool {
 	return types.MinPasswordLen <= len(password) && len(password) <= types.MaxPasswordLen

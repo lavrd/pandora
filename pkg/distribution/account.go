@@ -1,18 +1,20 @@
 package distribution
 
 import (
+	"github.com/spacelavr/pandora/pkg/api/routes/request"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/bcrypt"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/jwt"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 )
 
-// AccountCreate generate password, create account, save then,
+// AccountCreate generate password, keys, create account, save them,
 // send mail with credentials and returns jwt token
-func (d *Distribution) AccountCreate(email string) (string, error) {
-	acc, err := d.AccountFetch(email)
+func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
+	acc, err := d.AccountFetch(*opts.Email)
 	if err != nil {
 		return "", err
 	}
@@ -26,16 +28,26 @@ func (d *Distribution) AccountCreate(email string) (string, error) {
 		return "", err
 	}
 
+	private, public, err := rsa.GenerateKeys()
+	if err != nil {
+		return "", err
+	}
+
 	acc = &types.Account{
-		Email:    email,
-		Password: hashed,
+		Email:     *opts.Email,
+		Type:      *opts.Type,
+		PublicKey: public,
+		Secure: &types.AccountSecure{
+			Password:   hashed,
+			PrivateKey: private,
+		},
 	}
 
 	if err = d.AccountPut(acc); err != nil {
 		return "", err
 	}
 
-	if err = mail.SendAccountCreated(email, password); err != nil {
+	if err = mail.SendAccountCreated(*opts.Email, password); err != nil {
 		return "", err
 	}
 
@@ -43,8 +55,8 @@ func (d *Distribution) AccountCreate(email string) (string, error) {
 }
 
 // SessionNew create new session and returns jwt token
-func (d *Distribution) SessionNew(email, password string) (string, error) {
-	acc, err := d.AccountFetch(email)
+func (d *Distribution) SessionNew(opts *request.SignIn) (string, error) {
+	acc, err := d.AccountFetch(*opts.Email)
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +64,7 @@ func (d *Distribution) SessionNew(email, password string) (string, error) {
 		return "", errors.AccountNotFound
 	}
 
-	if err := bcrypt.Validate(acc.Password, password); err != nil {
+	if err := bcrypt.Validate(acc.Secure.Password, *opts.Password); err != nil {
 		return "", errors.InvalidCredentials
 	}
 
@@ -61,8 +73,8 @@ func (d *Distribution) SessionNew(email, password string) (string, error) {
 
 // AccountRecovery recovery account, generate new password,
 // save them and send recovery mail
-func (d *Distribution) AccountRecovery(email string) error {
-	acc, err := d.AccountFetch(email)
+func (d *Distribution) AccountRecovery(opts *request.AccountRecovery) error {
+	acc, err := d.AccountFetch(*opts.Email)
 	if err != nil {
 		return err
 	}
@@ -76,12 +88,12 @@ func (d *Distribution) AccountRecovery(email string) error {
 		return err
 	}
 
-	acc.Password = hashed
+	acc.Secure.Password = hashed
 
 	err = d.AccountPut(acc)
 	if err != nil {
 		return err
 	}
 
-	return mail.SendAccountRecovery(email, password)
+	return mail.SendAccountRecovery(*opts.Email, password)
 }

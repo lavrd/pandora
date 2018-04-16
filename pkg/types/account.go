@@ -1,5 +1,9 @@
 package types
 
+import (
+	"crypto/rsa"
+)
+
 // Session
 type Session struct {
 	Token string `json:"token"`
@@ -7,13 +11,20 @@ type Session struct {
 
 // Account
 type Account struct {
-	Email    string `json:"email"`
-	Password string `json:"password,omitempty"`
+	Email     string         `json:"email"`
+	Type      int            `json:"type"`
+	PublicKey *rsa.PublicKey `json:"public_key"`
+	Secure    *AccountSecure `json:"secure,omitempty"`
 }
 
-// Public get only public account info
+type AccountSecure struct {
+	Password   string          `json:"password,omitempty"`
+	PrivateKey *rsa.PrivateKey `json:"private_key"`
+}
+
+// Public returns public account info
 func (acc *Account) Public() *Account {
-	acc.Password = ""
+	acc.Secure = nil
 	return acc
 }
 

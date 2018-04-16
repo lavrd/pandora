@@ -29,7 +29,7 @@ func Connect(url string, port int) (*Broker, error) {
 
 // Close close connection with broker server
 func (b *Broker) Close() {
-	b.Close()
+	b.EncodedConn.Close()
 }
 
 // Subscribe subscribe to broker messages by channel

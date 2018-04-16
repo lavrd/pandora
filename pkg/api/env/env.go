@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	e *env
+	e = &env{}
 )
 
 type env struct {
@@ -19,7 +19,7 @@ func SetBroker(brk *broker.Broker) {
 	e.broker = brk
 }
 
-// GetBroker get broker from env
+// GetBroker returns broker from env
 func GetBroker() *broker.Broker {
 	return e.broker
 }
@@ -29,7 +29,7 @@ func SetStorage(stg *storage.Storage) {
 	e.storage = stg
 }
 
-// GetStorage get storage from env
+// GetStorage returns storage from env
 func GetStorage() *storage.Storage {
 	return e.storage
 }

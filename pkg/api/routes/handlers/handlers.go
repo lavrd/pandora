@@ -1,10 +1,11 @@
-package routes
+package handlers
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/api/env"
+	"github.com/spacelavr/pandora/pkg/api/routes/request"
 	"github.com/spacelavr/pandora/pkg/distribution"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -17,7 +18,7 @@ func HealthH(w http.ResponseWriter, _ *http.Request) {
 
 // SingUpH sign up handler
 func SignUpH(w http.ResponseWriter, r *http.Request) {
-	opts := &SignUp{}
+	opts := &request.SignUp{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
@@ -25,7 +26,7 @@ func SignUpH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{env.GetStorage()}
 
-	token, err := dist.AccountCreate(*opts.Email)
+	token, err := dist.AccountCreate(opts)
 	if err == nil {
 		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
 			errors.InternalServerError().Http(w)
@@ -41,7 +42,7 @@ func SignUpH(w http.ResponseWriter, r *http.Request) {
 
 // SingInH sign in handler
 func SignInH(w http.ResponseWriter, r *http.Request) {
-	opts := &SignIn{}
+	opts := &request.SignIn{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
@@ -49,7 +50,7 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{env.GetStorage()}
 
-	token, err := dist.SessionNew(*opts.Email, *opts.Password)
+	token, err := dist.SessionNew(opts)
 	if err == nil {
 		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
 			errors.InternalServerError().Http(w)
@@ -67,7 +68,7 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 
 // AccountRecoveryH account recovery handler
 func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
-	opts := &AccountRecovery{}
+	opts := &request.AccountRecovery{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
@@ -75,7 +76,7 @@ func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{env.GetStorage()}
 
-	err := dist.AccountRecovery(*opts.Email)
+	err := dist.AccountRecovery(opts)
 	if err != nil {
 		if err == errors.AccountNotFound {
 			errors.NotFound("account").Http(w)
@@ -96,13 +97,13 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CertificateCreateH create certificate handler
-func CertificateCreateH(w http.ResponseWriter, _ *http.Request) {
+// CertificateCreateH issue certificate handler
+func CertificateIssueH(w http.ResponseWriter, _ *http.Request) {
 	errors.NotImplemented().Http(w)
 }
 
-// CertificateIssueH issue certificate handler
-func CertificateIssueH(w http.ResponseWriter, _ *http.Request) {
+// CertificateViewH view certificate handler
+func CertificateViewH(w http.ResponseWriter, _ *http.Request) {
 	errors.NotImplemented().Http(w)
 }
 
