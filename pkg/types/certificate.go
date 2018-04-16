@@ -1,6 +1,7 @@
 package types
 
 import (
+	"crypto/rsa"
 	"time"
 )
 
@@ -20,12 +21,14 @@ type Meta struct {
 
 // Recipient
 type Recipient struct {
-	FullName string `json:"full_name"`
+	FullName  string         `json:"full_name"`
+	PublicKey *rsa.PublicKey `json:"public_key"`
 }
 
 // Issuer
 type Issuer struct {
-	Name string `json:"name"`
+	PublicKey *rsa.PublicKey `json:"public_key"`
+	Name      string         `json:"name"`
 }
 
 // Public returns public certificate info
