@@ -1,110 +1,202 @@
 package storage
 
 import (
-	"encoding/json"
-	"time"
+	"context"
 
-	"github.com/boltdb/bolt"
+	"github.com/arangodb/go-driver"
+	"github.com/arangodb/go-driver/http"
 	"github.com/spacelavr/pandora/pkg/log"
 )
 
 // Storage
 type Storage struct {
-	*bolt.DB
+	database string
+	client   driver.Client
 }
 
-// Open open database
-func Open(path string) (*Storage, error) {
-	var (
-		opts = &bolt.Options{
-			Timeout: 1 * time.Second,
-		}
-	)
+// ConnectOpts
+type ConnectOpts struct {
+	Endpoint string
+	User     string
+	Password string
+	Database string
+}
 
-	db, err := bolt.Open(path, 0600, opts)
+// Connect connect to database
+func Connect(opts *ConnectOpts) (*Storage, error) {
+	conn, err := http.NewConnection(http.ConnectionConfig{
+		Endpoints: []string{opts.Endpoint},
+	})
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	s := &Storage{db}
-
-	if err = s.InitBuckets(); err != nil {
+	client, err := driver.NewClient(driver.ClientConfig{
+		Connection:     conn,
+		Authentication: driver.BasicAuthentication(opts.User, opts.Password),
+	})
+	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 
-	return s, nil
+	storage := &Storage{database: opts.Database, client: client}
+
+	if err = storage.Init(); err != nil {
+		return nil, err
+	}
+
+	return storage, nil
 }
 
-func (s *Storage) InitBuckets() error {
-	if err := s.CreateBucket(BucketAccount); err != nil {
-		return err
-	}
+// Close close connection with database
+func (s *Storage) Close() error {
 	return nil
 }
 
-// Close close database
-func (s *Storage) Close() error {
-	return s.DB.Close()
-}
+// Init initialize database
+func (s *Storage) Init() error {
+	var (
+		ctx = context.Background()
+		db  driver.Database
+	)
 
-// CreateBucket create bucket
-func (s *Storage) CreateBucket(bucket string) error {
-	err := s.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(bucket))
+	ok, err := s.client.DatabaseExists(ctx, s.database)
+	if err != nil {
+		log.Error(err)
 		return err
-	})
-	if err != nil {
-		log.Error(err)
 	}
-	return err
-}
-
-// Delete delete key from bucket
-func (s *Storage) Delete(bucket, key string) error {
-	err := s.Update(func(tx *bolt.Tx) error {
-		if b := tx.Bucket([]byte(bucket)); b != nil {
-			return b.Delete([]byte(key))
-		}
-		return nil
-	})
-	if err != nil {
-		log.Error(err)
-	}
-	return err
-}
-
-// Get returns value by key and bucket
-func (s *Storage) Get(bucket, key string, value interface{}) error {
-	err := s.View(func(tx *bolt.Tx) error {
-		if b := tx.Bucket([]byte(bucket)); b != nil {
-			if v := b.Get([]byte(key)); v != nil {
-				return json.Unmarshal(v, value)
-			}
-			return nil
-		}
-		return nil
-	})
-	if err != nil {
-		log.Error(err)
-	}
-	return err
-}
-
-// Put put value by key and bucket
-func (s *Storage) Put(bucket, key string, value interface{}) error {
-	if data, err := json.Marshal(value); err == nil {
-		err = s.Update(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte(bucket))
-			err := b.Put([]byte(key), data)
-			return err
-		})
+	if !ok {
+		db, err = s.client.CreateDatabase(ctx, s.database, nil)
 		if err != nil {
 			log.Error(err)
+			return err
 		}
-		return err
 	} else {
+		db, err = s.Database()
+		if err != nil {
+			return err
+		}
+	}
+
+	ok, err = db.CollectionExists(ctx, CollectionAccount)
+	if err != nil {
 		log.Error(err)
 		return err
 	}
+	if !ok {
+		_, err = db.CreateCollection(ctx, CollectionAccount, nil)
+		if err != nil {
+			log.Error(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Clean clean database
+func (s *Storage) Clean() error {
+	ctx := context.Background()
+
+	db, err := s.Database()
+	if err != nil {
+		return err
+	}
+
+	err = db.Remove(ctx)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// Database returns database
+func (s *Storage) Database() (driver.Database, error) {
+	ctx := context.Background()
+
+	db, err := s.client.Database(ctx, s.database)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return db, nil
+}
+
+// Collection returns collection
+func (s *Storage) Collection(name string) (driver.Collection, error) {
+	ctx := context.Background()
+
+	db, err := s.Database()
+	if err != nil {
+		return nil, err
+	}
+
+	col, err := db.Collection(ctx, name)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return col, nil
+}
+
+// Read read document by collection and key
+func (s *Storage) Read(collection, key string, document interface{}) (*driver.DocumentMeta, error) {
+	ctx := context.Background()
+
+	col, err := s.Collection(collection)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := col.ReadDocument(ctx, key, document)
+	if err != nil {
+		if !driver.IsNotFound(err) {
+			log.Error(err)
+		}
+		return nil, err
+	}
+
+	return &meta, nil
+}
+
+// Write write document to collection
+func (s *Storage) Write(collection string, document interface{}) (*driver.DocumentMeta, error) {
+	ctx := context.Background()
+
+	col, err := s.Collection(collection)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := col.CreateDocument(ctx, document)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return &meta, nil
+}
+
+// Update update document by collection and key
+func (s *Storage) Update(collection, key string, document interface{}) (*driver.DocumentMeta, error) {
+	ctx := context.Background()
+
+	col, err := s.Collection(collection)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := col.UpdateDocument(ctx, key, document)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return &meta, nil
 }

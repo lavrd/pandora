@@ -37,6 +37,7 @@ func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
 	acc = &types.Account{
 		Email:     *opts.Email,
 		Type:      *opts.Type,
+		Key:       *opts.Email,
 		PublicKey: pub,
 		Secure: &types.AccountSecure{
 			Password:   hashed,
@@ -44,7 +45,7 @@ func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
 		},
 	}
 
-	if err = d.AccountPut(acc); err != nil {
+	if err = d.AccountSave(acc); err != nil {
 		return "", err
 	}
 
@@ -91,7 +92,7 @@ func (d *Distribution) AccountRecovery(opts *request.AccountRecovery) error {
 
 	acc.Secure.Password = hashed
 
-	err = d.AccountPut(acc)
+	err = d.AccountUpdate(acc)
 	if err != nil {
 		return err
 	}

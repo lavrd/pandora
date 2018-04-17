@@ -1,30 +1,45 @@
 package storage
 
 import (
+	"github.com/arangodb/go-driver"
 	"github.com/spacelavr/pandora/pkg/types"
 )
 
 const (
-	BucketAccount = "account"
+	CollectionAccount = "account"
 )
 
 // AccountFetch fetch account from storage
 func (s *Storage) AccountFetch(email string) (*types.Account, error) {
 	acc := &types.Account{}
 
-	err := s.Get(BucketAccount, email, acc)
+	_, err := s.Read(CollectionAccount, email, acc)
 	if err != nil {
+		if driver.IsNotFound(err) {
+			return nil, nil
+		}
 		return nil, err
-	}
-
-	if (types.Account{}) == *acc {
-		return nil, nil
 	}
 
 	return acc, nil
 }
 
-// AccountPut put account to storage
-func (s *Storage) AccountPut(acc *types.Account) error {
-	return s.Put(BucketAccount, acc.Email, acc)
+// AccountSave save account to storage
+func (s *Storage) AccountSave(acc *types.Account) error {
+	_, err := s.Write(CollectionAccount, acc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AccountUpdate update account in storage
+func (s *Storage) AccountUpdate(acc *types.Account) error {
+	_, err := s.Update(CollectionAccount, acc.Email, acc)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,7 +1,7 @@
 package types
 
 const (
-	TypeIssuer     = iota + 1
+	TypeIssuer = iota + 1
 	TypeRecipient
 	MaxAccountType
 

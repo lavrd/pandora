@@ -43,7 +43,7 @@ func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		dist := distribution.Distribution{env.GetStorage()}
+		dist := distribution.Distribution{Storage: env.GetStorage()}
 
 		// fetch account
 		acc, err := dist.AccountFetch(email)

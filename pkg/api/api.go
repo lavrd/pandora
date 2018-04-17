@@ -24,38 +24,35 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	stg, err := storage.Open(viper.GetString("db.file"))
+	stg, err := storage.Connect(&storage.ConnectOpts{
+		Endpoint: viper.GetString("db.endpoint"),
+		User:     viper.GetString("db.user"),
+		Password: viper.GetString("db.password"),
+		Database: viper.GetString("db.database"),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer stg.Close()
 
-	brk, err := broker.Connect(viper.GetString("broker.url"), viper.GetInt("broker.port"))
+	brk, err := broker.Connect(viper.GetString("broker.endpoint"))
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer brk.Close()
 
 	env.SetStorage(stg)
 	env.SetBroker(brk)
 
 	go func() {
-		if err := http.Listen(
-			viper.GetString("api.host"),
-			viper.GetInt("api.port"),
-			routes.Routes,
-		); err != nil {
-			log.Fatalf("api server start error: %v", err)
+		if err := http.Listen(viper.GetInt("api.port"), routes.Routes); err != nil {
+			log.Fatal(err)
 		}
 	}()
 
 	defer func() {
-		if err := stg.Close(); err != nil {
-			log.Error(err)
-		}
-
-		brk.Close()
-
 		if viper.GetBool("clean") {
-			if err := os.RemoveAll(viper.GetString("db.file")); err != nil {
+			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}
 		}

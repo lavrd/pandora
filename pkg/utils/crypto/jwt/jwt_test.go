@@ -6,12 +6,11 @@ import (
 	jwtGo "github.com/dgrijalva/jwt-go"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/jwt"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	email = viper.GetString("mail.email")
+	email = "asd@asd.asd"
 )
 
 func setup(t *testing.T) string {

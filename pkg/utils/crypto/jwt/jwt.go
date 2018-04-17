@@ -1,8 +1,6 @@
 package jwt
 
 import (
-	"fmt"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/types"
@@ -23,15 +21,17 @@ func New(acc *types.Account) (string, error) {
 	signed, err := token.SignedString(key)
 	if err != nil {
 		log.Error(err)
+		return "", err
 	}
-	return signed, err
+
+	return signed, nil
 }
 
 // Validate validate jwt token and returns token email
 func Validate(tkn string) (string, error) {
 	token, err := jwt.Parse(tkn, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New(fmt.Sprintf("unexpected signing method: %v", token.Header["alg"]))
+			return nil, errors.UnexpectedSigningMethod
 		}
 		return key, nil
 	})

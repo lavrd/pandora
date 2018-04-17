@@ -1,8 +1,6 @@
 package broker
 
 import (
-	"fmt"
-
 	"github.com/nats-io/go-nats"
 	"github.com/spacelavr/pandora/pkg/log"
 )
@@ -13,8 +11,8 @@ type Broker struct {
 }
 
 // Connect connect to broker server
-func Connect(url string, port int) (*Broker, error) {
-	c, err := nats.Connect(fmt.Sprintf("%s:%d", url, port))
+func Connect(endpoint string) (*Broker, error) {
+	c, err := nats.Connect(endpoint)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -23,8 +21,10 @@ func Connect(url string, port int) (*Broker, error) {
 	conn, err := nats.NewEncodedConn(c, nats.JSON_ENCODER)
 	if err != nil {
 		log.Error(err)
+		return nil, err
 	}
-	return &Broker{conn}, err
+
+	return &Broker{conn}, nil
 }
 
 // Close close connection with broker server
@@ -32,20 +32,24 @@ func (b *Broker) Close() {
 	b.EncodedConn.Close()
 }
 
-// Subscribe subscribe to broker messages by channel
-func (b *Broker) Subscribe(channel string, ch interface{}) error {
-	_, err := b.BindRecvChan(channel, ch)
+// Subscribe subscribe to broker messages by subject
+func (b *Broker) Subscribe(subject string, ch interface{}) error {
+	_, err := b.EncodedConn.BindRecvChan(subject, ch)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
-	return err
+
+	return nil
 }
 
-// Publish publish message to broker by channel
-func (b *Broker) Publish(channel string, message interface{}) error {
-	err := b.Publish(channel, message)
+// Publish publish message to broker by subject
+func (b *Broker) Publish(subject string, message interface{}) error {
+	err := b.EncodedConn.Publish(subject, message)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
-	return err
+
+	return nil
 }

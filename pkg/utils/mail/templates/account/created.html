@@ -4,20 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
 </head>
 
 <body>
-<section class="hero is-dark is-fullheight">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Pandora account is created
-      </h1>
-      <h2 class="subtitle">
-        Password is {{ .Secure.Password }}
-      </h2>
-    </div>
+<section class="container-fluid p-0">
+  <div class="alert alert-success">
+    <h4 class="alert-heading">Well done! Account is created!</h4>
+    <p>
+      Your password - {{ .Secure.Password }}
+    </p>
+    <hr>
+    <p class="mb-0">Now you can use our service!</p>
   </div>
 </section>
 </body>

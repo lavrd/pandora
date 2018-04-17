@@ -15,16 +15,18 @@ mail:
   subjects:
     account:
       created: Pandora account is created
-      recovery: Recovery Pandora account
+      recovery: Pandora account recovery
 
 # database
 db:
-  file: ./contrib/pandora.db
+  endpoint: http://localhost:8529
+  user: root
+  password: root
+  database: pandora
 
 # broker
 broker:
-  url: nats://localhost
-  port: 4222
+  endpoint: nats://localhost:4222
 
 # secure
 secure:

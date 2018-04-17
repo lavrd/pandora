@@ -2,10 +2,21 @@
 
 
 [[projects]]
-  name = "github.com/boltdb/bolt"
+  branch = "master"
+  name = "github.com/arangodb/go-driver"
+  packages = [
+    ".",
+    "cluster",
+    "http",
+    "util"
+  ]
+  revision = "91863909484aa5f5f9549458db53819ea71f0fb5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/arangodb/go-velocypack"
   packages = ["."]
-  revision = "2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8"
-  version = "v1.3.1"
+  revision = "c899a2a2271f97f297fd70afd031e5ffb9497f83"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -198,6 +209,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a2b9625fc5d8cb9d5f169d3487bfd6402595315f28ecd7e92faa70913f22e8df"
+  inputs-digest = "1cc8ee72b634e698b5e32d0540f7dfec52caaad9a6ba0cfdf619beec2a2f2feb"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -24,7 +24,7 @@ func SignUpH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dist := distribution.Distribution{env.GetStorage()}
+	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	token, err := dist.AccountCreate(opts)
 	if err == nil {
@@ -48,7 +48,7 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dist := distribution.Distribution{env.GetStorage()}
+	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	token, err := dist.SessionNew(opts)
 	if err == nil {
@@ -57,7 +57,7 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err == errors.InvalidCredentials {
-			errors.Unauthorized().Http(w)
+			errors.Forbidden().Http(w)
 		} else if err == errors.AccountNotFound {
 			errors.NotFound("account").Http(w)
 		} else {
@@ -74,7 +74,7 @@ func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dist := distribution.Distribution{env.GetStorage()}
+	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	err := dist.AccountRecovery(opts)
 	if err != nil {
@@ -105,7 +105,7 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dist := distribution.Distribution{env.GetStorage()}
+	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	if cert, err := dist.CertificateIssue(opts); err == nil {
 		if err = json.NewEncoder(w).Encode(cert.Public()); err != nil {

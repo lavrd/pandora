@@ -12,6 +12,11 @@ type Certificate struct {
 	Recipient *Recipient       `json:"recipient"`
 }
 
+// Public returns public certificate info
+func (cert *Certificate) Public() *Certificate {
+	return cert
+}
+
 // CertificateMeta
 type CertificateMeta struct {
 	Title       string    `json:"title"`
@@ -29,9 +34,4 @@ type Recipient struct {
 type Issuer struct {
 	PublicKey *rsa.PublicKey `json:"public_key"`
 	Name      string         `json:"name"`
-}
-
-// Public returns public certificate info
-func (cert *Certificate) Public() *Certificate {
-	return cert
 }

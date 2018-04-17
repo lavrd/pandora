@@ -90,8 +90,10 @@ func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
 	signature, err := rsa.SignPSS(rand.Reader, key, hash, hashed, opts)
 	if err != nil {
 		log.Error(err)
+		return nil, err
 	}
-	return signature, err
+
+	return signature, nil
 }
 
 // VerifyPSS verify signature
@@ -99,6 +101,8 @@ func VerifyPSS(key *rsa.PublicKey, signature []byte) error {
 	err := rsa.VerifyPSS(key, hash, hashed, signature, opts)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
-	return err
+
+	return nil
 }

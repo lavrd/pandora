@@ -4,20 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
 </head>
 
 <body>
-<section class="hero is-danger is-fullheight">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Pandora recovery email
-      </h1>
-      <h2 class="subtitle">
-        New password is {{ .Password }}
-      </h2>
-    </div>
+<section class="container-fluid p-0">
+  <div class="alert alert-warning">
+    <h4 class="alert-heading">Pandora recovery email!</h4>
+    <p>
+      Your new password - {{ .Password }}
+    </p>
+    <hr>
+    <p class="mb-0">Be careful!</p>
   </div>
 </section>
 </body>
