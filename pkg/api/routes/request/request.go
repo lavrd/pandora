@@ -100,6 +100,9 @@ func (ci *CertificateIssue) Validate() *errors.Response {
 		return errors.BadParameter("recipient email")
 	case ci.Title == nil || len(*ci.Title) == 0:
 		return errors.BadParameter("title")
+	case ci.Description == nil:
+		*ci.Description = ""
+		fallthrough
 	default:
 		return nil
 	}

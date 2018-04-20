@@ -18,8 +18,7 @@ func execute(email, subject, path string, data interface{}) error {
 		return err
 	}
 
-	err = tpl.Execute(&buf, data)
-	if err != nil {
+	if err = tpl.Execute(&buf, data); err != nil {
 		log.Error(err)
 		return err
 	}

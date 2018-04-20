@@ -11,15 +11,12 @@ import (
 func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.Certificate, error) {
 	cert := &types.Certificate{
 		Meta: &types.CertificateMeta{
-			Title: *opts.Title,
-			Date:  time.Now().UTC(),
+			Title:       *opts.Title,
+			Description: *opts.Description,
+			Date:        time.Now().UTC(),
 		},
 		Issuer:    &types.Issuer{},
 		Recipient: &types.Recipient{},
-	}
-
-	if opts.Description != nil {
-		cert.Meta.Description = *opts.Description
 	}
 
 	return cert, nil

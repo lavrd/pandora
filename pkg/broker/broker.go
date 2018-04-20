@@ -5,6 +5,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/log"
 )
 
+const (
+	SubjectBlock = "block"
+)
+
 // Broker
 type Broker struct {
 	*nats.EncodedConn
@@ -34,7 +38,7 @@ func (b *Broker) Close() {
 
 // Subscribe subscribe to broker messages by subject
 func (b *Broker) Subscribe(subject string, ch interface{}) error {
-	_, err := b.EncodedConn.BindRecvChan(subject, ch)
+	_, err := b.BindRecvChan(subject, ch)
 	if err != nil {
 		log.Error(err)
 		return err
