@@ -62,11 +62,11 @@ func (s *Storage) Init() error {
 		db driver.Database
 	)
 
-	if err := s.InitDatabase(db); err != nil {
+	if err := s.InitDatabase(&db); err != nil {
 		return err
 	}
 
-	if err := s.InitCollections(db); err != nil {
+	if err := s.InitCollections(&db); err != nil {
 		return err
 	}
 
@@ -74,7 +74,7 @@ func (s *Storage) Init() error {
 }
 
 // InitDatabase init storage database
-func (s *Storage) InitDatabase(db driver.Database) error {
+func (s *Storage) InitDatabase(db *driver.Database) error {
 	ctx := context.Background()
 
 	ok, err := s.client.DatabaseExists(ctx, s.database)
@@ -83,13 +83,13 @@ func (s *Storage) InitDatabase(db driver.Database) error {
 		return err
 	}
 	if !ok {
-		db, err = s.client.CreateDatabase(ctx, s.database, nil)
+		*db, err = s.client.CreateDatabase(ctx, s.database, nil)
 		if err != nil {
 			log.Error(err)
 			return err
 		}
 	} else {
-		db, err = s.Database()
+		*db, err = s.Database()
 		if err != nil {
 			return err
 		}
@@ -98,29 +98,29 @@ func (s *Storage) InitDatabase(db driver.Database) error {
 	return nil
 }
 
-func (s *Storage) InitCollections(db driver.Database) error {
+func (s *Storage) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
-	ok, err := db.CollectionExists(ctx, CollectionAccount)
+	ok, err := (*db).CollectionExists(ctx, CollectionAccount)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err = db.CreateCollection(ctx, CollectionAccount, nil)
+		_, err = (*db).CreateCollection(ctx, CollectionAccount, nil)
 		if err != nil {
 			log.Error(err)
 			return err
 		}
 	}
 
-	ok, err = db.CollectionExists(ctx, CollectionCertificate)
+	ok, err = (*db).CollectionExists(ctx, CollectionCertificate)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err := db.CreateCollection(ctx, CollectionCertificate, nil)
+		_, err := (*db).CreateCollection(ctx, CollectionCertificate, nil)
 		if err != nil {
 			log.Error(err)
 			return err

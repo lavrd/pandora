@@ -34,6 +34,10 @@ type email struct {
 }
 
 func send(to, subject, html string) error {
+	if !viper.GetBool("mail.send") {
+		return nil
+	}
+
 	mail := &Mail{
 		Personalizations: []*personalizations{
 			{

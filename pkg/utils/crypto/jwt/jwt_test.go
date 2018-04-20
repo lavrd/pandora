@@ -14,7 +14,7 @@ var (
 )
 
 func setup(t *testing.T) string {
-	token, err := jwt.New(&types.Account{Email: email})
+	token, err := jwt.New(&types.Account{Meta: &types.AccountMeta{Email: email}})
 	assert.NoError(t, err)
 
 	return token

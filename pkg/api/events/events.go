@@ -9,7 +9,7 @@ import (
 // Listen listen for events
 func Listen() error {
 	var (
-		chSendCert = make(chan<- *types.Certificate)
+		chSendCert = make(chan *types.Certificate)
 	)
 
 	if err := env.GetBroker().Publish(broker.SubjectCertificate, chSendCert); err != nil {
