@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/api/env"
@@ -9,6 +8,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/distribution"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
+	"github.com/spacelavr/pandora/pkg/utils/http/response"
 )
 
 // HealthH health handler
@@ -26,11 +26,8 @@ func SignUpH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
-	token, err := dist.AccountCreate(opts)
-	if err == nil {
-		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
-			errors.InternalServerError().Http(w)
-		}
+	if token, err := dist.AccountCreate(opts); err == nil {
+		response.Ok(&types.Session{Token: token}).Http(w)
 	} else {
 		if err == errors.AccountAlreadyExists {
 			errors.AlreadyExists("account").Http(w)
@@ -50,11 +47,8 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
-	token, err := dist.SessionNew(opts)
-	if err == nil {
-		if err = json.NewEncoder(w).Encode(types.Session{Token: token}); err != nil {
-			errors.InternalServerError().Http(w)
-		}
+	if token, err := dist.SessionNew(opts); err == nil {
+		response.Ok(&types.Session{Token: token}).Http(w)
 	} else {
 		if err == errors.InvalidCredentials {
 			errors.Forbidden().Http(w)
@@ -76,8 +70,7 @@ func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
-	err := dist.AccountRecovery(opts)
-	if err != nil {
+	if err := dist.AccountRecovery(opts); err != nil {
 		if err == errors.AccountNotFound {
 			errors.NotFound("account").Http(w)
 		} else {
@@ -92,9 +85,7 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 		acc = r.Context().Value("acc").(*types.Account)
 	)
 
-	if err := json.NewEncoder(w).Encode(acc.Public()); err != nil {
-		errors.InternalServerError().Http(w)
-	}
+	response.Ok(acc).Http(w)
 }
 
 // CertificateCreateH issue certificate handler
@@ -108,11 +99,15 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	if cert, err := dist.CertificateIssue(opts); err == nil {
-		if err = json.NewEncoder(w).Encode(cert.Public()); err != nil {
+		env.SendCert(cert)
+
+		response.Ok(cert.Public()).Http(w)
+	} else {
+		if err == errors.AccountNotFound {
+			errors.NotFound("account").Http(w)
+		} else {
 			errors.InternalServerError().Http(w)
 		}
-	} else {
-		errors.InternalServerError().Http(w)
 	}
 }
 

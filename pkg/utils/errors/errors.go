@@ -11,6 +11,7 @@ var (
 	SendMailError           = New("send mail error")
 	PemBlockParseFailed     = New("failed to parse pem block")
 	UnexpectedSigningMethod = New("unexpected signing method")
+	DocumentNotFound        = New("document not found")
 )
 
 // New returns new errors with text

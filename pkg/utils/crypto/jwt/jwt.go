@@ -15,7 +15,7 @@ var (
 // New generate new jwt token
 func New(acc *types.Account) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": acc.Email,
+		"email": acc.Meta.Email,
 	})
 
 	signed, err := token.SignedString(key)

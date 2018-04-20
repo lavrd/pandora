@@ -12,6 +12,7 @@ import (
 type SignUp struct {
 	Email *string `json:"email"`
 	Type  *int    `json:"type"`
+	Name  *string `json:"name"`
 }
 
 // Validate validate incoming data for sign up
@@ -21,6 +22,8 @@ func (s *SignUp) Validate() *errors.Response {
 		return errors.BadParameter("email")
 	case s.Type == nil || !validator.IsAccountType(*s.Type):
 		return errors.BadParameter("type")
+	case s.Name == nil || len(*s.Name) == 0:
+		return errors.BadParameter("name")
 	default:
 		return nil
 	}
@@ -95,9 +98,9 @@ type CertificateIssue struct {
 func (ci *CertificateIssue) Validate() *errors.Response {
 	switch {
 	case ci.IssuerEmail == nil || !validator.IsEmail(*ci.IssuerEmail):
-		return errors.BadParameter("issuer email")
+		return errors.BadParameter("issuer_email")
 	case ci.RecipientEmail == nil || !validator.IsEmail(*ci.RecipientEmail):
-		return errors.BadParameter("recipient email")
+		return errors.BadParameter("recipient_email")
 	case ci.Title == nil || len(*ci.Title) == 0:
 		return errors.BadParameter("title")
 	case ci.Description == nil:
@@ -109,9 +112,9 @@ func (ci *CertificateIssue) Validate() *errors.Response {
 }
 
 // DecodeAndValidate decode and validate incoming data for issue certificate
-func (si *CertificateIssue) DecodeAndValidate(reader io.Reader) *errors.Response {
-	if err := json.NewDecoder(reader).Decode(si); err != nil {
+func (ci *CertificateIssue) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(ci); err != nil {
 		return errors.InvalidJSON()
 	}
-	return si.Validate()
+	return ci.Validate()
 }

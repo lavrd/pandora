@@ -6,6 +6,7 @@ import (
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
 	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
 
 // Storage
@@ -58,9 +59,23 @@ func (s *Storage) Close() error {
 // Init initialize database
 func (s *Storage) Init() error {
 	var (
-		ctx = context.Background()
-		db  driver.Database
+		db driver.Database
 	)
+
+	if err := s.InitDatabase(db); err != nil {
+		return err
+	}
+
+	if err := s.InitCollections(db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// InitDatabase init storage database
+func (s *Storage) InitDatabase(db driver.Database) error {
+	ctx := context.Background()
 
 	ok, err := s.client.DatabaseExists(ctx, s.database)
 	if err != nil {
@@ -80,13 +95,32 @@ func (s *Storage) Init() error {
 		}
 	}
 
-	ok, err = db.CollectionExists(ctx, CollectionAccount)
+	return nil
+}
+
+func (s *Storage) InitCollections(db driver.Database) error {
+	ctx := context.Background()
+
+	ok, err := db.CollectionExists(ctx, CollectionAccount)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
 		_, err = db.CreateCollection(ctx, CollectionAccount, nil)
+		if err != nil {
+			log.Error(err)
+			return err
+		}
+	}
+
+	ok, err = db.CollectionExists(ctx, CollectionCertificate)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	if !ok {
+		_, err := db.CreateCollection(ctx, CollectionCertificate, nil)
 		if err != nil {
 			log.Error(err)
 			return err
@@ -145,24 +179,36 @@ func (s *Storage) Collection(name string) (driver.Collection, error) {
 	return col, nil
 }
 
-// Read read document by collection and key
-func (s *Storage) Read(collection, key string, document interface{}) (*driver.DocumentMeta, error) {
+// Exec exec query and returns document meta
+func (s *Storage) Exec(query string, vars map[string]interface{}, document interface{}) (*driver.DocumentMeta, error) {
 	ctx := context.Background()
 
-	col, err := s.Collection(collection)
+	db, err := s.Database()
 	if err != nil {
 		return nil, err
 	}
 
-	meta, err := col.ReadDocument(ctx, key, document)
+	cursor, err := db.Query(driver.WithQueryCount(ctx), query, vars)
 	if err != nil {
-		if !driver.IsNotFound(err) {
+		log.Error(err)
+		return nil, err
+	}
+	defer cursor.Close()
+
+	if cursor.Count() == 0 {
+		return nil, errors.DocumentNotFound
+	}
+
+	for {
+		meta, err := cursor.ReadDocument(ctx, document)
+		if err != nil {
+			if driver.IsNoMoreDocuments(err) {
+				return &meta, nil
+			}
 			log.Error(err)
+			return nil, err
 		}
-		return nil, err
 	}
-
-	return &meta, nil
 }
 
 // Write write document to collection

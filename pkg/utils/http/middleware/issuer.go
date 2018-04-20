@@ -14,7 +14,7 @@ func Issuer(h http.HandlerFunc) http.HandlerFunc {
 			acc = r.Context().Value("acc").(*types.Account)
 		)
 
-		if acc.Type != types.TypeIssuer {
+		if acc.Meta.Type != types.TypeIssuer {
 			errors.Forbidden().Http(w)
 			return
 		}

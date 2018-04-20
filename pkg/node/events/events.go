@@ -9,17 +9,16 @@ import (
 // Listen listen for events
 func Listen() error {
 	var (
-		chBlock = make(chan *types.Block)
+		chReadBlock = make(chan *types.Block)
 	)
 
-	err := env.GetBroker().Subscribe(broker.SubjectBlock, chBlock)
-	if err != nil {
+	if err := env.GetBroker().Subscribe(broker.SubjectBlock, chReadBlock); err != nil {
 		return err
 	}
 
 	for {
 		select {
-		case _, ok := <-chBlock:
+		case _, ok := <-chReadBlock:
 			if !ok {
 				return nil
 			}

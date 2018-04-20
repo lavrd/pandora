@@ -6,7 +6,10 @@ import (
 )
 
 const (
+	// SubjectBlock subject for send and read message about block
 	SubjectBlock = "block"
+	// SubjectCertificate subject for send and read message about certificate
+	SubjectCertificate = "certificate"
 )
 
 // Broker
@@ -36,7 +39,7 @@ func (b *Broker) Close() {
 	b.EncodedConn.Close()
 }
 
-// Subscribe subscribe to broker messages by subject
+// Subscribe bind receive channel to subject
 func (b *Broker) Subscribe(subject string, ch interface{}) error {
 	_, err := b.BindRecvChan(subject, ch)
 	if err != nil {
@@ -47,9 +50,9 @@ func (b *Broker) Subscribe(subject string, ch interface{}) error {
 	return nil
 }
 
-// Publish publish message to broker by subject
-func (b *Broker) Publish(subject string, message interface{}) error {
-	err := b.EncodedConn.Publish(subject, message)
+// Publish bind send channel to subject
+func (b *Broker) Publish(subject string, ch interface{}) error {
+	err := b.BindSendChan(subject, ch)
 	if err != nil {
 		log.Error(err)
 		return err

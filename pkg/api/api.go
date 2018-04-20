@@ -6,6 +6,7 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/pandora/pkg/api/env"
+	"github.com/spacelavr/pandora/pkg/api/events"
 	"github.com/spacelavr/pandora/pkg/api/routes"
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/log"
@@ -46,6 +47,12 @@ func Daemon() bool {
 
 	go func() {
 		if err := http.Listen(viper.GetInt("api.port"), routes.Routes); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	go func() {
+		if err := events.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()

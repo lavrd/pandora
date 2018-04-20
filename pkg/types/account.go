@@ -7,12 +7,16 @@ type Session struct {
 
 // Account
 type Account struct {
-	// Key used for identify document in arangodb collection
-	Key       string         `json:"_key,omitempty"`
-	Email     string         `json:"email"`
-	Type      int            `json:"type"`
 	PublicKey string         `json:"public_key"`
 	Secure    *AccountSecure `json:"secure,omitempty"`
+	Meta      *AccountMeta   `json:"meta"`
+}
+
+// AccountMeta
+type AccountMeta struct {
+	Email string `json:"email"`
+	Type  int    `json:"type"`
+	Name  string `json:"name"`
 }
 
 // Public returns public account info

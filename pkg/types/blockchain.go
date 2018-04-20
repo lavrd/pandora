@@ -7,11 +7,11 @@ import (
 
 // Block
 type Block struct {
-	Index       int          `json:"index"`
-	Hash        string       `json:"hash"`
-	PrevHash    string       `json:"prev_hash"`
-	Timestamp   time.Time    `json:"timestamp"`
-	Certificate *Certificate `json:"certificate"`
+	Index     int          `json:"index"`
+	Hash      string       `json:"hash"`
+	PrevHash  string       `json:"prev_hash"`
+	Timestamp time.Time    `json:"timestamp"`
+	Cert      *Certificate `json:"cert"`
 }
 
 // String returns block as a string
@@ -22,7 +22,7 @@ func (b Block) String() string {
 		b.PrevHash,
 		b.Index,
 		b.Timestamp.String(),
-		b.Certificate,
+		b.Cert,
 	)
 }
 

@@ -3,6 +3,7 @@ package env
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/storage"
+	"github.com/spacelavr/pandora/pkg/types"
 )
 
 var (
@@ -12,6 +13,21 @@ var (
 type env struct {
 	storage *storage.Storage
 	broker  *broker.Broker
+	chCert  chan *types.Certificate
+}
+
+func init() {
+	e.chCert = make(chan *types.Certificate)
+}
+
+// SendCert send certificate to cert channel
+func SendCert(cert *types.Certificate) {
+	e.chCert <- cert
+}
+
+// ReadCert read certificate from cert channel
+func ReadCert() chan *types.Certificate {
+	return e.chCert
 }
 
 // SetBroker set broker to env

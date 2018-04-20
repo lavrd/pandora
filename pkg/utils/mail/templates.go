@@ -39,7 +39,7 @@ func SendAccountRecovery(email, passowrd string) error {
 
 // SendAccountCreated send account created email
 func SendAccountCreated(email, password string) error {
-	data := &types.Account{Email: email, Secure: &types.AccountSecure{Password: password}}
+	data := &types.Account{Secure: &types.AccountSecure{Password: password}}
 	return execute(
 		email,
 		viper.GetString("mail.subjects.account.created"),

@@ -12,6 +12,7 @@ import (
 
 var (
 	logger *logrus.Logger
+	// CommonLogFormat http request log format
 	// 127.0.0.1 - - [Sun, 08 Apr 2018 06:50:15 +0000] "GET /health HTTP/1.1" 501 40 1.0019ms curl
 	CommonLogFormat = "%s %s %s [%s] \"%s %s %v\" %d %d %s %s\n"
 )
