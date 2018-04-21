@@ -8,6 +8,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/core/env"
 	"github.com/spacelavr/pandora/pkg/core/events"
+	"github.com/spacelavr/pandora/pkg/core/runtime"
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spf13/viper"
 )
@@ -17,7 +18,7 @@ func Daemon() bool {
 	log.Debug("start core daemon")
 
 	var (
-		sig = make(chan os.Signal, 1)
+		sig = make(chan os.Signal)
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
@@ -28,6 +29,7 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
+	env.SetRuntime(&runtime.Runtime{})
 	env.SetBroker(brk)
 
 	go func() {

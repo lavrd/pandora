@@ -72,3 +72,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/arangodb/go-driver"
+
+[[constraint]]
+  name = "github.com/jung-kurt/gofpdf"
+  version = "1.0.0"

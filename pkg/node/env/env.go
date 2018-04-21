@@ -2,6 +2,7 @@ package env
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
+	"github.com/spacelavr/pandora/pkg/node/runtime"
 )
 
 var (
@@ -9,7 +10,18 @@ var (
 )
 
 type env struct {
-	broker *broker.Broker
+	runtime *runtime.Runtime
+	broker  *broker.Broker
+}
+
+// SetRuntime set runtime to env
+func SetRuntime(rt *runtime.Runtime) {
+	e.runtime = rt
+}
+
+// GetRuntime get runtime from env
+func GetRuntime() *runtime.Runtime {
+	return e.runtime
 }
 
 // SetBroker set broker to env

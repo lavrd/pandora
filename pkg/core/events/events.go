@@ -9,24 +9,33 @@ import (
 // Listen listen for events
 func Listen() error {
 	var (
-		chReadCert  = make(chan *types.Certificate)
-		chSendBlock = make(chan *types.Block)
+		chReadNewCert  = make(chan *types.Certificate)
+		chSendNewBlock = make(chan *types.Block)
+		brk            = env.GetBroker()
+		rt             = env.GetRuntime()
 	)
 
-	if err := env.GetBroker().Subscribe(broker.SubjectCertificate, chReadCert); err != nil {
+	if err := brk.Subscribe(broker.SubjectNewCertificate, chReadNewCert); err != nil {
 		return err
 	}
 
-	if err := env.GetBroker().Publish(broker.SubjectBlock, chSendBlock); err != nil {
+	if err := brk.Publish(broker.SubjectNewBlock, chSendNewBlock); err != nil {
 		return err
 	}
 
 	for {
 		select {
-		case cert := <-chReadCert:
-			chSendBlock <- &types.Block{
-				Cert: cert,
+		case cert, ok := <-chReadNewCert:
+			if !ok {
+				return nil
 			}
+
+			last := &types.Block{}
+			if err := brk.Request(broker.SubjectLastBlock, "", last); err != nil {
+				return err
+			}
+
+			chSendNewBlock <- rt.PrepareBlock(cert, last)
 		}
 	}
 }

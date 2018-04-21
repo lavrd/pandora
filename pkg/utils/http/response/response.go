@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/log"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
 
 // Response
@@ -28,6 +27,5 @@ func (r Response) send(w http.ResponseWriter) {
 	w.WriteHeader(r.code)
 	if err := json.NewEncoder(w).Encode(r.data); err != nil {
 		log.Error(err)
-		errors.InternalServerError().Http(w)
 	}
 }

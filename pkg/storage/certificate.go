@@ -8,8 +8,8 @@ const (
 	CollectionCertificate = "certificate"
 )
 
-// CertSave save certificate to storage
-func (s *Storage) CertSave(cert *types.Certificate) error {
+// CertificateSave save certificate to storage
+func (s *Storage) CertificateSave(cert *types.Certificate) error {
 	_, err := s.Write(CollectionCertificate, cert)
 	if err != nil {
 		return err

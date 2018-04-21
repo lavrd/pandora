@@ -85,7 +85,7 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 		acc = r.Context().Value("acc").(*types.Account)
 	)
 
-	response.Ok(acc).Http(w)
+	response.Ok(acc.Public()).Http(w)
 }
 
 // CertificateCreateH issue certificate handler
@@ -105,6 +105,8 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if err == errors.AccountNotFound {
 			errors.NotFound("account").Http(w)
+		} else if err == errors.IssueCertToNonRecipient {
+			errors.BadParameter("recipient_email")
 		} else {
 			errors.InternalServerError().Http(w)
 		}

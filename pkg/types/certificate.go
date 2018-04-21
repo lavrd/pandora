@@ -36,11 +36,13 @@ type IssuerMeta struct {
 // Recipient
 type Recipient struct {
 	Meta      *RecipientMeta `json:"meta"`
+	Signature string         `json:"signature"`
 	PublicKey string         `json:"public_key"`
 }
 
 // Issuer
 type Issuer struct {
 	Meta      *IssuerMeta `json:"meta"`
+	Signature string      `json:"signature"`
 	PublicKey string      `json:"public_key"`
 }

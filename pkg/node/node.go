@@ -9,6 +9,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
+	"github.com/spacelavr/pandora/pkg/node/runtime"
 	"github.com/spf13/viper"
 )
 
@@ -17,7 +18,7 @@ func Daemon() bool {
 	log.Debug("start node daemon")
 
 	var (
-		sig = make(chan os.Signal, 1)
+		sig = make(chan os.Signal)
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
@@ -28,6 +29,9 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
+	rt := runtime.New()
+
+	env.SetRuntime(rt)
 	env.SetBroker(brk)
 
 	go func() {

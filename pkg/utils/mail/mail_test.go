@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup(t *testing.T, status int) (string, func(t *testing.T)) {
+func setup(_ *testing.T, status int) (string, func(t *testing.T)) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(status)
 	}))
@@ -20,7 +20,7 @@ func setup(t *testing.T, status int) (string, func(t *testing.T)) {
 	}
 }
 
-func TestBadRequst(t *testing.T) {
+func TestBadRequest(t *testing.T) {
 	url, teardown := setup(t, http.StatusBadRequest)
 	defer teardown(t)
 

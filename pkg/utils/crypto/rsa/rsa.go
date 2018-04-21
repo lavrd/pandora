@@ -7,6 +7,7 @@ import (
 	_ "crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 
 	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -86,19 +87,19 @@ func Unmarshal(pri, pub string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 }
 
 // SignPSS calculates signature
-func SignPSS(key *rsa.PrivateKey) ([]byte, error) {
+func SignPSS(key *rsa.PrivateKey) (string, error) {
 	signature, err := rsa.SignPSS(rand.Reader, key, hash, hashed, opts)
 	if err != nil {
 		log.Error(err)
-		return nil, err
+		return "", err
 	}
 
-	return signature, nil
+	return fmt.Sprintf("%x", signature), nil
 }
 
 // VerifyPSS verify signature
-func VerifyPSS(key *rsa.PublicKey, signature []byte) error {
-	err := rsa.VerifyPSS(key, hash, hashed, signature, opts)
+func VerifyPSS(key *rsa.PublicKey, signature string) error {
+	err := rsa.VerifyPSS(key, hash, hashed, []byte(signature), opts)
 	if err != nil {
 		log.Error(err)
 		return err

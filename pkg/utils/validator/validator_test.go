@@ -25,11 +25,11 @@ func TestIsEmail(t *testing.T) {
 			false,
 		},
 		{
-			"@doesnotexists.system",
+			"@d.system",
 			false,
 		},
 		{
-			"pandoradoesnotexists.system",
+			"p.system",
 			false,
 		},
 	}

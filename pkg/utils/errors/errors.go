@@ -12,6 +12,7 @@ var (
 	PemBlockParseFailed     = New("failed to parse pem block")
 	UnexpectedSigningMethod = New("unexpected signing method")
 	DocumentNotFound        = New("document not found")
+	IssueCertToNonRecipient = New("cannot issuer cert to non recipient")
 )
 
 // New returns new errors with text

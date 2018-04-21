@@ -38,16 +38,16 @@ func TestVerifyPSS(t *testing.T) {
 
 	cases := []struct {
 		error     error
-		signature []byte
+		signature string
 		name      string
 	}{{
-		name:      "verifying sugnature success",
+		name:      "verifying signature success",
 		error:     nil,
 		signature: signature,
 	}, {
 		name:      "verifying signature failed",
 		error:     rsa.ErrVerification,
-		signature: []byte("signature"),
+		signature: "signature",
 	}}
 
 	for _, c := range cases {

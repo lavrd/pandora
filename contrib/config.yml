@@ -34,6 +34,10 @@ secure:
   PSSMessage: secret
   JWTKey: secret
 
+# discovery
+discovery:
+  port: 2002
+
 # api
 api:
   port: 2001

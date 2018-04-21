@@ -72,6 +72,12 @@
   version = "v1.0"
 
 [[projects]]
+  name = "github.com/jung-kurt/gofpdf"
+  packages = ["."]
+  revision = "14c1db30737a138f8d9797cffea58783892b2fae"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
   revision = "c3beff4c2358b44d0493c7dda585e7db7ff28ae6"
@@ -209,6 +215,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1cc8ee72b634e698b5e32d0540f7dfec52caaad9a6ba0cfdf619beec2a2f2feb"
+  inputs-digest = "8b61536abd2e77dd7d83d587b6886fcb598c660a95cd3262ed2e90d52e5c17cf"
   solver-name = "gps-cdcl"
   solver-version = 1

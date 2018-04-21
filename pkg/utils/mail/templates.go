@@ -27,8 +27,8 @@ func execute(email, subject, path string, data interface{}) error {
 }
 
 // SendAccountRecovery send account recovery email
-func SendAccountRecovery(email, passowrd string) error {
-	data := &types.AccountRecovery{Password: passowrd}
+func SendAccountRecovery(email, password string) error {
+	data := &types.AccountRecovery{Password: password}
 	return execute(
 		email,
 		viper.GetString("mail.subjects.account.recovery"),

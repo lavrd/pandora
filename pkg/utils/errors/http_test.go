@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup(t *testing.T, r *errors.Response) (string, func(t *testing.T)) {
+func setup(_ *testing.T, r *errors.Response) (string, func(t *testing.T)) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		r.Http(w)
 	}))

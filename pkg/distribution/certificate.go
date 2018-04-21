@@ -5,6 +5,7 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/api/routes/request"
 	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
 
@@ -25,6 +26,29 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 	if recipient == nil {
 		return nil, errors.AccountNotFound
 	}
+	if recipient.Meta.Type != types.TypeRecipient {
+		return nil, errors.IssueCertToNonRecipient
+	}
+
+	IPrivate, _, err := rsa.Unmarshal(issuer.Secure.PrivateKey, issuer.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	RPrivate, _, err := rsa.Unmarshal(recipient.Secure.PrivateKey, recipient.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	ISign, err := rsa.SignPSS(IPrivate)
+	if err != nil {
+		return nil, err
+	}
+
+	RSign, err := rsa.SignPSS(RPrivate)
+	if err != nil {
+		return nil, err
+	}
 
 	cert := &types.Certificate{
 		Meta: &types.CertificateMeta{
@@ -37,16 +61,18 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 			Meta: &types.IssuerMeta{
 				Name: issuer.Meta.Name,
 			},
+			Signature: ISign,
 		},
 		Recipient: &types.Recipient{
 			PublicKey: recipient.PublicKey,
 			Meta: &types.RecipientMeta{
 				Name: recipient.Meta.Name,
 			},
+			Signature: RSign,
 		},
 	}
 
-	if err = d.CertSave(cert); err != nil {
+	if err = d.CertificateSave(cert); err != nil {
 		return nil, err
 	}
 

@@ -56,7 +56,7 @@ func (s *Storage) Close() error {
 	return nil
 }
 
-// Init initialize database
+// Init initialize storage
 func (s *Storage) Init() error {
 	var (
 		db driver.Database
@@ -98,6 +98,7 @@ func (s *Storage) InitDatabase(db *driver.Database) error {
 	return nil
 }
 
+// InitCollections init collections
 func (s *Storage) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 

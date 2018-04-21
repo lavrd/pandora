@@ -9,17 +9,22 @@ import (
 // Listen listen for events
 func Listen() error {
 	var (
-		chSendCert = make(chan *types.Certificate)
+		chSendNewCert = make(chan *types.Certificate)
+		brk           = env.GetBroker()
 	)
 
-	if err := env.GetBroker().Publish(broker.SubjectCertificate, chSendCert); err != nil {
+	if err := brk.Publish(broker.SubjectNewCertificate, chSendNewCert); err != nil {
 		return err
 	}
 
 	for {
 		select {
-		case cert := <-env.ReadCert():
-			chSendCert <- cert
+		case cert, ok := <-env.ReadCert():
+			if !ok {
+				return nil
+			}
+
+			chSendNewCert <- cert
 		}
 	}
 }

@@ -63,11 +63,6 @@ func Http(out io.Writer, ip, time, method, route, proto, duration, userAgent str
 	fmt.Fprintf(out, CommonLogFormat, ip, "-", "-", time, method, route, proto, code, size, duration, userAgent)
 }
 
-// Fatalf print formatted fatal log
-func Fatalf(format string, args ...interface{}) {
-	prepare().Fatalf(format, args...)
-}
-
 func prepare() *logrus.Entry {
 	if pc, file, line, ok := runtime.Caller(2); ok {
 		fname := runtime.FuncForPC(pc).Name()

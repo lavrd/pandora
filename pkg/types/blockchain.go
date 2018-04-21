@@ -26,5 +26,5 @@ func (b Block) String() string {
 	)
 }
 
-// BLockchain
+// Blockchain
 type Blockchain []*Block
