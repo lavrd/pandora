@@ -7,6 +7,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
+	"github.com/spacelavr/pandora/pkg/utils/generator"
 )
 
 // CertIssue issue certificate
@@ -51,6 +52,7 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 	}
 
 	cert := &types.Certificate{
+		Id: generator.UUID(),
 		Meta: &types.CertificateMeta{
 			Title:       *opts.Title,
 			Description: *opts.Description,
@@ -74,6 +76,19 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 
 	if err = d.CertificateSave(cert); err != nil {
 		return nil, err
+	}
+
+	return cert, nil
+}
+
+// CertificateView returns certificate
+func (d *Distribution) CertificateView(id string) (*types.Certificate, error) {
+	cert, err := d.CertificateFetch(id)
+	if err != nil {
+		return nil, err
+	}
+	if cert == nil {
+		return nil, errors.CertificateNotFound
 	}
 
 	return cert, nil

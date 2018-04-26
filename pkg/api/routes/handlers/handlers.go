@@ -114,8 +114,24 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 }
 
 // CertificateViewH view certificate handler
-func CertificateViewH(w http.ResponseWriter, _ *http.Request) {
-	errors.NotImplemented().Http(w)
+func CertificateViewH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertificateView{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	dist := distribution.Distribution{Storage: env.GetStorage()}
+
+	if cert, err := dist.CertificateView(*opts.Id); err == nil {
+		response.Ok(cert.Public()).Http(w)
+	} else {
+		if err == errors.CertificateNotFound {
+			errors.NotFound("certificate").Http(w)
+		} else {
+			errors.InternalServerError().Http(w)
+		}
+	}
 }
 
 // CertificateVerifyH verify certificate handler

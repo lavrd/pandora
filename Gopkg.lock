@@ -72,10 +72,10 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/jung-kurt/gofpdf"
   packages = ["."]
-  revision = "14c1db30737a138f8d9797cffea58783892b2fae"
-  version = "v1.0.0"
+  revision = "0298ebb7bb539ad17daadce86bedbdfd56c2bcd4"
 
 [[projects]]
   name = "github.com/magiconair/properties"

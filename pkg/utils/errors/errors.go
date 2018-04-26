@@ -13,6 +13,7 @@ var (
 	UnexpectedSigningMethod = New("unexpected signing method")
 	DocumentNotFound        = New("document not found")
 	IssueCertToNonRecipient = New("cannot issuer cert to non recipient")
+	CertificateNotFound     = New("certificate not found")
 )
 
 // New returns new errors with text

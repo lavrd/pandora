@@ -17,7 +17,7 @@ var (
 		{Path: "/account", Method: http.GET, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.AccountFetchH},
 
 		{Path: "/issue", Method: http.POST, Middleware: []http.Middleware{middleware.Issuer, middleware.Authenticate}, Handler: handlers.CertificateIssueH},
-		{Path: "/view", Method: http.GET, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.CertificateViewH},
+		{Path: "/view", Method: http.POST, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.CertificateViewH},
 		{Path: "/verify", Method: http.POST, Middleware: []http.Middleware{middleware.Authenticate}, Handler: handlers.CertificateVerifyH},
 	}
 )

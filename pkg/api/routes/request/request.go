@@ -118,3 +118,26 @@ func (ci *CertificateIssue) DecodeAndValidate(reader io.Reader) *errors.Response
 	}
 	return ci.Validate()
 }
+
+// CertificateView
+type CertificateView struct {
+	Id *string `json:"id"`
+}
+
+// Validate validate incoming data for view certificate
+func (cv *CertificateView) Validate() *errors.Response {
+	switch {
+	case cv.Id == nil || len(*cv.Id) == 0:
+		return errors.BadParameter("id")
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for view certificate
+func (cv *CertificateView) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(cv); err != nil {
+		return errors.InvalidJSON()
+	}
+	return cv.Validate()
+}
