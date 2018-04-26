@@ -11,26 +11,25 @@ import (
 )
 
 var (
-	logger *logrus.Logger
 	// CommonLogFormat http request log format
 	// 127.0.0.1 - - [Sun, 08 Apr 2018 06:50:15 +0000] "GET /health HTTP/1.1" 501 40 1.0019ms curl
 	CommonLogFormat = "%s %s %s [%s] \"%s %s %v\" %d %d %s %s\n"
 )
 
 func init() {
-	logger = logrus.New()
+	logrus.SetLevel(logrus.ErrorLevel)
 }
 
 // SetVerbose set verbose output
 func SetVerbose(verbose bool) {
 	if verbose {
-		logger.SetLevel(logrus.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 }
 
 // SetOut set output stream
 func SetOut(out io.Writer) {
-	logger.Out = out
+	logrus.SetOutput(out)
 }
 
 // Debug print debug log
@@ -67,12 +66,12 @@ func prepare() *logrus.Entry {
 	if pc, file, line, ok := runtime.Caller(2); ok {
 		fname := runtime.FuncForPC(pc).Name()
 
-		return logger.WithFields(logrus.Fields{
+		return logrus.WithFields(logrus.Fields{
 			"file":  ufp.PKG(file),
 			"fname": filepath.Base(fname),
 			"line":  line,
 		})
 	}
 
-	return logger.WithFields(logrus.Fields{})
+	return logrus.WithFields(logrus.Fields{})
 }

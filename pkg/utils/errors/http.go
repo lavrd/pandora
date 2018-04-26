@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Response
@@ -73,10 +73,6 @@ func BadParameter(parameter string) *Response {
 
 // Http send http response
 func (r *Response) Http(w http.ResponseWriter) {
-	r.send(w)
-}
-
-func (r Response) send(w http.ResponseWriter) {
 	w.WriteHeader(r.Code)
 	if err := json.NewEncoder(w).Encode(r); err != nil {
 		log.Error(err)

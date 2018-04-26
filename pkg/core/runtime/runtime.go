@@ -10,6 +10,11 @@ import (
 // Runtime
 type Runtime struct{}
 
+// New returns new runtime
+func New() *Runtime {
+	return &Runtime{}
+}
+
 // PrepareBlock prepare block
 func (r *Runtime) PrepareBlock(cert *types.Certificate, last *types.Block) *types.Block {
 	block := &types.Block{
@@ -19,7 +24,7 @@ func (r *Runtime) PrepareBlock(cert *types.Certificate, last *types.Block) *type
 		Timestamp: time.Now().UTC(),
 	}
 
-	block.Hash = sha256.Compute(block.String())
+	block.Hash = sha256.Sum(block.String())
 
 	return block
 }

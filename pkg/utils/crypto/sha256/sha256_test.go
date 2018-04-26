@@ -24,7 +24,7 @@ func TestCompute(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.p, func(t *testing.T) {
-			assert.Equal(t, c.hash, sha256.Compute(c.p))
+			assert.Equal(t, c.hash, sha256.Sum(c.p))
 		})
 	}
 }

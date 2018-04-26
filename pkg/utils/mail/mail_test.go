@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,14 +24,16 @@ func TestBadRequest(t *testing.T) {
 	url, teardown := setup(t, http.StatusBadRequest)
 	defer teardown(t)
 
-	viper.Set("mail.endpoint", url)
+	config.Viper.Mail.Send = true
+	config.Viper.Mail.Endpoint = url
 
 	err := send("", "", "")
 	assert.Equal(t, errors.SendMailError, err)
 }
 
 func TestBadEndpoint(t *testing.T) {
-	viper.Set("mail.endpoint", "invalid endpoint")
+	config.Viper.Mail.Send = true
+	config.Viper.Mail.Endpoint = "invalid endpoint"
 
 	err := send("", "", "")
 	assert.Error(t, err)

@@ -36,23 +36,36 @@ func TestVerifyPSS(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, signature)
 
+	IPrivate, IPublic := setup(t)
+	ISignature, err := ursa.SignPSS(IPrivate)
+	assert.NoError(t, err)
+	assert.NotNil(t, ISignature)
+
 	cases := []struct {
 		error     error
 		signature string
 		name      string
+		public    *rsa.PublicKey
 	}{{
-		name:      "verifying signature success",
+		public:    public,
+		name:      "verifying correct public and signature",
 		error:     nil,
 		signature: signature,
 	}, {
-		name:      "verifying signature failed",
+		public:    public,
+		name:      "verifying bad signature correct public",
 		error:     rsa.ErrVerification,
-		signature: "signature",
+		signature: ISignature,
+	}, {
+		public:    IPublic,
+		name:      "verifying correct signature bad public",
+		error:     rsa.ErrVerification,
+		signature: signature,
 	}}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			err = ursa.VerifyPSS(public, c.signature)
+			err = ursa.VerifyPSS(c.public, c.signature)
 			assert.Equal(t, c.error, err)
 		})
 	}

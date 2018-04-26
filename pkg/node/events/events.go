@@ -14,17 +14,17 @@ func Listen() error {
 		rt             = env.GetRuntime()
 	)
 
-	if err := brk.Subscribe(broker.SubjectNewBlock, chReadNewBlock); err != nil {
+	if err := brk.Subscribe(broker.SBlock, chReadNewBlock); err != nil {
 		return err
 	}
 
-	if err := brk.Reply(broker.SubjectLastBlock, func() (interface{}, error) {
-		return rt.LastBlock(), nil
+	if err := brk.Reply(broker.SLBlock, func() (interface{}, error) {
+		return rt.Last(), nil
 	}); err != nil {
 		return err
 	}
 
-	if err := brk.Reply(broker.SubjectBlockchain, func() (interface{}, error) {
+	if err := brk.Reply(broker.SBlockchain, func() (interface{}, error) {
 		return rt.Blockchain(), nil
 	}); err != nil {
 		return err
@@ -37,7 +37,7 @@ func Listen() error {
 				return nil
 			}
 
-			rt.AddBlock(block)
+			rt.Add(block)
 		}
 	}
 }

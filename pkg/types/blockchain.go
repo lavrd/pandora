@@ -11,7 +11,7 @@ type Block struct {
 	Hash      string       `json:"hash"`
 	PrevHash  string       `json:"prev_hash"`
 	Timestamp time.Time    `json:"timestamp"`
-	Cert      *Certificate `json:"cert"`
+	Cert      *Certificate `json:"cert,omitempty"`
 }
 
 // String returns block as a string

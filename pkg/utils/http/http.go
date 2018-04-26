@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/utils/http/middleware"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Route

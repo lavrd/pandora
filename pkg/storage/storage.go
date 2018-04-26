@@ -5,8 +5,8 @@ import (
 
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
-	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Storage
@@ -15,8 +15,8 @@ type Storage struct {
 	client   driver.Client
 }
 
-// ConnectOpts
-type ConnectOpts struct {
+// Opts
+type Opts struct {
 	Endpoint string
 	User     string
 	Password string
@@ -24,7 +24,7 @@ type ConnectOpts struct {
 }
 
 // Connect connect to database
-func Connect(opts *ConnectOpts) (*Storage, error) {
+func Connect(opts *Opts) (*Storage, error) {
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{opts.Endpoint},
 	})
@@ -52,9 +52,7 @@ func Connect(opts *ConnectOpts) (*Storage, error) {
 }
 
 // Close close connection with database
-func (s *Storage) Close() error {
-	return nil
-}
+func (s *Storage) Close() {}
 
 // Init initialize storage
 func (s *Storage) Init() error {
@@ -102,26 +100,26 @@ func (s *Storage) InitDatabase(db *driver.Database) error {
 func (s *Storage) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
-	ok, err := (*db).CollectionExists(ctx, CollectionAccount)
+	ok, err := (*db).CollectionExists(ctx, CAccount)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err = (*db).CreateCollection(ctx, CollectionAccount, nil)
+		_, err = (*db).CreateCollection(ctx, CAccount, nil)
 		if err != nil {
 			log.Error(err)
 			return err
 		}
 	}
 
-	ok, err = (*db).CollectionExists(ctx, CollectionCertificate)
+	ok, err = (*db).CollectionExists(ctx, CCertificate)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err := (*db).CreateCollection(ctx, CollectionCertificate, nil)
+		_, err := (*db).CreateCollection(ctx, CCertificate, nil)
 		if err != nil {
 			log.Error(err)
 			return err

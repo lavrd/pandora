@@ -5,12 +5,12 @@ import (
 )
 
 const (
-	CollectionCertificate = "certificate"
+	CCertificate = "certificate"
 )
 
 // CertificateSave save certificate to storage
 func (s *Storage) CertificateSave(cert *types.Certificate) error {
-	_, err := s.Write(CollectionCertificate, cert)
+	_, err := s.Write(CCertificate, cert)
 	if err != nil {
 		return err
 	}

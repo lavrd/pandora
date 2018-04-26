@@ -13,11 +13,11 @@ import (
 // BlockchainH blockchain handler
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 	var (
-		blockchain *types.Blockchain
+		blockchain = types.Blockchain{}
 		brk        = env.GetBroker()
 	)
 
-	if err := brk.Request(broker.SubjectBlockchain, "", blockchain); err != nil {
+	if err := brk.Request(broker.SBlockchain, "", &blockchain); err != nil {
 		errors.InternalServerError().Http(w)
 		return
 	}

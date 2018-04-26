@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	CollectionAccount = "account"
+	CAccount = "CAccount"
 )
 
 // AccountFetch fetch account from storage
@@ -17,7 +17,7 @@ func (s *Storage) AccountFetch(email string) (*types.Account, error) {
 		acc   = &types.Account{}
 		query = fmt.Sprintf(
 			"for a in %s filter a.meta.email == @email return a",
-			CollectionAccount,
+			CAccount,
 		)
 		vars = map[string]interface{}{
 			"email": email,
@@ -37,7 +37,7 @@ func (s *Storage) AccountFetch(email string) (*types.Account, error) {
 
 // AccountSave save account to storage
 func (s *Storage) AccountSave(acc *types.Account) error {
-	_, err := s.Write(CollectionAccount, acc)
+	_, err := s.Write(CAccount, acc)
 	if err != nil {
 		return err
 	}
@@ -49,8 +49,8 @@ func (s *Storage) AccountSave(acc *types.Account) error {
 func (s *Storage) AccountUpdate(acc *types.Account) error {
 	var (
 		query = fmt.Sprintf(
-			"for a in %s filter a.meta.email == @email replace a with @acc in %s",
-			CollectionAccount, CollectionAccount,
+			"for a in %s filter a.meta.email == @email replace a with @acc in %%s",
+			CAccount,
 		)
 		vars = map[string]interface{}{
 			"email": acc.Meta.Email,

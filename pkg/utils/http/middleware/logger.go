@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 type loggedResponseWriter struct {

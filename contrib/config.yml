@@ -1,6 +1,7 @@
 # runtime
-verbose: true
-clean: true
+runtime:
+  verbose: true
+  clean: true
 
 # mail
 mail:
@@ -19,7 +20,7 @@ mail:
       recovery: Pandora account recovery
 
 # database
-db:
+database:
   endpoint: http://localhost:8529
   user: root
   password: root
@@ -28,6 +29,8 @@ db:
 # broker
 broker:
   endpoint: nats://localhost:4222
+  user: root
+  password: root
 
 # secure
 secure:

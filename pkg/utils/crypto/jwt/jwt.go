@@ -2,14 +2,10 @@ package jwt
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spf13/viper"
-)
-
-var (
-	key = []byte(viper.GetString("secure.JWTKey"))
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // New generate new jwt token
@@ -18,7 +14,7 @@ func New(acc *types.Account) (string, error) {
 		"email": acc.Meta.Email,
 	})
 
-	signed, err := token.SignedString(key)
+	signed, err := token.SignedString([]byte(config.Viper.Secure.JWTKey))
 	if err != nil {
 		log.Error(err)
 		return "", err
@@ -33,7 +29,7 @@ func Validate(tkn string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.UnexpectedSigningMethod
 		}
-		return key, nil
+		return []byte(config.Viper.Secure.JWTKey), nil
 	})
 	if err != nil {
 		log.Error(err)

@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-// Compute computing p hash sum
-func Compute(p string) string {
+// Sum calculate a checksum
+func Sum(p string) string {
 	h := sha256.New()
 
 	h.Write([]byte(p))

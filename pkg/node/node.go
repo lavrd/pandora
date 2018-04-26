@@ -6,11 +6,11 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/runtime"
-	"github.com/spf13/viper"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Daemon start node daemon
@@ -23,7 +23,11 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	brk, err := broker.Connect(viper.GetString("broker.endpoint"))
+	brk, err := broker.Connect(&broker.Opts{
+		Endpoint: config.Viper.Broker.Endpoint,
+		User:     config.Viper.Broker.User,
+		Password: config.Viper.Broker.Password,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}

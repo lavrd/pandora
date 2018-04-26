@@ -15,6 +15,7 @@ const (
 func setup(t *testing.T) string {
 	hash, err := bcrypt.Encode(password)
 	assert.NoError(t, err)
+
 	return hash
 }
 
@@ -23,6 +24,8 @@ func TestEncode(t *testing.T) {
 }
 
 func TestValidate(t *testing.T) {
+	hashed := setup(t)
+
 	cases := []struct {
 		name     string
 		hash     string
@@ -31,13 +34,13 @@ func TestValidate(t *testing.T) {
 	}{
 		{
 			"valid password",
-			setup(t),
+			hashed,
 			password,
 			nil,
 		},
 		{
 			"invalid password",
-			setup(t),
+			hashed,
 			"",
 			bc.ErrMismatchedHashAndPassword,
 		},

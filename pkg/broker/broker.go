@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/nats-io/go-nats"
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 const (
-	SubjectNewBlock       = "new_block"
-	SubjectNewCertificate = "new_certificate"
-	SubjectLastBlock      = "last_block"
-	SubjectBlockchain     = "blockchain"
+	SBlock       = "SBlock"
+	SLBlock      = "SLBlock"
+	SCertificate = "SCertificate"
+	SBlockchain  = "SBlockchain"
 )
 
 // Broker
@@ -19,9 +19,19 @@ type Broker struct {
 	conn *nats.EncodedConn
 }
 
-// Connect connect to broker server
-func Connect(endpoint string) (*Broker, error) {
-	c, err := nats.Connect(endpoint)
+// Opts
+type Opts struct {
+	Endpoint string
+	User     string
+	Password string
+}
+
+// Connect connect to broker
+func Connect(opts *Opts) (*Broker, error) {
+	c, err := nats.Connect(
+		opts.Endpoint,
+		nats.UserInfo(opts.User, opts.Password),
+	)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -55,7 +65,7 @@ func (b *Broker) Reply(subject string, f func() (interface{}, error)) error {
 
 // Request request by subject
 func (b *Broker) Request(subject string, message, data interface{}) error {
-	if err := b.conn.Request(subject, message, data, 1*time.Second); err != nil {
+	if err := b.conn.Request(subject, message, data, time.Second); err != nil {
 		log.Error(err)
 		return err
 	}

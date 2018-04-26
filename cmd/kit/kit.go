@@ -5,21 +5,22 @@ import (
 	"strings"
 
 	"github.com/spacelavr/pandora/pkg/api"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/core"
 	"github.com/spacelavr/pandora/pkg/discovery"
-	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spacelavr/pandora/pkg/node"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	config string
+	cfg string
 
 	// CLI main command
 	CLI = &cobra.Command{
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			abs, err := filepath.Abs(config)
+			abs, err := filepath.Abs(cfg)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -34,7 +35,11 @@ var (
 				log.Fatal(err)
 			}
 
-			log.SetVerbose(viper.GetBool("verbose"))
+			if err := viper.Unmarshal(config.Viper); err != nil {
+				log.Fatal(err)
+			}
+
+			log.SetVerbose(config.Viper.Runtime.Verbose)
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
@@ -84,7 +89,7 @@ var (
 )
 
 func init() {
-	CLI.Flags().StringVarP(&config, "config", "c", "./contrib/config.yml", "/path/to/config.yml")
+	CLI.Flags().StringVarP(&cfg, "config", "c", "./contrib/config.yml", "/path/to/config.yml")
 }
 
 func main() {

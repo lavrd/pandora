@@ -1,7 +1,7 @@
 package bcrypt
 
 import (
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 	"golang.org/x/crypto/bcrypt"
 )
 

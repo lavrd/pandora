@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spf13/viper"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 func execute(email, subject, path string, data interface{}) error {
@@ -31,8 +31,8 @@ func SendAccountRecovery(email, password string) error {
 	data := &types.AccountRecovery{Password: password}
 	return execute(
 		email,
-		viper.GetString("mail.subjects.account.recovery"),
-		viper.GetString("mail.templates.account.recovery"),
+		config.Viper.Mail.Subjects.Account.Recovery,
+		config.Viper.Mail.Templates.Account.Recovery,
 		data,
 	)
 }
@@ -42,8 +42,8 @@ func SendAccountCreated(email, password string) error {
 	data := &types.Account{Secure: &types.AccountSecure{Password: password}}
 	return execute(
 		email,
-		viper.GetString("mail.subjects.account.created"),
-		viper.GetString("mail.templates.account.created"),
+		config.Viper.Mail.Subjects.Account.Created,
+		config.Viper.Mail.Templates.Account.Created,
 		data,
 	)
 }

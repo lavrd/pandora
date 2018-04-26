@@ -9,11 +9,11 @@ import (
 // Listen listen for events
 func Listen() error {
 	var (
-		chSendNewCert = make(chan *types.Certificate)
-		brk           = env.GetBroker()
+		chSendCert = make(chan *types.Certificate)
+		brk        = env.GetBroker()
 	)
 
-	if err := brk.Publish(broker.SubjectNewCertificate, chSendNewCert); err != nil {
+	if err := brk.Publish(broker.SCertificate, chSendCert); err != nil {
 		return err
 	}
 
@@ -24,7 +24,7 @@ func Listen() error {
 				return nil
 			}
 
-			chSendNewCert <- cert
+			chSendCert <- cert
 		}
 	}
 }

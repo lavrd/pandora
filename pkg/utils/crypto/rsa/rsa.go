@@ -6,12 +6,13 @@ import (
 	"crypto/rsa"
 	_ "crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spf13/viper"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 func init() {
 	hash := hash
 	pssh := hash.New()
-	pssh.Write([]byte(viper.GetString("secure.PSSMessage")))
+	pssh.Write([]byte(config.Viper.Secure.PSSMessage))
 	hashed = pssh.Sum(nil)
 }
 
@@ -99,8 +100,13 @@ func SignPSS(key *rsa.PrivateKey) (string, error) {
 
 // VerifyPSS verify signature
 func VerifyPSS(key *rsa.PublicKey, signature string) error {
-	err := rsa.VerifyPSS(key, hash, hashed, []byte(signature), opts)
+	h, err := hex.DecodeString(signature)
 	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	if err := rsa.VerifyPSS(key, hash, hashed, h, opts); err != nil {
 		log.Error(err)
 		return err
 	}

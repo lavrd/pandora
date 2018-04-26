@@ -9,10 +9,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/api/events"
 	"github.com/spacelavr/pandora/pkg/api/routes"
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
-	"github.com/spf13/viper"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Daemon start api daemon
@@ -25,18 +25,22 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	stg, err := storage.Connect(&storage.ConnectOpts{
-		Endpoint: viper.GetString("db.endpoint"),
-		User:     viper.GetString("db.user"),
-		Password: viper.GetString("db.password"),
-		Database: viper.GetString("db.database"),
+	stg, err := storage.Connect(&storage.Opts{
+		Endpoint: config.Viper.Database.Endpoint,
+		User:     config.Viper.Database.User,
+		Password: config.Viper.Database.Password,
+		Database: config.Viper.Database.Database,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stg.Close()
 
-	brk, err := broker.Connect(viper.GetString("broker.endpoint"))
+	brk, err := broker.Connect(&broker.Opts{
+		Endpoint: config.Viper.Broker.Endpoint,
+		User:     config.Viper.Broker.User,
+		Password: config.Viper.Broker.Password,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +50,7 @@ func Daemon() bool {
 	env.SetBroker(brk)
 
 	go func() {
-		if err := http.Listen(viper.GetInt("api.port"), routes.Routes); err != nil {
+		if err := http.Listen(config.Viper.Api.Port, routes.Routes); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -58,7 +62,7 @@ func Daemon() bool {
 	}()
 
 	defer func() {
-		if viper.GetBool("clean") {
+		if config.Viper.Runtime.Clean {
 			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/log"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spf13/viper"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Mail
@@ -34,7 +34,7 @@ type email struct {
 }
 
 func send(to, subject, html string) error {
-	if !viper.GetBool("mail.send") {
+	if !config.Viper.Mail.Send {
 		return nil
 	}
 
@@ -50,8 +50,8 @@ func send(to, subject, html string) error {
 		},
 		Subject: subject,
 		From: &email{
-			Name:  viper.GetString("mail.name"),
-			Email: viper.GetString("mail.email"),
+			Name:  config.Viper.Mail.Name,
+			Email: config.Viper.Mail.Email,
 		},
 		Content: []*content{
 			{
@@ -67,14 +67,14 @@ func send(to, subject, html string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", viper.GetString("mail.endpoint"), bytes.NewBuffer(buf))
+	req, err := http.NewRequest("POST", config.Viper.Mail.Endpoint, bytes.NewBuffer(buf))
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	defer req.Body.Close()
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", viper.GetString("mail.token")))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.Viper.Mail.Token))
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := (&http.Client{}).Do(req)
