@@ -41,6 +41,14 @@ var (
 			PSSMessage string
 			JWTKey     string
 		}
+		Node struct {
+			Backup struct {
+				File string
+			}
+			Discovery struct {
+				Endpoint string
+			}
+		}
 		Discovery struct {
 			Port int
 		}

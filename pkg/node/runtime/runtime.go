@@ -38,6 +38,16 @@ func (r *Runtime) Genesis() *types.Block {
 	return block
 }
 
+// Validate validate block
+func (r *Runtime) Validate() bool {
+	return false
+}
+
+// VBlockchain validate blockchain
+func (r *Runtime) VBlockchain() bool {
+	return false
+}
+
 // Add add block to blockchain
 func (r *Runtime) Add(block *types.Block) {
 	r.blockchain = append(r.blockchain, block)

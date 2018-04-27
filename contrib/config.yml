@@ -37,6 +37,13 @@ secure:
   PSSMessage: secret
   JWTKey: secret
 
+# node
+node:
+  backup:
+    file: backup.json
+  discovery:
+    endpoint: http://localhost:2002
+
 # discovery
 discovery:
   port: 2002
