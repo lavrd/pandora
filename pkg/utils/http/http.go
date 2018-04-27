@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/spacelavr/pandora/pkg/utils/http/middleware"
@@ -52,7 +53,14 @@ func Listen(port int, routes []Route) error {
 		router.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
 	}
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", port), middleware.Logger(router))
+	srv := &http.Server{
+		Handler:      middleware.Logger(router),
+		Addr:         fmt.Sprintf(":%d", port),
+		ReadTimeout:  time.Second * 5,
+		WriteTimeout: time.Second * 5,
+	}
+
+	return srv.ListenAndServe()
 }
 
 // DefaultHeaders add default headers
