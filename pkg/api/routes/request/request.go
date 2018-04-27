@@ -141,3 +141,58 @@ func (cv *CertificateView) DecodeAndValidate(reader io.Reader) *errors.Response 
 	}
 	return cv.Validate()
 }
+
+// AccountVerify
+type AccountVerify struct {
+	Signature *string `json:"signature"`
+	PublicKey *string `json:"public_key"`
+}
+
+// Validate validate incoming data for verify account
+func (av *AccountVerify) Validate() *errors.Response {
+	switch {
+	case av.Signature == nil || !validator.IsSignature(*av.Signature):
+		return errors.BadParameter("signature")
+	case av.PublicKey == nil || !validator.IsPublicKey(*av.PublicKey):
+		return errors.BadParameter("public_key")
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for verify account
+func (av *AccountVerify) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(av); err != nil {
+		return errors.InvalidJSON()
+	}
+	return av.Validate()
+}
+
+// CertificateVerify
+type CertificateVerify struct {
+	Id                 *string `json:"id"`
+	IssuerPublicKey    *string `json:"issuer_public_key"`
+	RecipientPublicKey *string `json:"recipient_public_key"`
+}
+
+// Validate validate incoming data for verify certificate
+func (cv *CertificateVerify) Validate() *errors.Response {
+	switch {
+	case cv.Id == nil || len(*cv.Id) == 0:
+		return errors.BadParameter("id")
+	case cv.IssuerPublicKey == nil || !validator.IsPublicKey(*cv.IssuerPublicKey):
+		return errors.BadParameter("issuer_public_key")
+	case cv.RecipientPublicKey == nil || !validator.IsPublicKey(*cv.RecipientPublicKey):
+		return errors.BadParameter("recipient_public_key")
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for verify certificate
+func (cv *CertificateVerify) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(cv); err != nil {
+		return errors.InvalidJSON()
+	}
+	return cv.Validate()
+}

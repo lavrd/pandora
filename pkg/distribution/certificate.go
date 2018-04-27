@@ -12,31 +12,31 @@ import (
 
 // CertIssue issue certificate
 func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.Certificate, error) {
-	issuer, err := d.AccountFetch(*opts.IssuerEmail)
+	issuer, err := d.AccountFetchByEmail(*opts.IssuerEmail)
 	if err != nil {
 		return nil, err
 	}
 	if issuer == nil {
-		return nil, errors.AccountNotFound
+		return nil, errors.DocumentNotFound
 	}
 
-	recipient, err := d.AccountFetch(*opts.RecipientEmail)
+	recipient, err := d.AccountFetchByEmail(*opts.RecipientEmail)
 	if err != nil {
 		return nil, err
 	}
 	if recipient == nil {
-		return nil, errors.AccountNotFound
+		return nil, errors.DocumentNotFound
 	}
 	if recipient.Meta.Type != types.TypeRecipient {
 		return nil, errors.IssueCertToNonRecipient
 	}
 
-	IPrivate, _, err := rsa.Unmarshal(issuer.Secure.PrivateKey, issuer.PublicKey)
+	IPrivate, err := rsa.DecodePrivate(issuer.Secure.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
 
-	RPrivate, _, err := rsa.Unmarshal(recipient.Secure.PrivateKey, recipient.PublicKey)
+	RPrivate, err := rsa.DecodePrivate(recipient.Secure.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
@@ -59,14 +59,12 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 			Date:        time.Now().UTC(),
 		},
 		Issuer: &types.Issuer{
-			PublicKey: issuer.PublicKey,
 			Meta: &types.IssuerMeta{
 				Name: issuer.Meta.Name,
 			},
 			Signature: ISign,
 		},
 		Recipient: &types.Recipient{
-			PublicKey: recipient.PublicKey,
 			Meta: &types.RecipientMeta{
 				Name: recipient.Meta.Name,
 			},
@@ -82,13 +80,50 @@ func (d *Distribution) CertificateIssue(opts *request.CertificateIssue) (*types.
 }
 
 // CertificateView returns certificate
-func (d *Distribution) CertificateView(id string) (*types.Certificate, error) {
-	cert, err := d.CertificateFetch(id)
+func (d *Distribution) CertificateView(opts *request.CertificateView) (*types.Certificate, error) {
+	cert, err := d.CertificateFetch(*opts.Id)
 	if err != nil {
 		return nil, err
 	}
 	if cert == nil {
-		return nil, errors.CertificateNotFound
+		return nil, errors.DocumentNotFound
+	}
+
+	return cert, nil
+}
+
+// CertificateVerify verify certificate
+func (d *Distribution) CertificateVerify(opts *request.CertificateVerify) (*types.Certificate, error) {
+	cert, err := d.CertificateFetch(*opts.Id)
+	if err != nil {
+		return nil, err
+	}
+	if cert == nil {
+		return nil, errors.DocumentNotFound
+	}
+
+	IPublic, err := rsa.DecodePublic(*opts.IssuerPublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	RPublic, err := rsa.DecodePublic(*opts.RecipientPublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := rsa.VerifyPSS(IPublic, cert.Issuer.Signature); err != nil {
+		if err == rsa.ErrVerification {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	if err := rsa.VerifyPSS(RPublic, cert.Recipient.Signature); err != nil {
+		if err == rsa.ErrVerification {
+			return nil, nil
+		}
+		return nil, err
 	}
 
 	return cert, nil

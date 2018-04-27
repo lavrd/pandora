@@ -11,8 +11,8 @@ const (
 	CAccount = "CAccount"
 )
 
-// AccountFetch fetch account from storage
-func (s *Storage) AccountFetch(email string) (*types.Account, error) {
+// AccountFetchByEmail fetch account from storage by email
+func (s *Storage) AccountFetchByEmail(email string) (*types.Account, error) {
 	var (
 		acc   = &types.Account{}
 		query = fmt.Sprintf(
@@ -21,6 +21,30 @@ func (s *Storage) AccountFetch(email string) (*types.Account, error) {
 		)
 		vars = map[string]interface{}{
 			"email": email,
+		}
+	)
+
+	_, err := s.Exec(query, vars, acc)
+	if err != nil {
+		if err == errors.DocumentNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return acc, nil
+}
+
+// AccountFetchByPublic fetch account from storage by public key
+func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
+	var (
+		acc   = &types.Account{}
+		query = fmt.Sprintf(
+			"for a in %s filter a.public_key == @public return a",
+			CAccount,
+		)
+		vars = map[string]interface{}{
+			"public": public,
 		}
 	)
 

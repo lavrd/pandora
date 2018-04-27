@@ -52,7 +52,7 @@ func SignInH(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if err == errors.InvalidCredentials {
 			errors.Forbidden().Http(w)
-		} else if err == errors.AccountNotFound {
+		} else if err == errors.DocumentNotFound {
 			errors.NotFound("account").Http(w)
 		} else {
 			errors.InternalServerError().Http(w)
@@ -71,7 +71,7 @@ func AccountRecoveryH(w http.ResponseWriter, r *http.Request) {
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
 	if err := dist.AccountRecovery(opts); err != nil {
-		if err == errors.AccountNotFound {
+		if err == errors.DocumentNotFound {
 			errors.NotFound("account").Http(w)
 		} else {
 			errors.InternalServerError().Http(w)
@@ -86,6 +86,27 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 	)
 
 	response.Ok(acc.Public()).Http(w)
+}
+
+// AccountVerifyH
+func AccountVerifyH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.AccountVerify{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	dist := distribution.Distribution{Storage: env.GetStorage()}
+
+	if acc, err := dist.AccountVerify(opts); err == nil {
+		if acc != nil {
+			response.Ok(acc.Public()).Http(w)
+		} else {
+			errors.NotFound("account").Http(w)
+		}
+	} else {
+		errors.InternalServerError().Http(w)
+	}
 }
 
 // CertificateCreateH issue certificate handler
@@ -103,7 +124,7 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 
 		response.Ok(cert.Public()).Http(w)
 	} else {
-		if err == errors.AccountNotFound {
+		if err == errors.DocumentNotFound {
 			errors.NotFound("account").Http(w)
 		} else if err == errors.IssueCertToNonRecipient {
 			errors.BadParameter("recipient_email")
@@ -123,10 +144,10 @@ func CertificateViewH(w http.ResponseWriter, r *http.Request) {
 
 	dist := distribution.Distribution{Storage: env.GetStorage()}
 
-	if cert, err := dist.CertificateView(*opts.Id); err == nil {
+	if cert, err := dist.CertificateView(opts); err == nil {
 		response.Ok(cert.Public()).Http(w)
 	} else {
-		if err == errors.CertificateNotFound {
+		if err == errors.DocumentNotFound {
 			errors.NotFound("certificate").Http(w)
 		} else {
 			errors.InternalServerError().Http(w)
@@ -135,6 +156,26 @@ func CertificateViewH(w http.ResponseWriter, r *http.Request) {
 }
 
 // CertificateVerifyH verify certificate handler
-func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
-	errors.NotImplemented().Http(w)
+func CertificateVerifyH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertificateVerify{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	dist := distribution.Distribution{Storage: env.GetStorage()}
+
+	if cert, err := dist.CertificateVerify(opts); err == nil {
+		if cert != nil {
+			response.Ok(cert.Public()).Http(w)
+		} else {
+			errors.NotFound("certificate").Http(w)
+		}
+	} else {
+		if err == errors.DocumentNotFound {
+			errors.NotFound("certificate").Http(w)
+		} else {
+			errors.InternalServerError().Http(w)
+		}
+	}
 }

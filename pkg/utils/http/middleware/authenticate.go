@@ -46,7 +46,7 @@ func Authenticate(h http.HandlerFunc) http.HandlerFunc {
 		dist := distribution.Distribution{Storage: env.GetStorage()}
 
 		// fetch account
-		acc, err := dist.AccountFetch(email)
+		acc, err := dist.AccountFetchByEmail(email)
 		if err != nil {
 			errors.InternalServerError().Http(w)
 			return

@@ -19,8 +19,9 @@ var (
 	opts = &rsa.PSSOptions{
 		SaltLength: rsa.PSSSaltLengthAuto,
 	}
-	hash   = crypto.SHA256
-	hashed []byte
+	hash            = crypto.SHA256
+	hashed          []byte
+	ErrVerification = errors.New("ErrVerification")
 )
 
 func init() {
@@ -43,8 +44,8 @@ func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	return private, public, nil
 }
 
-// Marshal marshal rsa keys
-func Marshal(pri *rsa.PrivateKey, pub *rsa.PublicKey) (string, string) {
+// Encode encode rsa keys
+func Encode(pri *rsa.PrivateKey, pub *rsa.PublicKey) (string, string) {
 	block := &pem.Block{
 		Type:  "PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(pri),
@@ -60,31 +61,47 @@ func Marshal(pri *rsa.PrivateKey, pub *rsa.PublicKey) (string, string) {
 	return string(private), string(public)
 }
 
-// Unmarshal unmarshal rsa keys
-func Unmarshal(pri, pub string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
-	block, _ := pem.Decode([]byte(pri))
+// Decode decode key to pem block
+func Decode(key string) (*pem.Block, error) {
+	block, _ := pem.Decode([]byte(key))
 	if block == nil {
 		log.Error(errors.PemBlockParseFailed)
-		return nil, nil, errors.PemBlockParseFailed
+		return nil, errors.PemBlockParseFailed
 	}
+
+	return block, nil
+}
+
+// DecodePrivate decode private key
+func DecodePrivate(pri string) (*rsa.PrivateKey, error) {
+	block, err := Decode(pri)
+	if err != nil {
+		return nil, err
+	}
+
 	private, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	block, _ = pem.Decode([]byte(pub))
-	if block == nil {
-		log.Error(errors.PemBlockParseFailed)
-		return nil, nil, errors.PemBlockParseFailed
+	return private, nil
+}
+
+// DecodePublic decode public key
+func DecodePublic(pub string) (*rsa.PublicKey, error) {
+	block, err := Decode(pub)
+	if err != nil {
+		return nil, err
 	}
+
 	public, err := x509.ParsePKCS1PublicKey(block.Bytes)
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	return private, public, nil
+	return public, nil
 }
 
 // SignPSS calculates signature
@@ -107,6 +124,9 @@ func VerifyPSS(key *rsa.PublicKey, signature string) error {
 	}
 
 	if err := rsa.VerifyPSS(key, hash, hashed, h, opts); err != nil {
+		if err == rsa.ErrVerification {
+			return ErrVerification
+		}
 		log.Error(err)
 		return err
 	}

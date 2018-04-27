@@ -14,7 +14,7 @@ import (
 // AccountCreate generate password, keys, create account, save them,
 // send mail with credentials and returns jwt token
 func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
-	acc, err := d.AccountFetch(*opts.Email)
+	acc, err := d.AccountFetchByEmail(*opts.Email)
 	if err != nil {
 		return "", err
 	}
@@ -32,7 +32,7 @@ func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	pri, pub := rsa.Marshal(private, public)
+	pri, pub := rsa.Encode(private, public)
 
 	acc = &types.Account{
 		Meta: &types.AccountMeta{
@@ -60,12 +60,12 @@ func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
 
 // SessionNew create new session and returns jwt token
 func (d *Distribution) SessionNew(opts *request.SignIn) (string, error) {
-	acc, err := d.AccountFetch(*opts.Email)
+	acc, err := d.AccountFetchByEmail(*opts.Email)
 	if err != nil {
 		return "", err
 	}
 	if acc == nil {
-		return "", errors.AccountNotFound
+		return "", errors.DocumentNotFound
 	}
 
 	if err := bcrypt.Validate(acc.Secure.Password, *opts.Password); err != nil {
@@ -78,12 +78,12 @@ func (d *Distribution) SessionNew(opts *request.SignIn) (string, error) {
 // AccountRecovery recovery account, generate new password,
 // save them and send recovery mail
 func (d *Distribution) AccountRecovery(opts *request.AccountRecovery) error {
-	acc, err := d.AccountFetch(*opts.Email)
+	acc, err := d.AccountFetchByEmail(*opts.Email)
 	if err != nil {
 		return err
 	}
 	if acc == nil {
-		return errors.AccountNotFound
+		return errors.DocumentNotFound
 	}
 
 	password := generator.Password()
@@ -100,4 +100,26 @@ func (d *Distribution) AccountRecovery(opts *request.AccountRecovery) error {
 	}
 
 	return mail.SendAccountRecovery(*opts.Email, password)
+}
+
+// AccountVerify verify account by public key
+func (d *Distribution) AccountVerify(opts *request.AccountVerify) (*types.Account, error) {
+	pub, err := rsa.DecodePublic(*opts.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := rsa.VerifyPSS(pub, *opts.Signature); err != nil {
+		if err == rsa.ErrVerification {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	acc, err := d.AccountFetchByPublic(*opts.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, nil
 }

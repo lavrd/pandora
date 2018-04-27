@@ -54,12 +54,12 @@ func TestVerifyPSS(t *testing.T) {
 	}, {
 		public:    public,
 		name:      "verifying bad signature correct public",
-		error:     rsa.ErrVerification,
+		error:     ursa.ErrVerification,
 		signature: ISignature,
 	}, {
 		public:    IPublic,
 		name:      "verifying correct signature bad public",
-		error:     rsa.ErrVerification,
+		error:     ursa.ErrVerification,
 		signature: signature,
 	}}
 
