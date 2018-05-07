@@ -14,7 +14,7 @@ func New(acc *types.Account) (string, error) {
 		"email": acc.Meta.Email,
 	})
 
-	signed, err := token.SignedString([]byte(config.Viper.Secure.JWTKey))
+	signed, err := token.SignedString([]byte(config.Viper.Secure.Jwt))
 	if err != nil {
 		log.Error(err)
 		return "", err
@@ -29,7 +29,7 @@ func Validate(tkn string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.UnexpectedSigningMethod
 		}
-		return []byte(config.Viper.Secure.JWTKey), nil
+		return []byte(config.Viper.Secure.Jwt), nil
 	})
 	if err != nil {
 		log.Error(err)

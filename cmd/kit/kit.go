@@ -4,12 +4,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spacelavr/pandora/pkg/api"
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/core"
-	"github.com/spacelavr/pandora/pkg/discovery"
 	"github.com/spacelavr/pandora/pkg/node"
+	"github.com/spacelavr/pandora/pkg/tracker"
 	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/spacelavr/pandora/pkg/validator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -48,14 +47,13 @@ var (
 				apps    = make(chan bool)
 				wait    = 0
 				daemons = map[string]func() bool{
-					"api":       api.Daemon,
-					"core":      core.Daemon,
-					"discovery": discovery.Daemon,
 					"node":      node.Daemon,
+					"validator": validator.Daemon,
+					"tracker":   tracker.Daemon,
 				}
 			)
 
-			components := []string{"api", "core", "discovery", "node"}
+			components := []string{"node", "validator", "tracker"}
 
 			if len(args) > 0 {
 				components = args

@@ -6,7 +6,7 @@ runtime:
 # mail
 mail:
   send: false
-  token: ''
+  token: token
   endpoint: https://api.sendgrid.com/v3/mail/send
   email: pandora@doesnotexist.system
   name: Pandora
@@ -34,8 +34,19 @@ broker:
 
 # secure
 secure:
-  PSSMessage: secret
-  JWTKey: secret
+  key: secret
+  salt: salt
+  jwt: jwt
+
+# validator
+validator:
+  broker:
+    port: 4222
+  tracker: localhost:2001
+
+# tracker
+tracker:
+  port: 2001
 
 # node
 node:

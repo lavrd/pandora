@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tracker;
+
+service Tracker {
+  rpc GetValidators (GVRequest) returns (GVResponse) {}
+  rpc NewValidator (NVRequest) returns (NVResponse) {}
+}
+
+message Empty {}
+
+message GVRequest {}
+
+message GVResponse {
+  map<string, Empty> ips = 1;
+}
+
+message NVRequest {
+  string ip = 1;
+}
+
+message NVResponse {}

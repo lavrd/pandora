@@ -26,6 +26,15 @@ var (
 				}
 			}
 		}
+		Validator struct {
+			Tracker string
+			Broker struct {
+				Port int
+			}
+		}
+		Tracker struct {
+			Port int
+		}
 		Database struct {
 			Endpoint string
 			User     string
@@ -38,8 +47,9 @@ var (
 			Password string
 		}
 		Secure struct {
-			PSSMessage string
-			JWTKey     string
+			Key  string
+			Salt string
+			Jwt  string
 		}
 		Node struct {
 			Backup struct {

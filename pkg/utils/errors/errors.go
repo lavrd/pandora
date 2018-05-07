@@ -8,10 +8,10 @@ var (
 	AccountAlreadyExists    = New("AccountAlreadyExists")
 	InvalidCredentials      = New("InvalidCredentials")
 	SendMailError           = New("SendMailError")
-	PemBlockParseFailed     = New("PemBlockParseFailed")
 	UnexpectedSigningMethod = New("UnexpectedSigningMethod")
 	DocumentNotFound        = New("DocumentNotFound")
 	IssueCertToNonRecipient = New("IssueCertToNonRecipient")
+	UnableStartGNATSD       = New("UnableStartGNATSD")
 )
 
 // New returns new errors with text
