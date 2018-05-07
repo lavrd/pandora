@@ -57,6 +57,14 @@ func Daemon() bool {
 		}
 	}()
 
+	defer func() {
+		if config.Viper.Runtime.Clean {
+			if err := stg.Clean(); err != nil {
+				log.Error(err)
+			}
+		}
+	}()
+
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")
 	return true

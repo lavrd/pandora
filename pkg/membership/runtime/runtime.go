@@ -1,8 +1,6 @@
 package runtime
 
 import (
-	"fmt"
-
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/types"
@@ -20,13 +18,12 @@ type Runtime struct {
 }
 
 func New(opts *Opts) *Runtime {
-	fmt.Printf("%#v", opts.Storage)
 	return &Runtime{
 		storage: opts.Storage,
 	}
 }
 
-func (r *Runtime) AccountCreate(opts *request.Account) error {
+func (r *Runtime) AccountCreate(opts *request.AccountCreate) error {
 	acc, err := r.storage.AccountFetchByEmail(*opts.Email)
 	if err != nil {
 		return err
@@ -57,4 +54,13 @@ func (r *Runtime) AccountCreate(opts *request.Account) error {
 	}
 
 	return nil
+}
+
+func (r *Runtime) AccountFetch(opts *request.AccountFetch) (*types.Account, error) {
+	acc, err := r.storage.AccountFetchByPublic(*opts.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, nil
 }

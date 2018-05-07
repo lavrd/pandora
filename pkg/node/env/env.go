@@ -2,28 +2,16 @@ package env
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/storage"
 )
 
 var (
-	e = &env{
-		chAccount: make(chan *request.Account),
-	}
+	e = &env{}
 )
 
 type env struct {
-	chAccount chan *request.Account
-	broker    *broker.Broker
-	storage   *storage.Storage
-}
-
-func SendAccount(acc *request.Account) {
-	e.chAccount <- acc
-}
-
-func ReadAccount() chan *request.Account {
-	return e.chAccount
+	broker  *broker.Broker
+	storage *storage.Storage
 }
 
 // SetStorage set storage to env

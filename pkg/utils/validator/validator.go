@@ -1,9 +1,11 @@
 package validator
 
 import (
+	"encoding/hex"
 	"regexp"
 
 	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/nacl"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -30,4 +32,15 @@ func IsPassword(password string) bool {
 // IsSignature checking for valid signature
 func IsSignature(signature string) bool {
 	return len(signature) == 512
+}
+
+func IsPublicKey(key string) bool {
+	buf, _ := hex.DecodeString(key)
+
+	switch {
+	case nacl.PublicKeySize != len(buf):
+		return false
+	default:
+		return true
+	}
 }

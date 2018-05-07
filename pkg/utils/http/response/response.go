@@ -18,13 +18,14 @@ func Ok(data interface{}) *Response {
 	return &Response{code: http.StatusOK, data: data}
 }
 
-// Http send http response
-func (r *Response) Http(w http.ResponseWriter) {
-	r.send(w)
+func Created() *Response {
+	return &Response{code: http.StatusCreated}
 }
 
-func (r Response) send(w http.ResponseWriter) {
+// Http send http response
+func (r *Response) Http(w http.ResponseWriter) {
 	w.WriteHeader(r.code)
+	log.Debug(r.data)
 	if err := json.NewEncoder(w).Encode(r.data); err != nil {
 		log.Error(err)
 	}

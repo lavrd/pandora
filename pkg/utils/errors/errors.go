@@ -11,7 +11,6 @@ var (
 	UnexpectedSigningMethod = New("UnexpectedSigningMethod")
 	DocumentNotFound        = New("DocumentNotFound")
 	IssueCertToNonRecipient = New("IssueCertToNonRecipient")
-	UnableStartGNATSD       = New("UnableStartGNATSD")
 )
 
 // New returns new errors with text

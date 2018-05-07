@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	SNAccount = "SNAccount"
+	SCAccount = "SCAccount"
+	SFAccount = "SFAccount"
 )
 
 // Broker
@@ -44,21 +45,7 @@ func Connect(opts *Opts) (*Broker, error) {
 }
 
 // Reply reply to subject
-func (b *Broker) Reply(subject string, handler func(subject, reply string, msg interface{})) error {
-	// if _, err := b.conn.Subscribe(subject, func(subject, reply string, msg interface{}) {
-	// 	if body, err := f(); err == nil {
-	// 		if err := b.conn.Publish(reply, body); err != nil {
-	// 			log.Error(err)
-	// 		}
-	// 	} else {
-	// 		log.Error(err)
-	// 	}
-	// }); err != nil {
-	// 	log.Error(err)
-	// 	return err
-	// }
-	// return nil
-
+func (b *Broker) Reply(subject string, handler func(m *nats.Msg)) error {
 	if _, err := b.conn.Subscribe(subject, handler); err != nil {
 		log.Error(err)
 		return err
@@ -77,7 +64,7 @@ func (b *Broker) SendReply(reply string, data interface{}) error {
 
 // Request request by subject
 func (b *Broker) Request(subject string, message, data interface{}) error {
-	if err := b.conn.Request(subject, message, data, time.Second); err != nil {
+	if err := b.conn.Request(subject, message, data, time.Second*1); err != nil {
 		log.Error(err)
 		return err
 	}

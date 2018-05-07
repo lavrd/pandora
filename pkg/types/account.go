@@ -26,7 +26,6 @@ func (acc *Account) Public() *Account {
 
 // AccountSecure
 type AccountSecure struct {
-	Password   string `json:"password"`
 	PrivateKey string `json:"private_key"`
 }
 

@@ -58,6 +58,7 @@ func Daemon() bool {
 			log.Fatal(err)
 		}
 	}()
+
 	go func() {
 		if err := http.Listen(config.Viper.Node.Port, routes.Routes); err != nil {
 			log.Fatal(err)
