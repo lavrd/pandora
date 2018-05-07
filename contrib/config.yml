@@ -40,22 +40,15 @@ secure:
 
 # validator
 validator:
-  broker:
-    endpoint: nats://localhost:4222
-    user: root
-    password: root
   tracker: localhost:2001
 
 # tracker
 tracker:
-  port: 2001
+  endpoint: localhost:2001
 
 # node
 node:
-  backup:
-    file: backup.json
-  discovery:
-    endpoint: http://localhost:2002
+  port: 2004
 
 # discovery
 discovery:

@@ -14,9 +14,8 @@ type Account struct {
 
 // AccountMeta
 type AccountMeta struct {
-	Email string `json:"email"`
-	Type  int    `json:"type"`
-	Name  string `json:"name"`
+	Email    string `json:"email"`
+	FullName string `json:"full_name"`
 }
 
 // Public returns public account info

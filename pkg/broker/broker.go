@@ -8,10 +8,7 @@ import (
 )
 
 const (
-	SBlock       = "SBlock"
-	SLBlock      = "SLBlock"
-	SCertificate = "SCertificate"
-	SBlockchain  = "SBlockchain"
+	SNAccount = "SNAccount"
 )
 
 // Broker
@@ -47,19 +44,34 @@ func Connect(opts *Opts) (*Broker, error) {
 }
 
 // Reply reply to subject
-func (b *Broker) Reply(subject string, f func() (interface{}, error)) error {
-	if _, err := b.conn.Subscribe(subject, func(subject, reply string, msg interface{}) {
-		if body, err := f(); err == nil {
-			if err := b.conn.Publish(reply, body); err != nil {
-				log.Error(err)
-			}
-		} else {
-			log.Error(err)
-		}
-	}); err != nil {
+func (b *Broker) Reply(subject string, handler func(subject, reply string, msg interface{})) error {
+	// if _, err := b.conn.Subscribe(subject, func(subject, reply string, msg interface{}) {
+	// 	if body, err := f(); err == nil {
+	// 		if err := b.conn.Publish(reply, body); err != nil {
+	// 			log.Error(err)
+	// 		}
+	// 	} else {
+	// 		log.Error(err)
+	// 	}
+	// }); err != nil {
+	// 	log.Error(err)
+	// 	return err
+	// }
+	// return nil
+
+	if _, err := b.conn.Subscribe(subject, handler); err != nil {
 		log.Error(err)
 		return err
 	}
+	return nil
+}
+
+func (b *Broker) SendReply(reply string, data interface{}) error {
+	if err := b.conn.Publish(reply, data); err != nil {
+		log.Error(err)
+		return err
+	}
+
 	return nil
 }
 

@@ -4,7 +4,6 @@ import (
 	"regexp"
 
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -31,12 +30,4 @@ func IsPassword(password string) bool {
 // IsSignature checking for valid signature
 func IsSignature(signature string) bool {
 	return len(signature) == 512
-}
-
-// IsPublicKey checking for valid public key
-func IsPublicKey(pub string) bool {
-	if _, err := rsa.DecodePublic(pub); err != nil {
-		return false
-	}
-	return true
 }

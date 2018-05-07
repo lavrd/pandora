@@ -10,7 +10,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/validator/env"
 	"github.com/spacelavr/pandora/pkg/validator/events"
-	"github.com/spacelavr/pandora/pkg/validator/rpc"
 	"github.com/spacelavr/pandora/pkg/validator/runtime"
 )
 
@@ -44,10 +43,6 @@ func Daemon() bool {
 			log.Fatal(err)
 		}
 	}()
-
-	if err := rpc.NotifyTracker(brkOpts); err != nil {
-		log.Fatal(err)
-	}
 
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")

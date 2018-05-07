@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"context"
-	"fmt"
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
@@ -11,35 +10,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-type server struct {
-	BrokerOpts *pb.BrokerOpts
-}
+type server struct{}
 
-func init() {
-
-}
-
-func (s *server) GetValidator(ctx context.Context, in *pb.Empty) (*pb.BrokerOpts, error) {
+func (s *server) GetBrokerOpts(ctx context.Context, in *pb.Empty) (*pb.BrokerOpts, error) {
 	return &pb.BrokerOpts{
-		Endpoint: s.BrokerOpts.Endpoint,
-		User:     s.BrokerOpts.User,
-		Password: s.BrokerOpts.Password,
+		Endpoint: config.Viper.Broker.Endpoint,
+		User:     config.Viper.Broker.User,
+		Password: config.Viper.Broker.Password,
 	}, nil
 }
 
-func (s *server) NewValidator(ctx context.Context, in *pb.BrokerOpts) (*pb.Empty, error) {
-
-	log.Debug(s.BrokerOpts)
-
-	s.BrokerOpts.Endpoint = in.Endpoint
-	s.BrokerOpts.User = in.User
-	s.BrokerOpts.Password = in.Password
-
-	return &pb.Empty{}, nil
-}
-
 func Listen() error {
-	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Viper.Tracker.Port))
+	listen, err := net.Listen("tcp", config.Viper.Tracker.Endpoint)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -49,7 +31,7 @@ func Listen() error {
 	s := grpc.NewServer()
 	defer s.GracefulStop()
 
-	pb.RegisterTrackerServer(s, &server{BrokerOpts: &pb.BrokerOpts{}})
+	pb.RegisterTrackerServer(s, &server{})
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/membership"
 	"github.com/spacelavr/pandora/pkg/node"
 	"github.com/spacelavr/pandora/pkg/tracker"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -47,13 +48,14 @@ var (
 				apps    = make(chan bool)
 				wait    = 0
 				daemons = map[string]func() bool{
-					"node":      node.Daemon,
-					"validator": validator.Daemon,
-					"tracker":   tracker.Daemon,
+					"node":       node.Daemon,
+					"validator":  validator.Daemon,
+					"tracker":    tracker.Daemon,
+					"membership": membership.Daemon,
 				}
 			)
 
-			components := []string{"node", "validator", "tracker"}
+			components := []string{"node", "validator", "tracker", "membership"}
 
 			if len(args) > 0 {
 				components = args

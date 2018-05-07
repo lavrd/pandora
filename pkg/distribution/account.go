@@ -1,19 +1,17 @@
 package distribution
 
 import (
-	"github.com/spacelavr/pandora/pkg/api/routes/request"
+	"crypto/rsa"
+
+	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/bcrypt"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/jwt"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/rsa"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 )
 
-// AccountCreate generate password, keys, create account, save them,
-// send mail with credentials and returns jwt token
-func (d *Distribution) AccountCreate(opts *request.SignUp) (string, error) {
+func (d *Distribution) AccountCreate(opts *request.Account) (string, error) {
 	acc, err := d.AccountFetchByEmail(*opts.Email)
 	if err != nil {
 		return "", err

@@ -38,12 +38,13 @@ func SendAccountRecovery(email, password string) error {
 }
 
 // SendAccountCreated send account created email
-func SendAccountCreated(email, password string) error {
-	data := &types.Account{Secure: &types.AccountSecure{Password: password}}
-	return execute(
-		email,
-		config.Viper.Mail.Subjects.Account.Created,
-		config.Viper.Mail.Templates.Account.Created,
-		data,
-	)
+func SendAccountCreated(email, public string) error {
+	// data := &types.Account{Secure: &types.AccountSecure{Password: password}}
+	// return execute(
+	// 	email,
+	// 	config.Viper.Mail.Subjects.Account.Created,
+	// 	config.Viper.Mail.Templates.Account.Created,
+	// 	data,
+	// )
+	return nil
 }

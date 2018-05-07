@@ -34,8 +34,13 @@ var (
 				Password string
 			}
 		}
+		Membership struct {
+			Tracker struct {
+				Endpoint string
+			}
+		}
 		Tracker struct {
-			Port int
+			Endpoint string
 		}
 		Database struct {
 			Endpoint string
@@ -54,6 +59,16 @@ var (
 			Jwt  string
 		}
 		Node struct {
+			Database struct {
+				Endpoint string
+				User     string
+				Password string
+				Database string
+			}
+			Tracker struct {
+				Endpoint string
+			}
+			Port int
 			Backup struct {
 				File string
 			}

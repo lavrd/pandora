@@ -1,4 +1,4 @@
-package node
+package membership
 
 import (
 	"os"
@@ -7,18 +7,16 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/node/events"
-	"github.com/spacelavr/pandora/pkg/node/routes"
+	"github.com/spacelavr/pandora/pkg/membership/env"
+	"github.com/spacelavr/pandora/pkg/membership/events"
+	"github.com/spacelavr/pandora/pkg/membership/runtime"
 	"github.com/spacelavr/pandora/pkg/rpc"
 	"github.com/spacelavr/pandora/pkg/storage"
-	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
-// Daemon start node daemon
 func Daemon() bool {
-	log.Debug("start node daemon")
+	log.Debug("start membership daemon")
 
 	var (
 		sig = make(chan os.Signal)
@@ -50,25 +48,12 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 
-	env.SetStorage(stg)
 	env.SetBroker(brk)
+	env.SetRuntime(runtime.New(&runtime.Opts{Storage: stg}))
 
 	go func() {
 		if err := events.Listen(); err != nil {
 			log.Fatal(err)
-		}
-	}()
-	go func() {
-		if err := http.Listen(config.Viper.Node.Port, routes.Routes); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	defer func() {
-		if config.Viper.Runtime.Clean {
-			if err := stg.Clean(); err != nil {
-				log.Error(err)
-			}
 		}
 	}()
 

@@ -30,6 +30,14 @@ func key() [SecretKeySize]byte {
 	return key
 }
 
+func Marshal() {
+
+}
+
+func Unmarshal() {
+
+}
+
 func Seal(data []byte) []byte {
 	var (
 		key   = key()
@@ -61,9 +69,9 @@ func Open(encrypted []byte) []byte {
 	return decrypted
 }
 
-func GenerateKeys() (*[PublicKeySize]byte, *[PrivateKeySize]byte) {
+func GenerateKeys() (string, string) {
 	public, private, _ := sign.GenerateKey(rand.Reader)
-	return public, private
+	return fmt.Sprintf("%x", public), fmt.Sprintf("%x", private)
 }
 
 func Sign(msg string, key *[PrivateKeySize]byte) string {

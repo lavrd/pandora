@@ -3,37 +3,28 @@ package events
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/spacelavr/pandora/pkg/node/routes/request"
 )
-
-var ChSendNewBlock = make(chan *types.Block)
 
 // Listen listen for events
 func Listen() error {
 	var (
-		chReadNewBlock = make(chan *types.Block)
-		brk            = env.GetBroker()
+		chsAccount = make(chan *request.Account)
+		brk        = env.GetBroker()
 	)
 
-	if err := brk.Subscribe(broker.SBlock, chReadNewBlock); err != nil {
-		return err
-	}
-
-	if err := brk.Publish(broker.SBlock, ChSendNewBlock); err != nil {
+	if err := brk.Publish(broker.SAccount, chsAccount); err != nil {
 		return err
 	}
 
 	for {
 		select {
-		case block, ok := <-chReadNewBlock:
+		case acc, ok := <-env.ReadAccount():
 			if !ok {
 				return nil
 			}
 
-			log.Debug(block.Index)
-
-			ChSendNewBlock <- block
+			chsAccount <- acc
 		}
 	}
 }

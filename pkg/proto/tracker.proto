@@ -3,8 +3,7 @@ syntax = "proto3";
 package tracker;
 
 service Tracker {
-  rpc GetValidator (Empty) returns (BrokerOpts) {}
-  rpc NewValidator (BrokerOpts) returns (Empty) {}
+  rpc GetBrokerOpts (Empty) returns (BrokerOpts) {}
 }
 
 message Empty {}
