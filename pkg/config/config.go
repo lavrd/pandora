@@ -29,7 +29,9 @@ var (
 		Validator struct {
 			Tracker string
 			Broker struct {
-				Port int
+				Endpoint string
+				User     string
+				Password string
 			}
 		}
 		Tracker struct {

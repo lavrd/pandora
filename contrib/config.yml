@@ -41,7 +41,9 @@ secure:
 # validator
 validator:
   broker:
-    port: 4222
+    endpoint: nats://localhost:4222
+    user: root
+    password: root
   tracker: localhost:2001
 
 # tracker

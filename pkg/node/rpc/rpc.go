@@ -9,23 +9,21 @@ import (
 	"google.golang.org/grpc"
 )
 
-func GetValidators() error {
+func GetValidators() (*pb.BrokerOpts, error) {
 	conn, err := grpc.Dial(config.Viper.Validator.Tracker, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)
-		return err
+		return nil, err
 	}
 	defer conn.Close()
 
 	c := pb.NewTrackerClient(conn)
 
-	r, err := c.GetValidators(context.Background(), &pb.GVRequest{})
+	r, err := c.GetValidator(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Error(err)
-		return err
+		return nil, err
 	}
 
-	log.Error(r.Ips)
-
-	return nil
+	return r, nil
 }

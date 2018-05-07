@@ -12,20 +12,30 @@ import (
 )
 
 type server struct {
-	IPs map[string]*pb.Empty
+	BrokerOpts *pb.BrokerOpts
 }
 
-func (s *server) AddIP(ip string) {
-	s.IPs[ip] = &pb.Empty{}
+func init() {
+
 }
 
-func (s *server) GetValidators(ctx context.Context, in *pb.GVRequest) (*pb.GVResponse, error) {
-	return &pb.GVResponse{Ips: s.IPs}, nil
+func (s *server) GetValidator(ctx context.Context, in *pb.Empty) (*pb.BrokerOpts, error) {
+	return &pb.BrokerOpts{
+		Endpoint: s.BrokerOpts.Endpoint,
+		User:     s.BrokerOpts.User,
+		Password: s.BrokerOpts.Password,
+	}, nil
 }
 
-func (s *server) NewValidator(ctx context.Context, in *pb.NVRequest) (*pb.NVResponse, error) {
-	s.AddIP(in.Ip)
-	return &pb.NVResponse{}, nil
+func (s *server) NewValidator(ctx context.Context, in *pb.BrokerOpts) (*pb.Empty, error) {
+
+	log.Debug(s.BrokerOpts)
+
+	s.BrokerOpts.Endpoint = in.Endpoint
+	s.BrokerOpts.User = in.User
+	s.BrokerOpts.Password = in.Password
+
+	return &pb.Empty{}, nil
 }
 
 func Listen() error {
@@ -39,7 +49,7 @@ func Listen() error {
 	s := grpc.NewServer()
 	defer s.GracefulStop()
 
-	pb.RegisterTrackerServer(s, &server{})
+	pb.RegisterTrackerServer(s, &server{BrokerOpts: &pb.BrokerOpts{}})
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)
