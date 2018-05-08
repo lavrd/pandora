@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"html/template"
 	"net/http"
 
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/distribution"
-	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -69,4 +70,19 @@ func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 	)
 
 	response.Ok(r.Blockchain()).Http(w)
+}
+
+func DashboardH(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	tpl, err := template.ParseFiles(config.Viper.Dashboard.Template)
+	if err != nil {
+		errors.InternalServerError().Http(w)
+		return
+	}
+
+	tpl = template.Must(tpl, err)
+
+	if err = tpl.Execute(w, nil); err != nil {
+		errors.InternalServerError().Http(w)
+	}
 }

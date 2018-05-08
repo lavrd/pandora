@@ -5,18 +5,32 @@ import (
 	"time"
 )
 
-// Block
-type Block struct {
-	Index     int          `json:"index"`
-	Hash      string       `json:"hash"`
-	PrevHash  string       `json:"prev_hash"`
-	Timestamp time.Time    `json:"timestamp"`
-	Cert      *Certificate `json:"cert,omitempty"`
-}
+type (
+	CertBlock struct {
+		*Block
+		Cert *Certificate `json:"cert"`
+	}
 
-func (b *Block) Bytes() []byte {
+	MasterBlock struct {
+		*block
+		CertChain CertChain `json:"cert_chain"`
+	}
+
+	Block struct {
+		Index     int       `json:"index"`
+		Hash      string    `json:"hash"`
+		PrevHash  string    `json:"prev_hash"`
+		Timestamp time.Time `json:"timestamp"`
+	}
+
+	CertChain []*CertBlock
+	MasterChain []*MasterBlock
+)
+
+func (b *MasterBlock) Bytes() []byte {
 	return []byte(fmt.Sprint(b))
 }
 
-// Blockchain
-type Blockchain []*Block
+func (b *CertBlock) Bytes() []byte {
+	return []byte(fmt.Sprint(b))
+}

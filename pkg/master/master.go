@@ -1,4 +1,4 @@
-package validator
+package master
 
 import (
 	"os"
@@ -7,10 +7,10 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/master/env"
+	"github.com/spacelavr/pandora/pkg/master/events"
+	"github.com/spacelavr/pandora/pkg/master/runtime"
 	"github.com/spacelavr/pandora/pkg/utils/log"
-	"github.com/spacelavr/pandora/pkg/validator/env"
-	"github.com/spacelavr/pandora/pkg/validator/events"
-	"github.com/spacelavr/pandora/pkg/validator/runtime"
 )
 
 func Daemon() bool {

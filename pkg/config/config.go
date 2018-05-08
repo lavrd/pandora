@@ -7,6 +7,9 @@ var (
 			Verbose bool
 			Clean   bool
 		}
+		Dashboard struct {
+			Template string
+		}
 		Mail struct {
 			Send     bool
 			Token    string

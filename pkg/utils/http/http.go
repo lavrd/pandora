@@ -49,6 +49,9 @@ func Listen(port int, routes []Route) error {
 
 	router := mux.NewRouter()
 
+	// todo need a flag? its need only for node, fot other no
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
+
 	for _, route := range routes {
 		router.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
 	}

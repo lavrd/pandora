@@ -3,29 +3,21 @@ package runtime
 import (
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/types"
-	ed255192 "github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
-	"golang.org/x/crypto/ed25519"
 )
 
 // Runtime
 type Runtime struct {
-	FullName   string
-	PrivateKey ed25519.PrivateKey
-	last       int
-	blockchain types.Blockchain
+	last        int
+	CertChain   types.CertChain
+	MasterBlock *types.MasterBlock
 }
 
 // New returns new runtime
 func New() *Runtime {
-	_, privateKey := ed255192.GenerateKeys()
-
 	r := &Runtime{
-		last:       0,
-		PrivateKey: privateKey,
-		FullName:   config.Viper.Node.FullName,
+		last: 0,
 	}
 
 	r.blockchain = types.Blockchain{r.Genesis()}
@@ -33,24 +25,9 @@ func New() *Runtime {
 	return r
 }
 
-// PrepareBlock prepare block
-func (r *Runtime) PrepareBlock(cert *types.Certificate, last *types.Block) *types.Block {
-	block := &types.Block{
-		Cert:      cert,
-		PrevHash:  last.Hash,
-		Index:     last.Index + 1,
-		Timestamp: time.Now().UTC(),
-	}
-
-	block.Hash = sha256.SumString(block.Bytes())
-
-	return block
-}
-
 // Genesis returns genesis block
-func (r *Runtime) Genesis() *types.Block {
+func (_ *Runtime) Genesis() *types.Block {
 	block := &types.Block{
-		Cert:      nil,
 		PrevHash:  "",
 		Index:     0,
 		Timestamp: time.Now().UTC(),
@@ -61,8 +38,30 @@ func (r *Runtime) Genesis() *types.Block {
 	return block
 }
 
+func (rt *Runtime) Genesis() *types.CertBlock {
+	block := &types.CertBlock{
+
+	}
+
+	return block
+}
+
+// PrepareBlock prepare block
+func (r *Runtime) PrepareBlock(cert *types.Certificate, last *types.CertBlock) *types.CertChain {
+	block := &types.Block{
+		Cert:      cert,
+		PrevHash:  last.Hash,
+		Index:     last.Index + 1,
+		Timestamp: time.Now().UTC(),
+	}
+
+	block.Hash = sha256.SumString(block.Bytes())
+
+	return nil
+}
+
 // Validate validate block
-func (r *Runtime) Validate(block *types.Block) bool {
+func (r *Runtime) Validate(block *types.CertChain) bool {
 	return true
 }
 
@@ -72,7 +71,7 @@ func (r *Runtime) VBlockchain() bool {
 }
 
 // Add add block to blockchain
-func (r *Runtime) Add(block *types.Block) {
+func (r *Runtime) Add(block *types.CertChain) {
 	if r.Validate(block) {
 		r.blockchain = append(r.blockchain, block)
 		r.last++

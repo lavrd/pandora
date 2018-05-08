@@ -8,9 +8,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes"
-	"github.com/spacelavr/pandora/pkg/node/runtime"
 	"github.com/spacelavr/pandora/pkg/rpc"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
@@ -26,6 +24,8 @@ func Daemon() bool {
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+	// todo when start node need auth with membership
 
 	brkOpts, err := rpc.GetBrokerOpts(config.Viper.Tracker.Endpoint)
 	if err != nil {

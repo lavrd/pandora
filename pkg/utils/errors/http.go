@@ -17,12 +17,20 @@ type Response struct {
 
 // NotImplemented returns not implemented response
 func NotImplemented() *Response {
-	return &Response{Code: http.StatusNotImplemented, Status: http.StatusText(http.StatusNotImplemented)}
+	return &Response{
+		Code:    http.StatusNotImplemented,
+		Status:  http.StatusText(http.StatusNotImplemented),
+		Message: http.StatusText(http.StatusNotImplemented),
+	}
 }
 
 // Unauthorized returns unauthorized response
 func Unauthorized() *Response {
-	return &Response{Code: http.StatusUnauthorized, Status: http.StatusText(http.StatusUnauthorized)}
+	return &Response{
+		Code:    http.StatusUnauthorized,
+		Status:  http.StatusText(http.StatusUnauthorized),
+		Message: http.StatusText(http.StatusUnauthorized),
+	}
 }
 
 // InvalidJSON returns invalid json response
@@ -36,7 +44,11 @@ func InvalidJSON() *Response {
 
 // Forbidden returns forbidden response
 func Forbidden() *Response {
-	return &Response{Code: http.StatusForbidden, Status: http.StatusText(http.StatusForbidden)}
+	return &Response{
+		Code:    http.StatusForbidden,
+		Status:  http.StatusText(http.StatusForbidden),
+		Message: http.StatusText(http.StatusForbidden),
+	}
 }
 
 // NotFound returns not found response
@@ -59,7 +71,11 @@ func AlreadyExists(what string) *Response {
 
 // InternalServerError returns internal server error response
 func InternalServerError() *Response {
-	return &Response{Code: http.StatusInternalServerError, Status: http.StatusText(http.StatusInternalServerError)}
+	return &Response{
+		Code:    http.StatusInternalServerError,
+		Status:  http.StatusText(http.StatusInternalServerError),
+		Message: http.StatusText(http.StatusInternalServerError),
+	}
 }
 
 // BadParameter returns bad parameter response

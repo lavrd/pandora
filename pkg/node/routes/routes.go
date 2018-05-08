@@ -15,5 +15,6 @@ var (
 		{Path: "/cert/view", Method: http.GET, Middleware: nil, Handler: handlers.CertificateViewH},
 		{Path: "/cert/verify", Method: http.POST, Middleware: nil, Handler: handlers.CertificateVerifyH},
 		{Path: "/blockchain", Method: http.GET, Middleware: nil, Handler: handlers.BlockchainH},
+		{Path: "/dashboard", Method: http.GET, Middleware: nil, Handler: handlers.DashboardH},
 	}
 )

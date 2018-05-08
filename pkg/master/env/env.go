@@ -2,7 +2,7 @@ package env
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/validator/runtime"
+	"github.com/spacelavr/pandora/pkg/master/runtime"
 )
 
 var (

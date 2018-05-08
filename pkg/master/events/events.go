@@ -2,8 +2,6 @@ package events
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/validator/env"
 )
 
 // Listen listen for events

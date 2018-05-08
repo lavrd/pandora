@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
@@ -36,7 +35,7 @@ func CertificateIssue(opts *request.CertificateIssue) error {
 		},
 		Issuer: &types.Issuer{
 			Meta: &types.IssuerMeta{
-				Name: rt.FullName,
+				// Name: rt.FullName,
 			},
 		},
 		Recipient: &types.Recipient{
@@ -55,6 +54,15 @@ func CertificateIssue(opts *request.CertificateIssue) error {
 	cert.Recipient.Signature = RSign
 
 	block := rt.PrepareBlock(cert, rt.Last())
+
+	if err := stg.BlockSave(block); err != nil {
+		return err
+	}
+
+	if err := stg.CertificateSave(cert); err != nil {
+		return err
+	}
+
 	events.PublishNBlock(block)
 
 	return nil

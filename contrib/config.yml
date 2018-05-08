@@ -19,6 +19,10 @@ mail:
       created: Pandora account is created
       recovery: Pandora account recovery
 
+# dashboard
+dashboard:
+  template: ./dashboard/index.html
+
 # database
 database:
   endpoint: http://localhost:8529
