@@ -12,6 +12,6 @@ const (
 	keyLen  = 32
 )
 
-func Key(key string) []byte {
-	return argon2.Key([]byte(key), []byte(config.Viper.Secure.Salt), time, memory, threads, keyLen)
+func Key(key []byte) []byte {
+	return argon2.Key(key, []byte(config.Viper.Secure.Salt), time, memory, threads, keyLen)
 }

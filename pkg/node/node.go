@@ -10,6 +10,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes"
+	"github.com/spacelavr/pandora/pkg/node/runtime"
 	"github.com/spacelavr/pandora/pkg/rpc"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
@@ -51,6 +52,7 @@ func Daemon() bool {
 	}
 
 	env.SetStorage(stg)
+	env.SetRuntime(runtime.New())
 	env.SetBroker(brk)
 
 	go func() {

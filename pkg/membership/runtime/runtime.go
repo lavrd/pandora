@@ -4,9 +4,8 @@ import (
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/nacl"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/mail"
 )
 
 type Opts struct {
@@ -32,7 +31,7 @@ func (r *Runtime) AccountCreate(opts *request.AccountCreate) error {
 		return errors.AccountAlreadyExists
 	}
 
-	public, private := nacl.GenerateKeys()
+	public, private := ed25519.GenerateKeys()
 
 	acc = &types.Account{
 		Meta: &types.AccountMeta{
@@ -49,9 +48,9 @@ func (r *Runtime) AccountCreate(opts *request.AccountCreate) error {
 		return err
 	}
 
-	if err = mail.SendAccountCreated(*opts.Email, public); err != nil {
-		return err
-	}
+	// if err = mail.SendAccountCreated(*opts.Email, public); err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

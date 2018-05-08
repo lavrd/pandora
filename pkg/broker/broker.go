@@ -10,6 +10,10 @@ import (
 const (
 	SCAccount = "SCAccount"
 	SFAccount = "SFAccount"
+	SCBlock   = "SCBlock"
+	SNBlock   = "SNBlock"
+
+	QCBlock = "QCBlock"
 )
 
 // Broker
@@ -74,6 +78,14 @@ func (b *Broker) Request(subject string, message, data interface{}) error {
 // Close close connection with broker server
 func (b *Broker) Close() {
 	b.conn.Close()
+}
+
+func (b *Broker) QSubscribe(subject, queue string, ch interface{}) error {
+	if _, err := b.conn.BindRecvQueueChan(subject, queue, ch); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
 }
 
 // Subscribe bind receive channel to subject

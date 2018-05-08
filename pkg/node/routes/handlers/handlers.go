@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/spacelavr/pandora/pkg/node/distribution"
+	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -13,7 +15,7 @@ func HealthH(w http.ResponseWriter, _ *http.Request) {
 	errors.NotImplemented().Http(w)
 }
 
-func NewAccountH(w http.ResponseWriter, r *http.Request) {
+func AccountCreateH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.AccountCreate{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
@@ -27,7 +29,7 @@ func NewAccountH(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func FetchAccountH(w http.ResponseWriter, r *http.Request) {
+func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.AccountFetch{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
@@ -41,14 +43,30 @@ func FetchAccountH(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NewCertificateH(w http.ResponseWriter, _ *http.Request) {
+func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertificateIssue{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	if err := distribution.CertificateIssue(opts); err != nil {
+		errors.InternalServerError().Http(w)
+	}
+}
+
+func CertificateViewH(w http.ResponseWriter, _ *http.Request) {
 	errors.NotImplemented().Http(w)
 }
 
-func FetchCertificateH(w http.ResponseWriter, _ *http.Request) {
+func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
 	errors.NotImplemented().Http(w)
 }
 
-func VerifyCertificateH(w http.ResponseWriter, _ *http.Request) {
-	errors.NotImplemented().Http(w)
+func BlockchainH(w http.ResponseWriter, _ *http.Request) {
+	var (
+		r = env.GetRuntime()
+	)
+
+	response.Ok(r.Blockchain()).Http(w)
 }

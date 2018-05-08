@@ -56,3 +56,33 @@ func (ac *AccountFetch) DecodeAndValidate(reader io.Reader) *errors.Response {
 	}
 	return ac.Validate()
 }
+
+// CertificateIssue
+type CertificateIssue struct {
+	PublicKey   *string `json:"public_key"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+}
+
+// Validate validate incoming data for issue certificate
+func (ci *CertificateIssue) Validate() *errors.Response {
+	switch {
+	case ci.PublicKey == nil || !validator.IsPublicKey(*ci.PublicKey):
+		return errors.BadParameter("public_key")
+	case ci.Title == nil || len(*ci.Title) == 0:
+		return errors.BadParameter("title")
+	case ci.Description == nil:
+		*ci.Description = ""
+		fallthrough
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for issue certificate
+func (ci *CertificateIssue) DecodeAndValidate(reader io.Reader) *errors.Response {
+	if err := json.NewDecoder(reader).Decode(ci); err != nil {
+		return errors.InvalidJSON()
+	}
+	return ci.Validate()
+}

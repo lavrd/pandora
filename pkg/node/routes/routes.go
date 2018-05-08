@@ -9,10 +9,11 @@ var (
 	// Routes
 	Routes = []http.Route{
 		{Path: "/health", Method: http.GET, Middleware: nil, Handler: handlers.HealthH},
-		{Path: "/account/create", Method: http.POST, Middleware: nil, Handler: handlers.NewAccountH},
-		{Path: "/account/fetch", Method: http.POST, Middleware: nil, Handler: handlers.FetchAccountH},
-		{Path: "/cert/new", Method: http.POST, Middleware: nil, Handler: handlers.NewCertificateH},
-		{Path: "/cert/fetch", Method: http.GET, Middleware: nil, Handler: handlers.FetchCertificateH},
-		{Path: "/cert/verify", Method: http.GET, Middleware: nil, Handler: handlers.VerifyCertificateH},
+		{Path: "/account/create", Method: http.POST, Middleware: nil, Handler: handlers.AccountCreateH},
+		{Path: "/account/fetch", Method: http.POST, Middleware: nil, Handler: handlers.AccountFetchH},
+		{Path: "/cert/issue", Method: http.POST, Middleware: nil, Handler: handlers.CertificateIssueH},
+		{Path: "/cert/view", Method: http.GET, Middleware: nil, Handler: handlers.CertificateViewH},
+		{Path: "/cert/verify", Method: http.POST, Middleware: nil, Handler: handlers.CertificateVerifyH},
+		{Path: "/blockchain", Method: http.GET, Middleware: nil, Handler: handlers.BlockchainH},
 	}
 )

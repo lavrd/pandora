@@ -3,19 +3,16 @@ package nacl
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"io"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/argon2"
 	"golang.org/x/crypto/nacl/secretbox"
-	"golang.org/x/crypto/nacl/sign"
 )
 
 const (
-	SecretKeySize  = 32
-	NonceSize      = 24
-	PublicKeySize  = 32
-	PrivateKeySize = 64
+	SecretKeySize = 32
+	NonceSize     = 24
 )
 
 func key() [SecretKeySize]byte {
@@ -24,6 +21,7 @@ func key() [SecretKeySize]byte {
 	)
 
 	keyBytes, _ := hex.DecodeString(config.Viper.Secure.Key)
+	keyBytes = argon2.Key(keyBytes)
 
 	copy(key[:], keyBytes)
 
@@ -59,21 +57,4 @@ func Open(encrypted []byte) []byte {
 	}
 
 	return decrypted
-}
-
-func GenerateKeys() (string, string) {
-	public, private, _ := sign.GenerateKey(rand.Reader)
-	return fmt.Sprintf("%x", public)[1:], fmt.Sprintf("%x", private)[1:]
-}
-
-func Sign(msg string, key *[PrivateKeySize]byte) string {
-	signature := sign.Sign(nil, []byte(msg), key)
-	return fmt.Sprintf("%x", signature)
-}
-
-func Verify(signature string, key *[PublicKeySize]byte) bool {
-	buf, _ := hex.DecodeString(signature)
-
-	_, ok := sign.Open(nil, buf, key)
-	return ok
 }

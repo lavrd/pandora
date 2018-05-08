@@ -5,11 +5,17 @@ import (
 	"fmt"
 )
 
-// Sum calculate a checksum
-func Sum(p string) string {
+func sum(p []byte) []byte {
 	h := sha256.New()
-	h.Write([]byte(p))
+	h.Write(p)
 	sum := h.Sum(nil)
+	return sum
+}
 
-	return fmt.Sprintf("%x", sum)
+func SumString(p []byte) string {
+	return fmt.Sprintf("%x", sum(p))
+}
+
+func SumBytes(p []byte) []byte {
+	return sum(p)
 }

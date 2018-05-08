@@ -68,7 +68,8 @@ var (
 			Tracker struct {
 				Endpoint string
 			}
-			Port int
+			Port     int
+			FullName string
 			Backup struct {
 				File string
 			}

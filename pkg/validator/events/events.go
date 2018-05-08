@@ -1,32 +1,35 @@
 package events
 
 import (
+	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/validator/env"
 )
 
 // Listen listen for events
 func Listen() error {
 	var (
-		chReadNewBlock = make(chan *types.Block)
-		chSendNewBlock = make(chan *types.Block)
+		brk       = env.GetBroker()
+		chrCBlock = make(chan *types.Block)
+		chsNBlock = make(chan *types.Block)
 	)
 
-	// if err := brk.Subscribe(broker.SBlock, chReadNewBlock); err != nil {
-	// 	return err
-	// }
-	//
-	// if err := brk.Publish(broker.SBlock, chSendNewBlock); err != nil {
-	// 	return err
-	// }
+	if err := brk.Subscribe(broker.SCBlock, chrCBlock); err != nil {
+		return err
+	}
+
+	if err := brk.Publish(broker.SNBlock, chsNBlock); err != nil {
+		return err
+	}
 
 	for {
 		select {
-		case block, ok := <-chReadNewBlock:
+		case block, ok := <-chrCBlock:
 			if !ok {
 				return nil
 			}
 
-			chSendNewBlock <- block
+			chsNBlock <- block
 		}
 	}
 }

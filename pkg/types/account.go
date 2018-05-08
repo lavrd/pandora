@@ -1,5 +1,9 @@
 package types
 
+import (
+	"golang.org/x/crypto/ed25519"
+)
+
 // Session
 type Session struct {
 	Token string `json:"token"`
@@ -7,9 +11,9 @@ type Session struct {
 
 // Account
 type Account struct {
-	PublicKey string         `json:"public_key"`
-	Secure    *AccountSecure `json:"secure,omitempty"`
-	Meta      *AccountMeta   `json:"meta"`
+	PublicKey ed25519.PublicKey `json:"public_key"`
+	Secure    *AccountSecure    `json:"secure,omitempty"`
+	Meta      *AccountMeta      `json:"meta"`
 }
 
 // AccountMeta
@@ -26,10 +30,5 @@ func (acc *Account) Public() *Account {
 
 // AccountSecure
 type AccountSecure struct {
-	PrivateKey string `json:"private_key"`
-}
-
-// AccountRecovery
-type AccountRecovery struct {
-	Password string `json:"password"`
+	PrivateKey ed25519.PrivateKey `json:"private_key"`
 }

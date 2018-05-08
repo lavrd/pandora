@@ -49,6 +49,7 @@ tracker:
 # node
 node:
   port: 2004
+  FullName: State University of Aerospace Instrumentation
 
 # discovery
 discovery:

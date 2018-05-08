@@ -14,16 +14,8 @@ type Block struct {
 	Cert      *Certificate `json:"cert,omitempty"`
 }
 
-// String returns block as a string
-// if only fmt.Sprint -> stack overflow
-func (b Block) String() string {
-	return fmt.Sprintf("%s%s%d%s%v",
-		b.Hash,
-		b.PrevHash,
-		b.Index,
-		b.Timestamp.String(),
-		b.Cert,
-	)
+func (b *Block) Bytes() []byte {
+	return []byte(fmt.Sprint(b))
 }
 
 // Blockchain

@@ -9,13 +9,40 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
+var (
+	chsCBlock = make(chan *types.Block)
+)
+
 // Listen listen for events
 func Listen() error {
-	var ()
+	var (
+		brk       = env.GetBroker()
+		rt        = env.GetRuntime()
+		chrNBlock = make(chan *types.Block)
+	)
+
+	if err := brk.Publish(broker.SCBlock, chsCBlock); err != nil {
+		return err
+	}
+
+	if err := brk.QSubscribe(broker.SNBlock, broker.QCBlock, chrNBlock); err != nil {
+		return err
+	}
 
 	for {
-		select {}
+		select {
+		case block, ok := <-chrNBlock:
+			if !ok {
+				return nil
+			}
+
+			rt.Add(block)
+		}
 	}
+}
+
+func PublishNBlock(block *types.Block) {
+	chsCBlock <- block
 }
 
 func ReqSCAccount(opts *request.AccountCreate) *errors.Response {

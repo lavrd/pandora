@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -15,6 +16,10 @@ type Certificate struct {
 // Public returns public certificate info
 func (cert *Certificate) Public() *Certificate {
 	return cert
+}
+
+func (cert *Certificate) Bytes() []byte {
+	return []byte(fmt.Sprint(cert))
 }
 
 // CertificateMeta

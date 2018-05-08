@@ -25,7 +25,6 @@ func Created() *Response {
 // Http send http response
 func (r *Response) Http(w http.ResponseWriter) {
 	w.WriteHeader(r.code)
-	log.Debug(r.data)
 	if err := json.NewEncoder(w).Encode(r.data); err != nil {
 		log.Error(err)
 	}
