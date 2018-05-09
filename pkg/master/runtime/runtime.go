@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 )
 
 type Runtime struct {
@@ -13,7 +12,7 @@ type Runtime struct {
 
 func New() *Runtime {
 	rt := &Runtime{}
-	rt.blockchain = types.Blockchain{rt.Genesis()}
+	// rt.blockchain = types.Blockchain{rt.Genesis()}
 	return rt
 }
 
@@ -29,7 +28,7 @@ func (_ *Runtime) Genesis() *types.Block {
 		Timestamp: time.Now().UTC(),
 	}
 
-	block.Hash = sha256.SumString(block.Bytes())
+	// block.Hash = sha256.SumString(block.Bytes())
 
 	return block
 }

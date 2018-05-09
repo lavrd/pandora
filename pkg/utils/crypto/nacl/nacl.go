@@ -20,7 +20,8 @@ func key() [SecretKeySize]byte {
 		key [SecretKeySize]byte
 	)
 
-	keyBytes, _ := hex.DecodeString(config.Viper.Secure.Key)
+	// todo not only node
+	keyBytes, _ := hex.DecodeString(config.Viper.Node.SecretKey)
 	keyBytes = argon2.Key(keyBytes)
 
 	copy(key[:], keyBytes)

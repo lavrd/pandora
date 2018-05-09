@@ -7,9 +7,13 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/membership/pb"
 	"github.com/spacelavr/pandora/pkg/node/env"
+	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes"
-	"github.com/spacelavr/pandora/pkg/rpc"
+	"github.com/spacelavr/pandora/pkg/node/routes/request"
+	"github.com/spacelavr/pandora/pkg/node/rpc"
+	"github.com/spacelavr/pandora/pkg/node/runtime"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -25,16 +29,30 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	// todo when start node need auth with membership
+	candidate := request.Candidate{
+		FullName: &config.Viper.Node.FullName,
+		Email:    &config.Viper.Node.Email,
+	}
+	if err := candidate.Validate(); err != nil {
+		log.Fatal(err.Message)
+	}
 
-	brkOpts, err := rpc.GetBrokerOpts(config.Viper.Tracker.Endpoint)
+	if err := rpc.Register(&pb.Candidate{
+		Email:    *candidate.Email,
+		FullName: *candidate.FullName,
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	netOpts, err := rpc.Network()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	brk, err := broker.Connect(&broker.Opts{
-		Endpoint: brkOpts.Endpoint,
-		User:     brkOpts.User,
-		Password: brkOpts.Password,
+		Endpoint: netOpts.Broker.Endpoint,
+		User:     netOpts.Broker.User,
+		Password: netOpts.Broker.Password,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -52,8 +70,8 @@ func Daemon() bool {
 	}
 
 	env.SetStorage(stg)
-	env.SetRuntime(runtime.New())
 	env.SetBroker(brk)
+	env.SetRuntime(runtime.New())
 
 	go func() {
 		if err := events.Listen(); err != nil {
@@ -62,7 +80,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := http.Listen(config.Viper.Node.Port, routes.Routes); err != nil {
+		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes); err != nil {
 			log.Fatal(err)
 		}
 	}()

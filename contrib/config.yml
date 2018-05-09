@@ -5,8 +5,8 @@ runtime:
 
 # mail
 mail:
-  send: false
-  token: token
+  send: true
+  token: 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
   endpoint: https://api.sendgrid.com/v3/mail/send
   email: pandora@doesnotexist.system
   name: Pandora
@@ -34,7 +34,7 @@ broker:
 
 # membership
 membership:
-  endpoint string
+  endpoint: localhost:2003
 
 # validator
 master:
@@ -45,6 +45,7 @@ node:
   endpoint: localhost:2004
   full_name: State University of Aerospace Instrumentation
   secret_key: secret
+  email: guap@doesnotexists.system
 
 # discovery
 discovery:

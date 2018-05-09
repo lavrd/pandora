@@ -9,7 +9,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/master"
 	"github.com/spacelavr/pandora/pkg/membership"
 	"github.com/spacelavr/pandora/pkg/node"
-	"github.com/spacelavr/pandora/pkg/tracker"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

@@ -42,8 +42,9 @@ var (
 		}
 		Node struct {
 			Endpoint  string
-			FullName  string
-			SecretKey string
+			Email     string
+			FullName  string `mapstructure:"full_name"`
+			SecretKey string `mapstructure:"secret_key"`
 		}
 		Discovery struct {
 			Endpoint string

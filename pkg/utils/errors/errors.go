@@ -5,12 +5,9 @@ import (
 )
 
 var (
-	AccountAlreadyExists    = New("AccountAlreadyExists")
-	InvalidCredentials      = New("InvalidCredentials")
-	SendMailError           = New("SendMailError")
-	UnexpectedSigningMethod = New("UnexpectedSigningMethod")
-	DocumentNotFound        = New("DocumentNotFound")
-	IssueCertToNonRecipient = New("IssueCertToNonRecipient")
+	AlreadyExists = New("AlreadyExists")
+	SendMailError = New("SendMailError")
+	NotFound      = New("NotFound")
 )
 
 // New returns new errors with text

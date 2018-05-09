@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -44,8 +43,8 @@ func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 }
 
 // Listen start listen http requests
-func Listen(port int, routes []Route) error {
-	log.Debugf("listen http server on :%d", port)
+func Listen(endpoint string, routes []Route) error {
+	log.Debugf("listen http server on :%s", endpoint)
 
 	router := mux.NewRouter()
 
@@ -58,7 +57,7 @@ func Listen(port int, routes []Route) error {
 
 	srv := &http.Server{
 		Handler:      middleware.Logger(router),
-		Addr:         fmt.Sprintf(":%d", port),
+		Addr:         endpoint,
 		ReadTimeout:  time.Second * 5,
 		WriteTimeout: time.Second * 5,
 	}

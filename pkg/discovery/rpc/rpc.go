@@ -14,7 +14,19 @@ import (
 type server struct{}
 
 func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.Net, error) {
-	return &pb.Net{}, nil
+	return &pb.Net{
+		Broker: &pb.Broker{
+			Endpoint: config.Viper.Broker.Endpoint,
+			User:     config.Viper.Broker.User,
+			Password: config.Viper.Broker.Password,
+		},
+		Membership: &pb.Membership{
+			Endpoint: config.Viper.Membership.Endpoint,
+		},
+		Master: &pb.Master{
+			Endpoint: config.Viper.Master.Endpoint,
+		},
+	}, nil
 }
 
 func Listen() error {

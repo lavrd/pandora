@@ -12,7 +12,7 @@ type (
 	}
 
 	MasterBlock struct {
-		*block
+		*Block
 		CertChain CertChain `json:"cert_chain"`
 	}
 

@@ -26,7 +26,7 @@ func (s *Storage) AccountFetchByEmail(email string) (*types.Account, error) {
 
 	_, err := s.Exec(query, vars, acc)
 	if err != nil {
-		if err == errors.DocumentNotFound {
+		if err == errors.NotFound {
 			return nil, nil
 		}
 		return nil, err
@@ -50,7 +50,7 @@ func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
 
 	_, err := s.Exec(query, vars, acc)
 	if err != nil {
-		if err == errors.DocumentNotFound {
+		if err == errors.NotFound {
 			return nil, nil
 		}
 		return nil, err
@@ -84,7 +84,7 @@ func (s *Storage) AccountUpdate(acc *types.Account) error {
 
 	_, err := s.Exec(query, vars, acc)
 	if err != nil {
-		if err == errors.DocumentNotFound {
+		if err == errors.NotFound {
 			return nil
 		}
 		return err

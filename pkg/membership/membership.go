@@ -7,7 +7,6 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/membership/env"
-	"github.com/spacelavr/pandora/pkg/membership/events"
 	"github.com/spacelavr/pandora/pkg/membership/rpc"
 	"github.com/spacelavr/pandora/pkg/membership/runtime"
 	"github.com/spacelavr/pandora/pkg/storage"
@@ -33,17 +32,11 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 
-	// todo stg move to env
-	env.SetRuntime(runtime.New(&runtime.Opts{Storage: stg}))
+	env.SetStorage(stg)
+	env.SetRuntime(runtime.New())
 
 	go func() {
 		if err := rpc.Listen(); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	go func() {
-		if err := events.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()

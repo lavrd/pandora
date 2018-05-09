@@ -195,7 +195,7 @@ func (s *Storage) Exec(query string, vars map[string]interface{}, document inter
 	defer cursor.Close()
 
 	if cursor.Count() == 0 {
-		return nil, errors.DocumentNotFound
+		return nil, errors.NotFound
 	}
 
 	for {

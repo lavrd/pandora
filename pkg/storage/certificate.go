@@ -36,7 +36,7 @@ func (s *Storage) CertificateFetch(id string) (*types.Certificate, error) {
 
 	_, err := s.Exec(query, vars, cert)
 	if err != nil {
-		if err == errors.DocumentNotFound {
+		if err == errors.NotFound {
 			return nil, nil
 		}
 		return nil, err
