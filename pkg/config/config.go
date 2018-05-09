@@ -7,9 +7,6 @@ var (
 			Verbose bool
 			Clean   bool
 		}
-		Dashboard struct {
-			Template string
-		}
 		Mail struct {
 			Send     bool
 			Token    string
@@ -17,33 +14,14 @@ var (
 			Email    string
 			Name     string
 			Templates struct {
-				Account struct {
-					Created  string
-					Recovery string
-				}
+				Credentials string
 			}
 			Subjects struct {
-				Account struct {
-					Created  string
-					Recovery string
-				}
+				Credentials string
 			}
 		}
-		Validator struct {
-			Tracker string
-			Broker struct {
-				Endpoint string
-				User     string
-				Password string
-			}
-		}
-		Membership struct {
-			Tracker struct {
-				Endpoint string
-			}
-		}
-		Tracker struct {
-			Endpoint string
+		Dashboard struct {
+			Template string
 		}
 		Database struct {
 			Endpoint string
@@ -56,35 +34,19 @@ var (
 			User     string
 			Password string
 		}
-		Secure struct {
-			Key  string
-			Salt string
-			Jwt  string
+		Membership struct {
+			Endpoint string
+		}
+		Master struct {
+			Endpoint string
 		}
 		Node struct {
-			Database struct {
-				Endpoint string
-				User     string
-				Password string
-				Database string
-			}
-			Tracker struct {
-				Endpoint string
-			}
-			Port     int
-			FullName string
-			Backup struct {
-				File string
-			}
-			Discovery struct {
-				Endpoint string
-			}
+			Endpoint  string
+			FullName  string
+			SecretKey string
 		}
 		Discovery struct {
-			Port int
-		}
-		Api struct {
-			Port int
+			Endpoint string
 		}
 	}{}
 )

@@ -5,23 +5,20 @@ import (
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
-	pb "github.com/spacelavr/pandora/pkg/proto"
+	"github.com/spacelavr/pandora/pkg/master/pb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
 )
 
 type server struct{}
 
-func (s *server) GetBrokerOpts(ctx context.Context, in *pb.Empty) (*pb.BrokerOpts, error) {
-	return &pb.BrokerOpts{
-		Endpoint: config.Viper.Broker.Endpoint,
-		User:     config.Viper.Broker.User,
-		Password: config.Viper.Broker.Password,
-	}, nil
+func (s *server) Candidate(ctx context.Context, in *pb.Block) (*pb.Empty, error) {
+	return &pb.Empty{}, nil
 }
 
 func Listen() error {
-	listen, err := net.Listen("tcp", config.Viper.Tracker.Endpoint)
+	listen, err := net.Listen(network.TCP, config.Viper.Master.Endpoint)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -31,7 +28,7 @@ func Listen() error {
 	s := grpc.NewServer()
 	defer s.GracefulStop()
 
-	pb.RegisterTrackerServer(s, &server{})
+	pb.RegisterMasterServer(s, &server{})
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)

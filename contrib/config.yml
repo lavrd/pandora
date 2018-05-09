@@ -11,13 +11,9 @@ mail:
   email: pandora@doesnotexist.system
   name: Pandora
   templates:
-    account:
-      created: ./pkg/utils/mail/templates/account/created.html
-      recovery: ./pkg/utils/mail/templates/account/recovery.html
+    credentials: ./pkg/utils/mail/templates/credentials.html
   subjects:
-    account:
-      created: Pandora account is created
-      recovery: Pandora account recovery
+    credentials: Credentials
 
 # dashboard
 dashboard:
@@ -36,29 +32,20 @@ broker:
   user: root
   password: root
 
-# secure
-secure:
-  key: secret
-  salt: salt
-  jwt: jwt
+# membership
+membership:
+  endpoint string
 
 # validator
-validator:
-  tracker: localhost:2001
-
-# tracker
-tracker:
-  endpoint: localhost:2001
+master:
+  endpoint: localhost:2002
 
 # node
 node:
-  port: 2004
-  FullName: State University of Aerospace Instrumentation
+  endpoint: localhost:2004
+  full_name: State University of Aerospace Instrumentation
+  secret_key: secret
 
 # discovery
 discovery:
-  port: 2002
-
-# api
-api:
-  port: 2001
+  endpoint: localhost:2001

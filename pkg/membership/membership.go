@@ -5,12 +5,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/membership/events"
+	"github.com/spacelavr/pandora/pkg/membership/rpc"
 	"github.com/spacelavr/pandora/pkg/membership/runtime"
-	"github.com/spacelavr/pandora/pkg/rpc"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -24,20 +23,6 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	brkOpts, err := rpc.GetBrokerOpts(config.Viper.Tracker.Endpoint)
-	if err != nil {
-		log.Fatal(err)
-	}
-	brk, err := broker.Connect(&broker.Opts{
-		Endpoint: brkOpts.Endpoint,
-		User:     brkOpts.User,
-		Password: brkOpts.Password,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer brk.Close()
-
 	stg, err := storage.Connect(&storage.Opts{
 		Endpoint: config.Viper.Database.Endpoint,
 		Database: config.Viper.Database.Database,
@@ -48,8 +33,14 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 
-	env.SetBroker(brk)
+	// todo stg move to env
 	env.SetRuntime(runtime.New(&runtime.Opts{Storage: stg}))
+
+	go func() {
+		if err := rpc.Listen(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	go func() {
 		if err := events.Listen(); err != nil {

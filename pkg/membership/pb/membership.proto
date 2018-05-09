@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb;
+
+service Membership {
+  rpc Register (Candidate) returns (Empty) {}
+  rpc Fetch (Public) returns (Account) {}
+}
+
+message Public {
+  string public_key = 1;
+}
+
+message Account {
+  AccountMeta meta = 1;
+  string public_key = 2;
+}
+
+message AccountMeta {
+  string email = 1;
+  string full_name = 2;
+}
+
+message Candidate {
+  string email = 1;
+  string full_name = 2;
+}
+
+message Empty {}

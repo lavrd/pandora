@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb;
+
+service Discovery {
+  rpc Network (Empty) returns (Net) {}
+}
+
+message Net {
+  Broker broker = 1;
+  Membership membership = 2;
+  Master master = 3;
+}
+
+message Broker {
+  string endpoint = 1;
+  string user = 2;
+  string password = 3;
+}
+
+message Membership {
+  string endpoint = 1;
+}
+
+message Master {
+  string endpoint = 1;
+}
+
+message Empty {}

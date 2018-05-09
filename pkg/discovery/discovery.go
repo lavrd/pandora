@@ -1,11 +1,11 @@
-package tracker
+package discovery
 
 import (
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/tracker/rpc"
+	"github.com/spacelavr/pandora/pkg/discovery/rpc"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 

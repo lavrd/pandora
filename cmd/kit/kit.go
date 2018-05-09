@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/discovery"
 	"github.com/spacelavr/pandora/pkg/master"
 	"github.com/spacelavr/pandora/pkg/membership"
 	"github.com/spacelavr/pandora/pkg/node"
@@ -50,12 +51,12 @@ var (
 				daemons = map[string]func() bool{
 					"node":       node.Daemon,
 					"master":     master.Daemon,
-					"tracker":    tracker.Daemon,
+					"discovery":  discovery.Daemon,
 					"membership": membership.Daemon,
 				}
 			)
 
-			components := []string{"node", "master", "tracker", "membership"}
+			components := []string{"node", "master", "discovery", "membership"}
 
 			if len(args) > 0 {
 				components = args
