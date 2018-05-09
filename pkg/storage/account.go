@@ -38,17 +38,10 @@ func (s *Storage) AccountFetchByEmail(email string) (*types.Account, error) {
 // AccountFetchByPublic fetch account from storage by public key
 func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
 	var (
-		acc   = &types.Account{}
-		query = fmt.Sprintf(
-			"for a in %s filter a.public_key == @public return a",
-			CAccount,
-		)
-		vars = map[string]interface{}{
-			"public": public,
-		}
+		acc = &types.Account{}
 	)
 
-	_, err := s.Exec(query, vars, acc)
+	_, err := s.Read(public, CAccount, acc)
 	if err != nil {
 		// todo correct or not?
 		if err == errors.NotFound {
@@ -64,30 +57,7 @@ func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
 func (s *Storage) AccountSave(acc *types.Account) error {
 	_, err := s.Write(CAccount, acc)
 	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AccountUpdate update account in storage
-func (s *Storage) AccountUpdate(acc *types.Account) error {
-	var (
-		query = fmt.Sprintf(
-			"for a in %s filter a.meta.email == @email replace a with @acc in %%s",
-			CAccount,
-		)
-		vars = map[string]interface{}{
-			"email": acc.Meta.Email,
-			"acc":   acc,
-		}
-	)
-
-	_, err := s.Exec(query, vars, acc)
-	if err != nil {
-		if err == errors.NotFound {
-			return nil
-		}
+		// todo need handle error that already exists or not? check this level up
 		return err
 	}
 

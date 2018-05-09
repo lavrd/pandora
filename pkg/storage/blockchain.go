@@ -8,11 +8,11 @@ const (
 	CBlockchain = "CBlockchain"
 )
 
-func (s *Storage) BlockSave(block *types.CertBlock) error {
-	// 	_, err := s.Write(CBlockchain, block)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	//
+func (s *Storage) SaveCertBlock(block *types.CertBlock) error {
+	_, err := s.Write(CBlockchain, block)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

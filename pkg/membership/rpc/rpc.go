@@ -5,6 +5,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/membership/distribution"
 	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/pb"
@@ -52,7 +53,7 @@ func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, erro
 }
 
 func Listen() error {
-	listen, err := net.Listen(network.TCP, ":2003")
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Membership.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

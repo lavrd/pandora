@@ -17,6 +17,7 @@ type (
 	}
 
 	Block struct {
+		Key       string    `json:"_key"`
 		Index     int       `json:"index"`
 		Hash      string    `json:"hash"`
 		PrevHash  string    `json:"prev_hash"`

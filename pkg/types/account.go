@@ -6,6 +6,7 @@ type (
 	}
 
 	Account struct {
+		Key       string         `json:"_key"`
 		PublicKey string         `json:"public_key"`
 		Secure    *AccountSecure `json:"secure,omitempty"`
 		Meta      *AccountMeta   `json:"meta"`

@@ -113,13 +113,13 @@ func (s *Storage) InitCollections(db *driver.Database) error {
 		}
 	}
 
-	ok, err = (*db).CollectionExists(ctx, CCertificate)
+	ok, err = (*db).CollectionExists(ctx, CCertificates)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err := (*db).CreateCollection(ctx, CCertificate, nil)
+		_, err := (*db).CreateCollection(ctx, CCertificates, nil)
 		if err != nil {
 			log.Error(err)
 			return err
@@ -208,6 +208,31 @@ func (s *Storage) Exec(query string, vars map[string]interface{}, document inter
 			return nil, err
 		}
 	}
+}
+
+func (s *Storage) Read(key, collection string, document interface{}) (*driver.DocumentMeta, error) {
+	ctx := context.Background()
+
+	db, err := s.Database()
+	if err != nil {
+		return nil, err
+	}
+
+	col, err := db.Collection(ctx, collection)
+	if err != nil {
+		return nil, nil
+	}
+
+	meta, err := col.ReadDocument(ctx, key, document)
+	if err != nil {
+		if driver.IsNotFound(err) {
+			return nil, errors.NotFound
+		}
+
+		return nil, err
+	}
+
+	return &meta, nil
 }
 
 // Write write document to collection

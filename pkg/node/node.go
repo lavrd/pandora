@@ -48,6 +48,8 @@ func Daemon() bool {
 		}
 	}
 
+
+
 	t := time.Now()
 	netOpts, err := rpc.Network()
 	if err != nil {
@@ -98,7 +100,9 @@ func Daemon() bool {
 			}
 		}
 	}()
-
+	if err := rpc.Node(); err != nil {
+		log.Fatal(err)
+	}
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")
 	return true

@@ -7,6 +7,7 @@ import (
 
 type (
 	Certificate struct {
+		Key       string           `json:"_key"`
 		Id        string           `json:"id"`
 		Meta      *CertificateMeta `json:"meta"`
 		Issuer    *Issuer          `json:"issuer"`

@@ -9,6 +9,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/master/events"
+	"github.com/spacelavr/pandora/pkg/master/rpc"
 	"github.com/spacelavr/pandora/pkg/master/runtime"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -37,15 +38,16 @@ func Daemon() bool {
 
 	env.SetBroker(brk)
 	env.SetRuntime(rt)
-
-	// go func() {
-	// 	if err := rpc.Listen(); err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// }()
+	env.SetEvents(events.New(brk))
 
 	go func() {
-		if err := events.Listen(); err != nil {
+		if err := rpc.Listen(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	go func() {
+		if err := env.GetEvents().Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()

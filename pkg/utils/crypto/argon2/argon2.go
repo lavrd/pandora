@@ -1,7 +1,9 @@
 package argon2
 
 import (
-	"github.com/spacelavr/pandora/pkg/config"
+	"crypto/rand"
+	"io"
+
 	"golang.org/x/crypto/argon2"
 )
 
@@ -10,8 +12,21 @@ const (
 	memory  = 32 * 2014
 	threads = 4
 	keyLen  = 32
+
+	saltSize = 256
 )
 
 func Key(key []byte) []byte {
-	return argon2.Key(key, []byte(config.Viper.Secure.Salt), time, memory, threads, keyLen)
+	var (
+		nonce = [saltSize]byte{}
+		salt  []byte
+	)
+
+	if _, err := io.ReadFull(rand.Reader, nonce[:]); err != nil {
+		panic(err)
+	}
+
+	copy(salt, nonce[:])
+
+	return argon2.Key(key, salt, time, memory, threads, keyLen)
 }

@@ -72,6 +72,24 @@ func FetchAccount(key *pb.PublicKey) (*pb.Account, error) {
 	return r, nil
 }
 
+func Node() error {
+	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithInsecure())
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	defer cc.Close()
+
+	c := pb.NewMasterClient(cc)
+
+	_, err = c.Node(context.Background(), &pb.PublicKey{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // todo rename and rename at .proto
 func Network() (*pb.NetOpts, error) {
 	t := time.Now()

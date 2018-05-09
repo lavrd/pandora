@@ -30,6 +30,7 @@ message Candidate {
 
 service Master {
   rpc Candidate (Block) returns (Empty) {}
+  rpc Node (PublicKey) returns (Empty) {}
 }
 
 message Block {

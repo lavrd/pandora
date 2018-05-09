@@ -1,19 +1,14 @@
 package broker
 
 import (
-	"time"
-
 	"github.com/nats-io/go-nats"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 const (
-	SCAccount = "SCAccount"
-	SFAccount = "SFAccount"
-	SCBlock   = "SCBlock"
-	SNBlock   = "SNBlock"
+	SMasterBlock = "SMasterBLock"
 
-	QCBlock = "QCBlock"
+	QMasterBlock = "QMasterBlock"
 )
 
 // Broker
@@ -46,33 +41,6 @@ func Connect(opts *Opts) (*Broker, error) {
 	}
 
 	return &Broker{conn}, nil
-}
-
-// Reply reply to subject
-func (b *Broker) Reply(subject string, handler func(m *nats.Msg)) error {
-	if _, err := b.conn.Subscribe(subject, handler); err != nil {
-		log.Error(err)
-		return err
-	}
-	return nil
-}
-
-func (b *Broker) SendReply(reply string, data interface{}) error {
-	if err := b.conn.Publish(reply, data); err != nil {
-		log.Error(err)
-		return err
-	}
-
-	return nil
-}
-
-// Request request by subject
-func (b *Broker) Request(subject string, message, data interface{}) error {
-	if err := b.conn.Request(subject, message, data, time.Second*1); err != nil {
-		log.Error(err)
-		return err
-	}
-	return nil
 }
 
 // Close close connection with broker server

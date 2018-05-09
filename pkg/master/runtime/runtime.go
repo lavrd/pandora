@@ -4,15 +4,22 @@ import (
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 )
 
 type Runtime struct {
-	blockchain types.MasterChain
+	// last index of master block
+	LIMB int
+	MC   types.MasterChain
 }
 
 func New() *Runtime {
-	rt := &Runtime{}
-	// rt.blockchain = types.Blockchain{rt.Genesis()}
+	rt := &Runtime{
+		LIMB: 0,
+	}
+
+	rt.MC = types.MasterChain{rt.GenesisMasterBlock()}
+
 	return rt
 }
 
@@ -20,15 +27,37 @@ func (rt *Runtime) Add() error {
 	return nil
 }
 
-// Genesis returns genesis block
-func (_ *Runtime) Genesis() *types.Block {
-	block := &types.Block{
-		PrevHash:  "",
-		Index:     0,
-		Timestamp: time.Now().UTC(),
+func (_ *Runtime) GenesisCertBlock() *types.CertBlock {
+	block := &types.CertBlock{
+		Block: &types.Block{
+			Index:     0,
+			PrevHash:  "",
+			Timestamp: time.Now().UTC(),
+		},
 	}
 
-	// block.Hash = sha256.SumString(block.Bytes())
+	hash := sha256.SumString(block.Bytes())
+
+	block.Hash = hash
+	block.Key = hash
+
+	return block
+}
+
+func (rt *Runtime) GenesisMasterBlock() *types.MasterBlock {
+	block := &types.MasterBlock{
+		Block: &types.Block{
+			Index:     0,
+			PrevHash:  "",
+			Timestamp: time.Now().UTC(),
+		},
+		CertChain: types.CertChain{rt.GenesisCertBlock()},
+	}
+
+	hash := sha256.SumString(block.Bytes())
+
+	block.Hash = hash
+	block.Key = hash
 
 	return block
 }

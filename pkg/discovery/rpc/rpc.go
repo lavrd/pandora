@@ -31,7 +31,7 @@ func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetOpts, error)
 }
 
 func Listen() error {
-	listen, err := net.Listen(network.TCP, ":2001")
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

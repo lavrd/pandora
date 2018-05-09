@@ -1,31 +1,34 @@
 package events
 
+import (
+	"github.com/spacelavr/pandora/pkg/broker"
+	"github.com/spacelavr/pandora/pkg/types"
+)
+
+type Events struct {
+	// todo :( not good
+	*broker.Broker
+	ChSMasterBlock chan *types.MasterBlock
+}
+
+func New(brk *broker.Broker) *Events {
+	return &Events{
+		Broker:         brk,
+		ChSMasterBlock: make(chan *types.MasterBlock),
+	}
+}
+
 // Listen listen for events
-func Listen() error {
-	// var (
-	// 	brk       = env.GetBroker()
-	// 	chrCBlock = make(chan *types.Block)
-	// 	chsNBlock = make(chan *types.Block)
-	// )
-	//
-	// if err := brk.Subscribe(broker.SCBlock, chrCBlock); err != nil {
-	// 	return err
-	// }
-	//
-	// if err := brk.Publish(broker.SNBlock, chsNBlock); err != nil {
-	// 	return err
-	// }
-	//
-	// for {
-	// 	select {
-	// 	case block, ok := <-chrCBlock:
-	// 		if !ok {
-	// 			return nil
-	// 		}
-	//
-	// 		chsNBlock <- block
-	// 	}
-	//
-	//}
-	return nil
+func (e *Events) Listen() error {
+	if err := e.Publish(broker.SMasterBlock, e.ChSMasterBlock); err != nil {
+		return err
+	}
+
+	for {
+		select {}
+	}
+}
+
+func (e *Events) PMasterBlock(block *types.MasterBlock) {
+	e.ChSMasterBlock <- block
 }
