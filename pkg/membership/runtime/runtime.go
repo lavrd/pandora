@@ -18,6 +18,7 @@ func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *types.Account {
 	publicKey, privateKey := ed25519.GenerateKeys()
 
 	return &types.Account{
+		Key: hex.EncodeToString(publicKey),
 		Meta: &types.AccountMeta{
 			Email:    candidate.Email,
 			FullName: candidate.FullName,

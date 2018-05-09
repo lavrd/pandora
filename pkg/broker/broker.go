@@ -7,8 +7,6 @@ import (
 
 const (
 	SMasterBlock = "SMasterBLock"
-
-	QMasterBlock = "QMasterBlock"
 )
 
 // Broker
@@ -48,6 +46,7 @@ func (b *Broker) Close() {
 	b.conn.Close()
 }
 
+// QSubscribe bind receive queue channel to subject
 func (b *Broker) QSubscribe(subject, queue string, ch interface{}) error {
 	if _, err := b.conn.BindRecvQueueChan(subject, queue, ch); err != nil {
 		log.Error(err)

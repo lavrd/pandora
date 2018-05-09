@@ -13,6 +13,7 @@ type (
 
 	MasterBlock struct {
 		*Block
+		PublicKey []byte    `json:"public_key"`
 		CertChain CertChain `json:"cert_chain"`
 	}
 

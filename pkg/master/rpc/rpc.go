@@ -5,9 +5,8 @@ import (
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/master/env"
+	"github.com/spacelavr/pandora/pkg/master/distribution"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
@@ -20,16 +19,7 @@ func (s *server) Candidate(ctx context.Context, in *pb.Block) (*pb.Empty, error)
 }
 
 func (s *server) Node(ctx context.Context, in *pb.PublicKey) (*pb.Empty, error) {
-	var (
-		e = env.GetEvents()
-	)
-
-	e.PMasterBlock(&types.MasterBlock{
-		Block: &types.Block{
-			Index: 999,
-		},
-	})
-
+	distribution.AddMasterBlock(in)
 	return &pb.Empty{}, nil
 }
 

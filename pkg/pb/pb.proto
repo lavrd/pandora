@@ -5,6 +5,7 @@ package pb;
 message Empty {}
 
 service Membership {
+  rpc Node (Candidate) returns (PublicKey) {}
   rpc Register (Candidate) returns (Empty) {}
   rpc Fetch (PublicKey) returns (Account) {}
 }

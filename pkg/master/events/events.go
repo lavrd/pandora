@@ -6,21 +6,21 @@ import (
 )
 
 type Events struct {
-	// todo :( not good
-	*broker.Broker
-	ChSMasterBlock chan *types.MasterBlock
+	chsMasterBlock chan *types.MasterBlock
 }
 
-func New(brk *broker.Broker) *Events {
+type Opts struct {
+	*broker.Broker
+}
+
+func New() *Events {
 	return &Events{
-		Broker:         brk,
-		ChSMasterBlock: make(chan *types.MasterBlock),
+		chsMasterBlock: make(chan *types.MasterBlock),
 	}
 }
 
-// Listen listen for events
-func (e *Events) Listen() error {
-	if err := e.Publish(broker.SMasterBlock, e.ChSMasterBlock); err != nil {
+func (e *Events) Listen(opts *Opts) error {
+	if err := opts.Broker.Publish(broker.SMasterBlock, e.chsMasterBlock); err != nil {
 		return err
 	}
 
@@ -30,5 +30,5 @@ func (e *Events) Listen() error {
 }
 
 func (e *Events) PMasterBlock(block *types.MasterBlock) {
-	e.ChSMasterBlock <- block
+	e.chsMasterBlock <- block
 }

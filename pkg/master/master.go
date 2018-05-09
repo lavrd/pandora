@@ -23,22 +23,19 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	brkOpts := &broker.Opts{
+	brk, err := broker.Connect(&broker.Opts{
 		Endpoint: config.Viper.Broker.Endpoint,
 		User:     config.Viper.Broker.User,
 		Password: config.Viper.Broker.Password,
-	}
-	brk, err := broker.Connect(brkOpts)
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer brk.Close()
 
-	rt := runtime.New()
-
 	env.SetBroker(brk)
-	env.SetRuntime(rt)
-	env.SetEvents(events.New(brk))
+	env.SetRuntime(runtime.New())
+	env.SetEvents(events.New())
 
 	go func() {
 		if err := rpc.Listen(); err != nil {
@@ -47,7 +44,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := env.GetEvents().Listen(); err != nil {
+		if err := env.GetEvents().Listen(&events.Opts{Broker: brk}); err != nil {
 			log.Fatal(err)
 		}
 	}()

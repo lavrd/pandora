@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
@@ -39,23 +38,21 @@ func Daemon() bool {
 		log.Fatal(err.Message)
 	}
 
-	if err := rpc.Register(&pb.Candidate{
+	// todo with either start or once?
+	key, err := rpc.NodeReg(&pb.Candidate{
 		Email:    *candidate.Email,
 		FullName: *candidate.FullName,
-	}); err != nil {
+	})
+	if err != nil {
 		if err != errors.AlreadyExists {
 			log.Fatal(err)
 		}
 	}
 
-
-
-	t := time.Now()
 	netOpts, err := rpc.Network()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debug(time.Since(t))
 
 	brk, err := broker.Connect(&broker.Opts{
 		Endpoint: netOpts.Broker.Endpoint,
@@ -100,9 +97,11 @@ func Daemon() bool {
 			}
 		}
 	}()
-	if err := rpc.Node(); err != nil {
+
+	if err := rpc.Node(key); err != nil {
 		log.Fatal(err)
 	}
+
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")
 	return true

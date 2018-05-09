@@ -14,18 +14,15 @@ import (
 )
 
 func Register(candidate *pb.Candidate) error {
-	t := time.Now()
 	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	defer cc.Close()
-	log.Debug(time.Since(t))
 
 	c := pb.NewMembershipClient(cc)
 
-	t = time.Now()
 	_, err = c.Register(context.Background(), candidate)
 	if err != nil {
 		st, ok := status.FromError(err)
@@ -39,9 +36,27 @@ func Register(candidate *pb.Candidate) error {
 		log.Error(err)
 		return err
 	}
-	log.Debug(time.Since(t))
 
 	return nil
+}
+
+func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	defer cc.Close()
+
+	c := pb.NewMembershipClient(cc)
+
+	r, err := c.Node(context.Background(), candidate)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return r, nil
 }
 
 // todo through pb struct or only string and convert in this func
@@ -72,7 +87,7 @@ func FetchAccount(key *pb.PublicKey) (*pb.Account, error) {
 	return r, nil
 }
 
-func Node() error {
+func Node(key *pb.PublicKey) error {
 	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)
@@ -82,7 +97,7 @@ func Node() error {
 
 	c := pb.NewMasterClient(cc)
 
-	_, err = c.Node(context.Background(), &pb.PublicKey{})
+	_, err = c.Node(context.Background(), key)
 	if err != nil {
 		return err
 	}
@@ -92,20 +107,15 @@ func Node() error {
 
 // todo rename and rename at .proto
 func Network() (*pb.NetOpts, error) {
-	t := time.Now()
 	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 	defer cc.Close()
-	log.Debug(time.Since(t))
 
-	t = time.Now()
 	c := pb.NewDiscoveryClient(cc)
-	log.Debug(time.Since(t))
 
-	t = time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 	r, err := c.Network(ctx, &pb.Empty{})
@@ -113,7 +123,6 @@ func Network() (*pb.NetOpts, error) {
 		log.Error(err)
 		return nil, err
 	}
-	log.Debug(time.Since(t))
 
 	return r, nil
 }

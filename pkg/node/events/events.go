@@ -26,6 +26,7 @@ func Listen() error {
 			}
 
 			log.Debug(block)
+			log.Debug(block.PublicKey)
 		}
 	}
 }

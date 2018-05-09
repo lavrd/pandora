@@ -3,7 +3,6 @@ package rpc
 import (
 	"context"
 	"net"
-	"time"
 
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/membership/distribution"
@@ -24,15 +23,30 @@ func (s *server) Register(ctx context.Context, in *pb.Candidate) (*pb.Empty, err
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
 	}
-	t := time.Now()
-	if err := dist.CandidateCheck(in); err != nil {
+
+	_, err := dist.AcceptCandidate(in)
+	if err != nil {
 		if err == errors.AlreadyExists {
 			return &pb.Empty{}, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
 		}
 		return &pb.Empty{}, err
 	}
-	log.Debug(time.Since(t))
+
 	return &pb.Empty{}, nil
+}
+
+func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
+	dist := &distribution.Distribution{
+		Storage: env.GetStorage(),
+		Runtime: env.GetRuntime(),
+	}
+
+	key, err := dist.AcceptCandidate(in)
+	if err != nil && err != errors.AlreadyExists {
+		return &pb.PublicKey{}, err
+	}
+
+	return key, nil
 }
 
 func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, error) {

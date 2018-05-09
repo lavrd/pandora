@@ -13,26 +13,26 @@ type Distribution struct {
 	*storage.Storage
 }
 
-func (d *Distribution) CandidateCheck(candidate *pb.Candidate) error {
+func (d *Distribution) AcceptCandidate(candidate *pb.Candidate) (*pb.PublicKey, error) {
 	acc, err := d.AccountFetchByEmail(candidate.Email)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if acc != nil {
-		return errors.AlreadyExists
+		return nil, errors.AlreadyExists
 	}
 
-	acc = d.AcceptCandidate(candidate)
+	acc = d.Runtime.AcceptCandidate(candidate)
 
 	if err := d.AccountSave(acc); err != nil {
-		return err
+		return nil, err
 	}
 
 	if err = mail.SendCredentials(candidate.Email, string(acc.PublicKey)); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &pb.PublicKey{PublicKey: acc.PublicKey}, nil
 }
 
 func (d *Distribution) AccountFetch(key *pb.PublicKey) (*pb.Account, error) {
