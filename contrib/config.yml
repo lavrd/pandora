@@ -1,11 +1,11 @@
 # runtime
 runtime:
   verbose: true
-  clean: true
+  clean: false
 
 # mail
 mail:
-  send: true
+  send: false
   token: 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
   endpoint: https://api.sendgrid.com/v3/mail/send
   email: pandora@doesnotexist.system

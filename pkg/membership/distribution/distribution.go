@@ -1,8 +1,8 @@
 package distribution
 
 import (
-	"github.com/spacelavr/pandora/pkg/membership/pb"
 	"github.com/spacelavr/pandora/pkg/membership/runtime"
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/mail"
@@ -33,4 +33,22 @@ func (d *Distribution) CandidateCheck(candidate *pb.Candidate) error {
 	}
 
 	return nil
+}
+
+func (d *Distribution) AccountFetch(key *pb.PublicKey) (*pb.Account, error) {
+	acc, err := d.AccountFetchByPublic(key.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+	if acc == nil {
+		return nil, errors.NotFound
+	}
+
+	return &pb.Account{
+		PublicKey: acc.PublicKey,
+		Meta: &pb.AccountMeta{
+			FullName: acc.Meta.FullName,
+			Email:    acc.Meta.Email,
+		},
+	}, nil
 }

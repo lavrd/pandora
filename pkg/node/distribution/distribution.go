@@ -1,21 +1,43 @@
 package distribution
 
 import (
-	mpb "github.com/spacelavr/pandora/pkg/membership/pb"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/node/rpc"
+	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 type Distribution struct{}
 
 func (d *Distribution) Candidate(opts *request.Candidate) error {
-	if err := rpc.Register(&mpb.Candidate{
+	if err := rpc.Register(&pb.Candidate{
 		FullName: *opts.FullName,
 		Email:    *opts.Email,
 	}); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (d *Distribution) FetchAccount(opts *request.AccountFetch) (*types.Account, error) {
+	acc, err := rpc.FetchAccount(&pb.PublicKey{
+		PublicKey: *opts.PublicKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debug(acc)
+
+	// todo added convert pkg
+	return &types.Account{
+		PublicKey: acc.PublicKey,
+		Meta: &types.AccountMeta{
+			Email:    acc.Meta.Email,
+			FullName: acc.Meta.FullName,
+		},
+	}, nil
 }
 
 func CertificateIssue(opts *request.CertificateIssue) error {

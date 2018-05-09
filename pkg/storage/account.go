@@ -50,6 +50,7 @@ func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
 
 	_, err := s.Exec(query, vars, acc)
 	if err != nil {
+		// todo correct or not?
 		if err == errors.NotFound {
 			return nil, nil
 		}

@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package pb;
+
+message Empty {}
+
+service Membership {
+  rpc Register (Candidate) returns (Empty) {}
+  rpc Fetch (PublicKey) returns (Account) {}
+}
+
+message PublicKey {
+  string public_key = 1;
+}
+
+message Account {
+  AccountMeta meta = 1;
+  string public_key = 2;
+}
+
+message AccountMeta {
+  string email = 1;
+  string full_name = 2;
+}
+
+message Candidate {
+  string email = 1;
+  string full_name = 2;
+}
+
+service Master {
+  rpc Candidate (Block) returns (Empty) {}
+}
+
+message Block {
+  int64 index = 1;
+  string hash = 2;
+  string prev_hash = 3;
+  int64 timestamp = 4;
+}
+
+service Discovery {
+  rpc Network (Empty) returns (NetOpts) {}
+}
+
+message NetOpts {
+  BrokerOpts broker = 1;
+  MembershipOpts membership = 2;
+  MasterOpts master = 3;
+}
+
+message BrokerOpts {
+  string endpoint = 1;
+  string user = 2;
+  string password = 3;
+}
+
+message MembershipOpts {
+  string endpoint = 1;
+}
+
+message MasterOpts {
+  string endpoint = 1;
+}

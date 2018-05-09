@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"net/http/pprof"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -46,17 +47,23 @@ func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 func Listen(endpoint string, routes []Route) error {
 	log.Debugf("listen http server on :%s", endpoint)
 
-	router := mux.NewRouter()
+	r := mux.NewRouter()
+
+	r.HandleFunc("/debug/pprof/", pprof.Index)
+	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	r.HandleFunc("/debug/pprof/trace", pprof.Trace)
 
 	// todo need a flag? its need only for node, fot other no
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
 
 	for _, route := range routes {
-		router.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
+		r.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
 	}
 
 	srv := &http.Server{
-		Handler:      middleware.Logger(router),
+		Handler:      middleware.Logger(r),
 		Addr:         endpoint,
 		ReadTimeout:  time.Second * 5,
 		WriteTimeout: time.Second * 5,

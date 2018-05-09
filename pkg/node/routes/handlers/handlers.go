@@ -42,6 +42,18 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 		err.Http(w)
 		return
 	}
+
+	dist := &distribution.Distribution{}
+
+	if acc, err := dist.FetchAccount(opts); err == nil {
+		response.Ok(acc.Public()).Http(w)
+	} else {
+		if err == errors.NotFound {
+			response.NotFound("account").Http(w)
+		} else {
+			response.InternalServerError().Http(w)
+		}
+	}
 }
 
 func CertificateIssueH(w http.ResponseWriter, r *http.Request) {

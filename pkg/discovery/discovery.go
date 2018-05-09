@@ -10,7 +10,7 @@ import (
 )
 
 func Daemon() bool {
-	log.Debug("start tracker daemon")
+	log.Debug("start discovery daemon")
 
 	var (
 		sig = make(chan os.Signal)

@@ -1,7 +1,9 @@
 package runtime
 
 import (
-	"github.com/spacelavr/pandora/pkg/membership/pb"
+	"encoding/hex"
+
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
 )
@@ -20,7 +22,7 @@ func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *types.Account {
 			Email:    candidate.Email,
 			FullName: candidate.FullName,
 		},
-		PublicKey: publicKey,
+		PublicKey: hex.EncodeToString(publicKey),
 		Secure: &types.AccountSecure{
 			PrivateKey: privateKey,
 		},

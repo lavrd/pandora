@@ -4,17 +4,19 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/membership/pb"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/node/rpc"
 	"github.com/spacelavr/pandora/pkg/node/runtime"
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/storage"
+	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -41,13 +43,17 @@ func Daemon() bool {
 		Email:    *candidate.Email,
 		FullName: *candidate.FullName,
 	}); err != nil {
-		log.Fatal(err)
+		if err != errors.AlreadyExists {
+			log.Fatal(err)
+		}
 	}
 
+	t := time.Now()
 	netOpts, err := rpc.Network()
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Debug(time.Since(t))
 
 	brk, err := broker.Connect(&broker.Opts{
 		Endpoint: netOpts.Broker.Endpoint,

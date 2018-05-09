@@ -3,11 +3,11 @@ package rpc
 import (
 	"context"
 	"net"
+	"time"
 
-	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/membership/distribution"
 	"github.com/spacelavr/pandora/pkg/membership/env"
-	"github.com/spacelavr/pandora/pkg/membership/pb"
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
@@ -23,21 +23,36 @@ func (s *server) Register(ctx context.Context, in *pb.Candidate) (*pb.Empty, err
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
 	}
+	t := time.Now()
 	if err := dist.CandidateCheck(in); err != nil {
 		if err == errors.AlreadyExists {
 			return &pb.Empty{}, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
 		}
 		return &pb.Empty{}, err
 	}
+	log.Debug(time.Since(t))
 	return &pb.Empty{}, nil
 }
 
-func (s *server) Fetch(ctx context.Context, in *pb.Public) (*pb.Account, error) {
-	return &pb.Account{}, nil
+func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, error) {
+	dist := &distribution.Distribution{
+		Storage: env.GetStorage(),
+		Runtime: env.GetRuntime(),
+	}
+
+	acc, err := dist.AccountFetch(in)
+	if err != nil {
+		if err == errors.NotFound {
+			// todo may be nil? and in all place
+			return &pb.Account{}, status.Error(codes.NotFound, codes.NotFound.String())
+		}
+		return &pb.Account{}, err
+	}
+	return acc, nil
 }
 
 func Listen() error {
-	listen, err := net.Listen(network.TCP, config.Viper.Membership.Endpoint)
+	listen, err := net.Listen(network.TCP, ":2003")
 	if err != nil {
 		log.Error(err)
 		return err
