@@ -81,11 +81,6 @@ func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 		rt = env.GetRuntime()
 	)
 
-	log.Debug(rt.MC)
-	log.Debug(rt.CC)
-	log.Debug(rt.LCB)
-	log.Debug(rt.LMB)
-
 	response.Ok(rt.MC).Http(w)
 }
 

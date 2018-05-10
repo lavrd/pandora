@@ -49,6 +49,10 @@ func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, err
 	return key, nil
 }
 
+func (s *server) Issue(ctx context.Context, in *pb.CertCandidate) (*pb.Empty, error) {
+	return &pb.Empty{}, nil
+}
+
 func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),

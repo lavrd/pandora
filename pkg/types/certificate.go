@@ -18,7 +18,7 @@ type (
 	CertificateMeta struct {
 		Title       string    `json:"title"`
 		Description string    `json:"description,omitempty"`
-		Date        time.Time `json:"date"`
+		Timestamp   time.Time `json:"timestamp"`
 	}
 
 	RecipientMeta struct {
@@ -33,6 +33,7 @@ type (
 		Meta      *RecipientMeta `json:"meta"`
 		Signature string         `json:"signature"`
 	}
+
 	Issuer struct {
 		Meta      *IssuerMeta `json:"meta"`
 		Signature string      `json:"signature"`

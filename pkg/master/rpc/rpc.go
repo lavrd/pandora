@@ -14,7 +14,7 @@ import (
 
 type server struct{}
 
-func (s *server) Candidate(ctx context.Context, in *pb.Block) (*pb.Empty, error) {
+func (s *server) CertCandidate(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	return &pb.Empty{}, nil
 }
 
