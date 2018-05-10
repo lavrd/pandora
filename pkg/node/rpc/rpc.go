@@ -40,6 +40,24 @@ func Register(candidate *pb.Candidate) error {
 	return nil
 }
 
+func Issue(cert *pb.Cert) error {
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	if err != nil {
+		log.Error(err)
+	}
+	defer cc.Close()
+
+	c := pb.NewMembershipClient(cc)
+
+	_, err = c.Issue(context.Background(), cert)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
 func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
 	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
 	if err != nil {

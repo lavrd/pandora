@@ -12,6 +12,10 @@ type Runtime struct {
 	CC  types.CertChain
 	LMB int
 	LCB int
+
+	// todo store at runtime or in another place (env?)
+	FullName  string
+	PublicKey string
 }
 
 func New(key *pb.PublicKey) (*Runtime, error) {
@@ -22,7 +26,7 @@ func New(key *pb.PublicKey) (*Runtime, error) {
 
 	cc := &pb.CertChain{}
 
-	for _, mb := range mc.Master_Block {
+	for _, mb := range mc.MasterBlock {
 		if mb.PublicKey.PublicKey == key.PublicKey {
 			cc = mb.CertChain
 		}
@@ -32,6 +36,18 @@ func New(key *pb.PublicKey) (*Runtime, error) {
 		MC:  converter.FPBMC(mc),
 		CC:  converter.FPBCC(cc),
 		LCB: len(cc.CertBlock) - 1,
-		LMB: len(mc.Master_Block) - 1,
+		LMB: len(mc.MasterBlock) - 1,
 	}, nil
+}
+
+func (r *Runtime) AddMC(block *types.MasterBlock) {
+	r.MC = append(r.MC, block)
+}
+
+func (r *Runtime) AddCC(block *types.CertBlock) {
+	for i, mb := range r.MC {
+		if mb.PublicKey == block.PublicKey {
+			r.MC[i].CertChain = append(r.MC[i].CertChain, block)
+		}
+	}
 }

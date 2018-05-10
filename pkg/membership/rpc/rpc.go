@@ -41,16 +41,51 @@ func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, err
 		Runtime: env.GetRuntime(),
 	}
 
+	log.Debug(99999, in)
+
 	key, err := dist.AcceptCandidate(in)
 	if err != nil && err != errors.AlreadyExists {
+		log.Debug(1)
 		return &pb.PublicKey{}, err
 	}
+
+	log.Debug(8777)
+	log.Debug(key)
 
 	return key, nil
 }
 
-func (s *server) Issue(ctx context.Context, in *pb.CertCandidate) (*pb.Empty, error) {
+func (s *server) Issue(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+	cert, err := distribution.New().Issue(in)
+	if err != nil {
+		return &pb.Empty{}, err
+	}
+
+	log.Debug(10)
+	if err := Issue(cert); err != nil {
+		return &pb.Empty{}, err
+	}
+	log.Debug(11)
+
 	return &pb.Empty{}, nil
+}
+
+func Issue(cert *pb.Cert) error {
+	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithInsecure())
+	if err != nil {
+		log.Error(err)
+	}
+	defer cc.Close()
+
+	c := pb.NewMasterClient(cc)
+
+	_, err = c.CertCandidate(context.Background(), cert)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
 }
 
 func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, error) {

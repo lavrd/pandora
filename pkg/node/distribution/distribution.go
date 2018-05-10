@@ -8,8 +8,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/node/rpc"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -48,9 +46,31 @@ func (d *Distribution) FetchAccount(opts *request.AccountFetch) (*types.Account,
 
 func CertificateIssue(opts *request.CertificateIssue) error {
 	var (
-		stg = env.GetStorage()
-		rt  = env.GetRuntime()
+		rt = env.GetRuntime()
 	)
+
+	log.Debug(1)
+	if err := rpc.Issue(&pb.Cert{
+		Id: generator.UUID(),
+		Meta: &pb.CertMeta{
+			Timestamp:   time.Now().UTC().Unix(),
+			Description: *opts.Description,
+			Title:       *opts.Title,
+		},
+		Recipient: &pb.CertRecipient{
+			PublicKey: &pb.PublicKey{
+				PublicKey: *opts.PublicKey,
+			},
+		},
+		Issuer: &pb.CertIssuer{
+			PublicKey: &pb.PublicKey{
+				PublicKey: rt.PublicKey,
+			},
+		},
+	}); err != nil {
+		return err
+	}
+	log.Debug(2)
 
 	return nil
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/master/distribution"
+	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
@@ -15,6 +16,8 @@ import (
 type server struct{}
 
 func (s *server) CertCandidate(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+	block := distribution.PrepareBlock(in)
+	env.GetEvents().PCertBlock(block)
 	return &pb.Empty{}, nil
 }
 

@@ -23,9 +23,9 @@ import (
 func FPBMC(pbmc *pb.MasterChain) types.MasterChain {
 	mc := types.MasterChain{}
 
-	fmt.Printf("%#v\n", pbmc.Master_Block)
+	fmt.Printf("%#v\n", pbmc.MasterBlock)
 
-	for _, mb := range pbmc.Master_Block {
+	for _, mb := range pbmc.MasterBlock {
 		cc := types.CertChain{}
 		for _, cb := range mb.CertChain.CertBlock {
 			cc = append(cc, &types.CertBlock{
@@ -36,6 +36,7 @@ func FPBMC(pbmc *pb.MasterChain) types.MasterChain {
 					Index:     int(cb.Block.Index),
 					Key:       cb.Block.Hash,
 				},
+				PublicKey: cb.PublicKey.PublicKey,
 			})
 		}
 
@@ -63,7 +64,7 @@ func TPBMC(mc types.MasterChain) *pb.MasterChain {
 	pbmc := &pb.MasterChain{}
 
 	for _, mb := range mc {
-		pbmc.Master_Block = append(pbmc.Master_Block, &pb.MasterBlock{
+		pbmc.MasterBlock = append(pbmc.MasterBlock, &pb.MasterBlock{
 			PublicKey: TPBPK(mb.PublicKey),
 			CertChain: TPBCC(mb.CertChain),
 			Block:     TPBB(mb.Block),
@@ -93,7 +94,8 @@ func TPBCC(cc types.CertChain) *pb.CertChain {
 
 	for _, cb := range cc {
 		ch.CertBlock = append(ch.CertBlock, &pb.CertBlock{
-			Block: TPBB(cb.Block),
+			Block:     TPBB(cb.Block),
+			PublicKey: TPBPK(cb.PublicKey),
 		})
 	}
 

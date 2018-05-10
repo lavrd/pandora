@@ -7,6 +7,7 @@ import (
 
 type Events struct {
 	chsMasterBlock chan *types.MasterBlock
+	chsCertBlock   chan *types.CertBlock
 }
 
 type Opts struct {
@@ -16,11 +17,16 @@ type Opts struct {
 func New() *Events {
 	return &Events{
 		chsMasterBlock: make(chan *types.MasterBlock),
+		chsCertBlock:   make(chan *types.CertBlock),
 	}
 }
 
 func (e *Events) Listen(opts *Opts) error {
 	if err := opts.Broker.Publish(broker.SMasterBlock, e.chsMasterBlock); err != nil {
+		return err
+	}
+
+	if err := opts.Broker.Publish(broker.SCertBlock, e.chsCertBlock); err != nil {
 		return err
 	}
 
@@ -31,4 +37,8 @@ func (e *Events) Listen(opts *Opts) error {
 
 func (e *Events) PMasterBlock(block *types.MasterBlock) {
 	e.chsMasterBlock <- block
+}
+
+func (e *Events) PCertBlock(block *types.CertBlock) {
+	e.chsCertBlock <- block
 }

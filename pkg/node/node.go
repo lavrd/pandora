@@ -40,6 +40,7 @@ func Daemon() bool {
 		log.Fatal(err.Message)
 	}
 
+	log.Debug(candidate)
 	// todo with either start or once?
 	key, err := rpc.NodeReg(&pb.Candidate{
 		Email:    *candidate.Email,
@@ -80,6 +81,9 @@ func Daemon() bool {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rt.PublicKey = key.PublicKey
+	rt.FullName = config.Viper.Node.FullName
 
 	env.SetStorage(stg)
 	env.SetBroker(brk)

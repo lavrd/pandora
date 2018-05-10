@@ -9,11 +9,12 @@ import (
 type (
 	CertBlock struct {
 		*Block
+		PublicKey string `json:"public_key"`
 	}
 
 	MasterBlock struct {
 		*Block
-		PublicKey string    `json:"public_key,omitempty"`
+		PublicKey string    `json:"public_key"`
 		CertChain CertChain `json:"cert_chain"`
 	}
 
@@ -21,7 +22,7 @@ type (
 		Key       string    `json:"_key"`
 		Index     int       `json:"index"`
 		Hash      string    `json:"hash"`
-		PrevHash  string    `json:"prev_hash,omitempty"`
+		PrevHash  string    `json:"prev_hash"`
 		Timestamp time.Time `json:"timestamp"`
 	}
 

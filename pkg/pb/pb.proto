@@ -8,7 +8,7 @@ service Membership {
   rpc Node (Candidate) returns (PublicKey) {}
   rpc Register (Candidate) returns (Empty) {}
   rpc Fetch (PublicKey) returns (Account) {}
-  rpc Issue (CertCandidate) returns (Empty) {}
+  rpc Issue (Cert) returns (Empty) {}
 }
 
 message PublicKey {
@@ -30,28 +30,24 @@ message Candidate {
   string full_name = 2;
 }
 
-message CertCandidate {
-  PublicKey public_key = 1;
-  string title = 2;
-  string description = 3;
-}
-
-message CertIssuer {
-  IssuerMeta meta = 1;
-  string signature = 2;
-}
-
-message CertRecipient {
-  RecipientMeta meta = 1;
-  string signature = 2;
-}
-
 message IssuerMeta {
   string name = 1;
 }
 
 message RecipientMeta {
   string name = 1;
+}
+
+message CertIssuer {
+  IssuerMeta meta = 1;
+  string signature = 2;
+  PublicKey public_key = 3;
+}
+
+message CertRecipient {
+  RecipientMeta meta = 1;
+  string signature = 2;
+  PublicKey public_key = 3;
 }
 
 message CertMeta {
@@ -73,7 +69,8 @@ service Master {
 }
 
 message CertBlock {
-  Block block = 1;
+  PublicKey public_key = 1;
+  Block block = 2;
 }
 
 message CertChain {

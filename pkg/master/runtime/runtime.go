@@ -17,9 +17,7 @@ type Runtime struct {
 }
 
 func New() *Runtime {
-	rt := &Runtime{
-		LIMB: 0,
-	}
+	rt := &Runtime{}
 
 	rt.MC = types.MasterChain{rt.GenesisMasterBlock()}
 
@@ -47,10 +45,12 @@ func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
 				PrevHash:  rt.LastMasterBlock().Hash,
 				Timestamp: time.Now().UTC(),
 			},
-			CertChain: types.CertChain{rt.GenesisCertBlock()},
+			CertChain: types.CertChain{rt.GenesisCertBlock(publicKey.PublicKey)},
 		}
 
 		hash := sha256.SumString(block.Bytes())
+
+		log.Debug(block.CertChain[0].PublicKey)
 
 		block.Hash = hash
 		block.Key = hash
@@ -63,13 +63,37 @@ func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
 	return nil
 }
 
-func (_ *Runtime) GenesisCertBlock() *types.CertBlock {
+func (rt *Runtime) PrepareBlock(cert *pb.Cert) *types.CertBlock {
+	old := &types.CertBlock{}
+
+	for _, mb := range rt.MC {
+		if mb.PublicKey == cert.Issuer.PublicKey.PublicKey {
+			old = mb.CertChain[len(mb.CertChain)-1]
+		}
+	}
+
 	block := &types.CertBlock{
 		Block: &types.Block{
-			Index:     0,
-			PrevHash:  "",
+			Timestamp: time.Now().UTC(),
+			PrevHash:  old.Hash,
+			Index:     old.Index + 1,
+		},
+		PublicKey: old.PublicKey,
+	}
+
+	hash := sha256.SumString(block.Bytes())
+	block.Hash = hash
+	block.Key = hash
+
+	return block
+}
+
+func (_ *Runtime) GenesisCertBlock(publicKey string) *types.CertBlock {
+	block := &types.CertBlock{
+		Block: &types.Block{
 			Timestamp: time.Now().UTC(),
 		},
+		PublicKey: publicKey,
 	}
 
 	hash := sha256.SumString(block.Bytes())
@@ -83,11 +107,10 @@ func (_ *Runtime) GenesisCertBlock() *types.CertBlock {
 func (rt *Runtime) GenesisMasterBlock() *types.MasterBlock {
 	block := &types.MasterBlock{
 		Block: &types.Block{
-			Index:     0,
-			PrevHash:  "",
 			Timestamp: time.Now().UTC(),
 		},
-		CertChain: types.CertChain{rt.GenesisCertBlock()},
+		PublicKey: "",
+		CertChain: types.CertChain{rt.GenesisCertBlock("")},
 	}
 
 	hash := sha256.SumString(block.Bytes())

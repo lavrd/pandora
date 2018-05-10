@@ -4,15 +4,20 @@ import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 // Listen listen for events
 func Listen() error {
 	var (
 		chrMasterBlock = make(chan *types.MasterBlock)
+		chrCertBlock   = make(chan *types.CertBlock)
 		brk            = env.GetBroker()
+		rt             = env.GetRuntime()
 	)
+
+	if err := brk.Subscribe(broker.SCertBlock, chrCertBlock); err != nil {
+		return err
+	}
 
 	if err := brk.Subscribe(broker.SMasterBlock, chrMasterBlock); err != nil {
 		return err
@@ -25,8 +30,13 @@ func Listen() error {
 				return nil
 			}
 
-			log.Debug(block)
-			log.Debug(block.PublicKey)
+			rt.AddMC(block)
+		case block, ok := <-chrCertBlock:
+			if !ok {
+				return nil
+			}
+
+			rt.AddCC(block)
 		}
 	}
 }
