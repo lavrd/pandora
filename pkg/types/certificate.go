@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"time"
 )
@@ -44,5 +45,6 @@ func (cert *Certificate) Public() *Certificate {
 }
 
 func (cert *Certificate) Bytes() []byte {
-	return []byte(fmt.Sprint(cert))
+	buf, _ := hex.DecodeString(fmt.Sprint(cert))
+	return buf
 }

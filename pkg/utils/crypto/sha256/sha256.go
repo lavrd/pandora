@@ -2,7 +2,7 @@ package sha256
 
 import (
 	"crypto/sha256"
-	"fmt"
+	"encoding/hex"
 )
 
 func sum(p []byte) []byte {
@@ -13,7 +13,7 @@ func sum(p []byte) []byte {
 }
 
 func SumString(p []byte) string {
-	return fmt.Sprintf("%x", sum(p))
+	return hex.EncodeToString(sum(p))
 }
 
 func SumBytes(p []byte) []byte {

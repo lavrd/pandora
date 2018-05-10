@@ -1,7 +1,6 @@
 package converter
 
 import (
-	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -40,11 +39,9 @@ func FPBMC(pbmc *pb.MasterChain) types.MasterChain {
 			})
 		}
 
-		q, _ := hex.DecodeString(mb.PublicKey.PublicKey)
-
 		mc = append(mc, &types.MasterBlock{
 			CertChain: cc,
-			PublicKey: q,
+			PublicKey: mb.PublicKey.PublicKey,
 			Block: &types.Block{
 				Hash:      mb.Block.Hash,
 				Key:       mb.Block.Hash,
@@ -76,9 +73,9 @@ func TPBMC(mc types.MasterChain) *pb.MasterChain {
 	return pbmc
 }
 
-func TPBPK(publicKey []byte) *pb.PublicKey {
+func TPBPK(publicKey string) *pb.PublicKey {
 	return &pb.PublicKey{
-		PublicKey: hex.EncodeToString(publicKey),
+		PublicKey: publicKey,
 	}
 }
 

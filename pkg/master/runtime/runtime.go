@@ -1,8 +1,6 @@
 package runtime
 
 import (
-	"bytes"
-	"encoding/hex"
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/pb"
@@ -14,7 +12,6 @@ import (
 // todo need optimization and reuse
 
 type Runtime struct {
-	// last index of master block
 	LIMB int
 	MC   types.MasterChain
 }
@@ -35,22 +32,22 @@ func (rt *Runtime) LastMasterBlock() *types.MasterBlock {
 
 func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
 	isFound := false
-	buf, _ := hex.DecodeString(publicKey.PublicKey)
-	log.Debug(buf)
 	for _, b := range rt.MC {
-		if bytes.Equal(b.PublicKey, buf) {
+		if b.PublicKey == publicKey.PublicKey {
+			log.Debug("ISFOUND")
 			isFound = true
 		}
 	}
 
 	if !isFound {
 		block := &types.MasterBlock{
-			PublicKey: buf,
+			PublicKey: publicKey.PublicKey,
 			Block: &types.Block{
 				Index:     rt.LastMasterBlock().Index + 1,
 				PrevHash:  rt.LastMasterBlock().Hash,
 				Timestamp: time.Now().UTC(),
 			},
+			CertChain: types.CertChain{rt.GenesisCertBlock()},
 		}
 
 		hash := sha256.SumString(block.Bytes())
@@ -58,7 +55,6 @@ func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
 		block.Hash = hash
 		block.Key = hash
 
-		log.Debug(block)
 		rt.MC = append(rt.MC, block)
 
 		return block

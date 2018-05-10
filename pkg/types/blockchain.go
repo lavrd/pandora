@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"time"
 )
@@ -12,7 +13,7 @@ type (
 
 	MasterBlock struct {
 		*Block
-		PublicKey []byte    `json:"public_key"`
+		PublicKey string    `json:"public_key,omitempty"`
 		CertChain CertChain `json:"cert_chain"`
 	}
 
@@ -20,7 +21,7 @@ type (
 		Key       string    `json:"_key"`
 		Index     int       `json:"index"`
 		Hash      string    `json:"hash"`
-		PrevHash  string    `json:"prev_hash"`
+		PrevHash  string    `json:"prev_hash,omitempty"`
 		Timestamp time.Time `json:"timestamp"`
 	}
 
@@ -29,9 +30,11 @@ type (
 )
 
 func (b *MasterBlock) Bytes() []byte {
-	return []byte(fmt.Sprint(b))
+	buf, _ := hex.DecodeString(fmt.Sprint(b))
+	return buf
 }
 
 func (b *CertBlock) Bytes() []byte {
-	return []byte(fmt.Sprint(b))
+	buf, _ := hex.DecodeString(fmt.Sprint(b))
+	return buf
 }
