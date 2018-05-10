@@ -45,3 +45,4 @@ func SetBroker(brk *broker.Broker) {
 func GetBroker() *broker.Broker {
 	return e.broker
 }
+

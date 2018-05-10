@@ -28,7 +28,7 @@ func (d *Distribution) AcceptCandidate(candidate *pb.Candidate) (*pb.PublicKey, 
 		return nil, err
 	}
 
-	if err = mail.SendCredentials(candidate.Email, string(acc.PublicKey)); err != nil {
+	if err = mail.SendCredentials(candidate.Email, acc.PublicKey); err != nil {
 		return nil, err
 	}
 

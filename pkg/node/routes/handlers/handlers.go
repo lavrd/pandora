@@ -78,10 +78,15 @@ func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
 
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 	var (
-		_ = env.GetRuntime()
+		rt = env.GetRuntime()
 	)
 
-	// response.Ok(r.Blockchain()).Http(w)
+	log.Debug(rt.MC)
+	log.Debug(rt.CC)
+	log.Debug(rt.LCB)
+	log.Debug(rt.LMB)
+
+	response.Ok(rt.MC).Http(w)
 }
 
 func DashboardH(w http.ResponseWriter, _ *http.Request) {

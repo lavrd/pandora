@@ -8,7 +8,6 @@ import (
 type (
 	CertBlock struct {
 		*Block
-		Cert *Certificate `json:"cert"`
 	}
 
 	MasterBlock struct {

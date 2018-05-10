@@ -31,7 +31,26 @@ message Candidate {
 
 service Master {
   rpc Candidate (Block) returns (Empty) {}
-  rpc Node (PublicKey) returns (Empty) {}
+  rpc Node (PublicKey) returns (MasterChain) {}
+}
+
+message CertBlock {
+  Block block = 1;
+}
+
+message CertChain {
+  repeated CertBlock cert_block = 1;
+}
+
+// todo public_key -> publicKey
+message MasterBlock {
+  Block block = 1;
+  PublicKey public_key = 2;
+  CertChain cert_chain = 3;
+}
+
+message MasterChain {
+  repeated MasterBlock master_block = 1;
 }
 
 message Block {

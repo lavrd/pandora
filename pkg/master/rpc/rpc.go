@@ -18,9 +18,9 @@ func (s *server) Candidate(ctx context.Context, in *pb.Block) (*pb.Empty, error)
 	return &pb.Empty{}, nil
 }
 
-func (s *server) Node(ctx context.Context, in *pb.PublicKey) (*pb.Empty, error) {
+func (s *server) Node(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
 	distribution.AddMasterBlock(in)
-	return &pb.Empty{}, nil
+	return distribution.GetMasterChain(), nil
 }
 
 func Listen() error {

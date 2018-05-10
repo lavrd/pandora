@@ -1,9 +1,11 @@
 package node
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
@@ -74,9 +76,14 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 
+	rt, err := runtime.New(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	env.SetStorage(stg)
 	env.SetBroker(brk)
-	env.SetRuntime(runtime.New())
+	env.SetRuntime(rt)
 
 	go func() {
 		if err := events.Listen(); err != nil {
@@ -98,9 +105,10 @@ func Daemon() bool {
 		}
 	}()
 
-	if err := rpc.Node(key); err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		time.Sleep(time.Second * 10)
+		fmt.Println(env.GetRuntime().MC)
+	}()
 
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")
