@@ -4,7 +4,7 @@ const App = () => (
       <Header/>
 
       <div className="row">
-        <div className="col-md-7 mb-5">
+        <div className="col-md-7">
           <Certificate/>
         </div>
 

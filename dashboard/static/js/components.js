@@ -37,7 +37,7 @@ Error.propTypes = {
 };
 
 const Header = () => (
-  <div className="row mb-5 d-flex align-items-center">
+  <header className="row mb-5 d-flex align-items-center">
     <div className="col-md-3">
       <h1 className="display-4">Pandora</h1>
     </div>
@@ -47,9 +47,23 @@ const Header = () => (
         <div className="progress-bar w-100"/>
       </div>
     </div>
-  </div>
+  </header>
 );
 
 const Footer = () => (
-  <div/>
+  <footer className="mt-5 text-center">
+    <i className="fas fa-university"/>
+    <i className="fas fa-plus"/>
+    <i className="fas fa-user-graduate"/>
+    <i className="fas fa-caret-right"/>
+    <i className="fas fa-money-check"/>
+    <i className="fas fa-caret-right"/>
+    <i className="fas fa-box"/>
+    <i className="fas fa-link"/>
+    <i className="fas fa-box"/>
+    <i className="fas fa-caret-right"/>
+    <i className="fas fa-handshake"/>
+    <i className="fas fa-caret-right"/>
+    <i className="fas fa-heartbeat"/>Pandora
+  </footer>
 );
