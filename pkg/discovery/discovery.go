@@ -6,6 +6,7 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/pandora/pkg/discovery/rpc"
+	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -17,6 +18,8 @@ func Daemon() bool {
 	)
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+	log.Debug(generator.UUID())
 
 	go func() {
 		if err := rpc.Listen(); err != nil {
