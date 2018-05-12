@@ -37,12 +37,18 @@ func (s *Storage) AccountFetchByEmail(email string) (*pb.Member, error) {
 // AccountFetchByPublic fetch account from storage by public key
 func (s *Storage) AccountFetchByPublic(public string) (*pb.Member, error) {
 	var (
-		acc = &pb.Member{}
+		acc   = &pb.Member{}
+		query = fmt.Sprintf(
+			"for a in %s filter a.public_key.public_key == @public return a",
+			CAccount,
+		)
+		vars = map[string]interface{}{
+			"public": public,
+		}
 	)
 
-	_, err := s.Read(public, CAccount, acc)
+	_, err := s.Exec(query, vars, acc)
 	if err != nil {
-		// todo correct or not?
 		if err == errors.NotFound {
 			return nil, nil
 		}

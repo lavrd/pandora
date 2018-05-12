@@ -57,6 +57,29 @@ func (ac *AccountFetch) DecodeAndValidate(reader io.Reader) *response.Error {
 	return ac.Validate()
 }
 
+// CertView
+type CertView struct {
+	Id *string `json:"id"`
+}
+
+// Validate validate incoming data for issue certificate
+func (cv *CertView) Validate() *response.Error {
+	switch {
+	case cv.Id == nil || len(*cv.Id) == 0:
+		return response.BadParameter("id")
+	default:
+		return nil
+	}
+}
+
+// DecodeAndValidate decode and validate incoming data for issue certificate
+func (cv *CertView) DecodeAndValidate(reader io.Reader) *response.Error {
+	if err := json.NewDecoder(reader).Decode(cv); err != nil {
+		return response.InvalidJSON()
+	}
+	return cv.Validate()
+}
+
 // CertificateIssue
 type CertificateIssue struct {
 	PublicKey   *string `json:"public_key"`

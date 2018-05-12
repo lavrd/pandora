@@ -18,6 +18,7 @@ type server struct{}
 func (s *server) ConfirmCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	block := distribution.PrepareBlock(in)
 	env.GetEvents().PCertBlock(block)
+	env.GetEvents().PubCert(in)
 	return &pb.Empty{}, nil
 }
 

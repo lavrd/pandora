@@ -54,7 +54,6 @@ func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *pb.MasterBlock {
 		hash := sha256.SumString(block.String())
 
 		block.Block.Hash = hash
-		block.Block.XKey = hash
 
 		rt.mc.MasterChain = append(rt.mc.MasterChain, block)
 
@@ -79,12 +78,12 @@ func (rt *Runtime) PrepareBlock(cert *pb.Cert) *pb.CertBlock {
 			PrevHash:  old.Block.Hash,
 			Index:     old.Block.Index + 1,
 			PublicKey: old.Block.PublicKey,
+			Tx:        cert.Id,
 		},
 	}
 
 	hash := sha256.SumString(block.String())
 	block.Block.Hash = hash
-	block.Block.XKey = hash
 
 	return block
 }
@@ -100,7 +99,6 @@ func (_ *Runtime) GenesisCertBlock(publicKey *pb.PublicKey) *pb.CertBlock {
 	hash := sha256.SumString(block.String())
 
 	block.Block.Hash = hash
-	block.Block.XKey = hash
 
 	return block
 }
@@ -120,7 +118,6 @@ func (rt *Runtime) GenesisMasterBlock() *pb.MasterBlock {
 	hash := sha256.SumString(block.String())
 
 	block.Block.Hash = hash
-	block.Block.XKey = hash
 
 	return block
 }

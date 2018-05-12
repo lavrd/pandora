@@ -18,7 +18,6 @@ func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *pb.Member {
 	publicKey, privateKey := ed25519.GenerateKeys()
 
 	return &pb.Member{
-		XKey: hex.EncodeToString(publicKey),
 		Meta: &pb.MemberMeta{
 			Email: candidate.Email,
 			Name:  candidate.Name,

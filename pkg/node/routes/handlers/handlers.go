@@ -11,6 +11,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/http/response"
 	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/spacelavr/pandora/pkg/storage"
 )
 
 func HealthH(w http.ResponseWriter, _ *http.Request) {
@@ -68,12 +69,22 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CertificateViewH(w http.ResponseWriter, _ *http.Request) {
-	response.NotImplemented().Http(w)
+func CertificateViewH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertView{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	if cert, err := storage.Get(*opts.Id); err == nil {
+		response.Ok(cert).Http(w)
+	} else {
+		response.InternalServerError().Http(w)
+	}
 }
 
 func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
-	response.NotImplemented().Http(w)
+	response.Ok(nil).Http(w)
 }
 
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {

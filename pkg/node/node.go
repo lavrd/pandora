@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
-
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/env"
@@ -16,7 +14,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/node/rpc"
 	"github.com/spacelavr/pandora/pkg/node/runtime"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -69,16 +66,6 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
-	stg, err := storage.Connect(&storage.Opts{
-		Endpoint: config.Viper.Membership.Database.Endpoint,
-		Database: config.Viper.Membership.Database.Database,
-		User:     config.Viper.Membership.Database.User,
-		Password: config.Viper.Membership.Database.Password,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	rt, err := runtime.New(key)
 	if err != nil {
 		log.Fatal(err)
@@ -87,7 +74,6 @@ func Daemon() bool {
 	rt.PublicKey = key.PublicKey
 	rt.FullName = config.Viper.Node.Meta.Name
 
-	env.SetStorage(stg)
 	env.SetBroker(brk)
 	env.SetRuntime(rt)
 
@@ -103,18 +89,13 @@ func Daemon() bool {
 		}
 	}()
 
-	defer func() {
-		if config.Viper.Runtime.Clean {
-			if err := stg.Clean(); err != nil {
-				log.Error(err)
-			}
-		}
-	}()
-
-	go func() {
-		time.Sleep(time.Second * 10)
-		fmt.Println(env.GetRuntime().MC)
-	}()
+	// defer func() {
+	// if config.Viper.Runtime.Clean {
+	// 	if err := stg.Clean(); err != nil {
+	// 		log.Error(err)
+	// 	}
+	// }
+	// }()
 
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")

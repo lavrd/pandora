@@ -29,9 +29,15 @@ var (
 			Endpoint string
 		}
 		Master struct {
+			Database struct {
+				FilePath string
+			}
 			Endpoint string
 		}
 		Node struct {
+			Database struct {
+				FilePath string
+			}
 			Dashboard struct {
 				Template string
 			}
@@ -43,6 +49,9 @@ var (
 			Port int
 		}
 		Discovery struct {
+			Database struct {
+				FilePath string
+			}
 			Broker struct {
 				Endpoint string
 				User     string

@@ -1,7 +1,7 @@
 # runtime
 runtime:
   verbose: true
-  clean: false
+  clean: true
 
 # membership
 membership:
@@ -25,10 +25,14 @@ membership:
 
 # validator
 master:
+  database:
+    filepath: ./contrib/master.db
   endpoint: localhost:2002
 
 # node
 node:
+  database:
+    filepath: ./contrib/node.db
   dashboard:
     template: ./dashboard/index.html
   meta:
@@ -39,6 +43,8 @@ node:
 
 # discovery
 discovery:
+  database:
+    filepath: ./contrib/discovery.db
   broker:
     endpoint: nats://localhost:4222
     user: root

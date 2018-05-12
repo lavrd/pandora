@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	SMasterBlock = "SMasterBLock"
-	SCertBlock   = "SCertBlock"
+	SubMB   = "SubMB"
+	SubCB   = "SubCB"
+	SubCert = "SubCert"
 )
 
 // Broker
