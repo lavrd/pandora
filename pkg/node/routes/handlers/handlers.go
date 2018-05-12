@@ -12,6 +12,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/http/response"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/storage"
+	"fmt"
 )
 
 func HealthH(w http.ResponseWriter, _ *http.Request) {
@@ -98,6 +99,7 @@ func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
 	// todo move to http utils
 	w.Header().Set("Content-Type", "text/html")
+	fmt.Println(config.Viper.Node.Dashboard.Template)
 	tpl, err := template.ParseFiles(config.Viper.Node.Dashboard.Template)
 	if err != nil {
 		response.InternalServerError().Http(w)

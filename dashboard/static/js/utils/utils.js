@@ -1,4 +1,4 @@
-const request = (method, url, body) => {
+const request = (method, endpoint, body) => {
   let headers = {};
   if (!!body) {
     headers['Content-Type'] = 'application/json';
@@ -11,7 +11,8 @@ const request = (method, url, body) => {
     opts.body = JSON.stringify(body);
   }
 
-  return fetch(url, opts)
+  // todo how to run with specific endpoint?
+  return fetch(endpoint, opts)
     .then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json().then((res) => {

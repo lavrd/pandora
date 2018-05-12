@@ -89,13 +89,13 @@ func Daemon() bool {
 		}
 	}()
 
-	// defer func() {
-	// if config.Viper.Runtime.Clean {
-	// 	if err := stg.Clean(); err != nil {
-	// 		log.Error(err)
-	// 	}
-	// }
-	// }()
+	defer func() {
+		if config.Viper.Runtime.Clean {
+			if err := os.RemoveAll(config.Viper.Node.Database.FilePath); err != nil {
+				log.Error(err)
+			}
+		}
+	}()
 
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")

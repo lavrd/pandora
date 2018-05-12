@@ -132,8 +132,8 @@ class CertificateCreate extends React.Component {
   }
 }
 
-CertificateCreate.proppb = {
-  submit: Proppb.func.isRequired
+CertificateCreate.propTypes = {
+  submit: PropTypes.func.isRequired
 };
 
 class CertificateFetch extends React.Component {
@@ -177,6 +177,6 @@ class CertificateFetch extends React.Component {
   }
 }
 
-CertificateFetch.proppb = {
-  submit: Proppb.func.isRequired
+CertificateFetch.propTypes = {
+  submit: PropTypes.func.isRequired
 };

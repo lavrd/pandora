@@ -5,34 +5,51 @@ const Preloader = () => (
   </div>
 );
 
-const Alert = ({text}) => (
-  <div className="alert alert-primary" role="alert">{text}</div>
-);
+const Alert = ({text, close}) => (
+  <div className="alert alert-primary alert-dismissible fade show">
+    <span>{text}</span>
 
-Alert.propTypes = {
-  text: PropTypes.string.isRequired
-};
-
-const Error = ({error}) => (
-  <div className="alert alert-danger">
-    <h4 className="alert-heading">Error</h4>
-
-    <code className="text-danger">
-      {`
-        {
-          "code": ${error.code},\n
-          "status": ${error.status},\n
-          "message": ${error.message}
-        }
-      `}
-    </code>
-
-    <hr/>
-    <p className="mb-0">Check the server or input data and try again</p>
+    <button
+      className="close"
+      onClick={close}
+    >
+      <span>&times;</span>
+    </button>
   </div>
 );
 
+Alert.propTypes = {
+  close: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired
+};
+
+const Error = ({error, close}) => (
+  <div className="alert alert-danger alert-dismissible fade show">
+    <h4 className="alert-heading">Oops, some mistake</h4>
+
+    <pre className="text-danger">
+{`{
+    code: ${error.code}
+    status: ${error.status}
+    message: ${error.message}
+}`}
+    </pre>
+
+    <hr/>
+    <p className="mb-0">Make sure that you are doing everything right</p>
+
+    <button
+      className="close"
+      onClick={close}
+    >
+      <span>&times;</span>
+    </button>
+  </div>
+);
+
+// todo check prop-types everywhere
 Error.propTypes = {
+  close: PropTypes.func.isRequired,
   error: PropTypes.object.isRequired
 };
 
@@ -51,7 +68,7 @@ const Header = () => (
 );
 
 const Footer = () => (
-  <footer className="mt-5 text-center">
+  <footer className="mt-5 d-flex align-items-center justify-content-center fixed-bottom mb-5">
     <i className="fas fa-university"/>
     <i className="fas fa-plus"/>
     <i className="fas fa-user-graduate"/>

@@ -24,6 +24,8 @@ func IsSignature(signature string) bool {
 func IsPublicKey(key string) bool {
 	// todo how to verify?
 	switch {
+	case len(key) == 0:
+		return false
 	default:
 		return true
 	}

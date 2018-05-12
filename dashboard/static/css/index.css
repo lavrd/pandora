@@ -7,14 +7,19 @@ body {
   font-family: 'Roboto', sans-serif
 }
 
-footer {
-  font-size: 2.2em;
-}
-
 .fa-caret-right {
-  margin: 0 25px;
+  margin: 0 25px !important;
 }
 
-svg {
+.fa-plus {
+  margin: 0 10px 0 5px !important;
+}
+
+.fa-caret-right, .fa-plus {
+  font-size: 1em !important;
+}
+
+.svg-inline--fa {
+  font-size: 3em;
   margin: 0 5px;
 }
