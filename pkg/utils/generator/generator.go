@@ -2,15 +2,10 @@ package generator
 
 import (
 	"github.com/satori/go.uuid"
-	"github.com/spacelavr/pandora/pkg/types"
 )
 
-// UUID generate uuid string
+// todo rename
 func UUID() string {
-	return uuid.NewV4().String()
-}
-
-// Password generate password from uuid
-func Password() string {
-	return UUID()[:types.MinPasswordLen]
+	v4, _ := uuid.NewV4()
+	return v4.String()
 }

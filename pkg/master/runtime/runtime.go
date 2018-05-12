@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -12,50 +11,52 @@ import (
 // todo need optimization and reuse
 
 type Runtime struct {
-	LIMB int
-	MC   types.MasterChain
+	limb int
+	mc   *pb.MasterChain
 }
 
 func New() *Runtime {
 	rt := &Runtime{}
 
-	rt.MC = types.MasterChain{rt.GenesisMasterBlock()}
+	rt.mc = &pb.MasterChain{MasterChain: []*pb.MasterBlock{rt.GenesisMasterBlock()}}
 
 	return rt
 }
 
-func (rt *Runtime) LastMasterBlock() *types.MasterBlock {
-	return rt.MC[rt.LIMB]
+func (rt *Runtime) MC() *pb.MasterChain {
+	return rt.mc
 }
 
-func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
+func (rt *Runtime) LastMasterBlock() *pb.MasterBlock {
+	return rt.mc.MasterChain[rt.limb]
+}
+
+func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *pb.MasterBlock {
 	isFound := false
-	for _, b := range rt.MC {
-		if b.PublicKey == publicKey.PublicKey {
+	for _, b := range rt.mc.MasterChain {
+		if b.Block.PublicKey.PublicKey == publicKey.PublicKey {
 			log.Debug("ISFOUND")
 			isFound = true
 		}
 	}
 
 	if !isFound {
-		block := &types.MasterBlock{
-			PublicKey: publicKey.PublicKey,
-			Block: &types.Block{
-				Index:     rt.LastMasterBlock().Index + 1,
-				PrevHash:  rt.LastMasterBlock().Hash,
-				Timestamp: time.Now().UTC(),
+		block := &pb.MasterBlock{
+			Block: &pb.Block{
+				Index:     rt.LastMasterBlock().Block.Index + 1,
+				PrevHash:  rt.LastMasterBlock().Block.Hash,
+				Timestamp: time.Now().UTC().Unix(),
+				PublicKey: publicKey,
 			},
-			CertChain: types.CertChain{rt.GenesisCertBlock(publicKey.PublicKey)},
+			CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{rt.GenesisCertBlock(publicKey)}},
 		}
 
-		hash := sha256.SumString(block.Bytes())
+		hash := sha256.SumString(block.String())
 
-		log.Debug(block.CertChain[0].PublicKey)
+		block.Block.Hash = hash
+		block.Block.XKey = hash
 
-		block.Hash = hash
-		block.Key = hash
-
-		rt.MC = append(rt.MC, block)
+		rt.mc.MasterChain = append(rt.mc.MasterChain, block)
 
 		return block
 	}
@@ -63,60 +64,63 @@ func (rt *Runtime) AddMasterBlock(publicKey *pb.PublicKey) *types.MasterBlock {
 	return nil
 }
 
-func (rt *Runtime) PrepareBlock(cert *pb.Cert) *types.CertBlock {
-	old := &types.CertBlock{}
+func (rt *Runtime) PrepareBlock(cert *pb.Cert) *pb.CertBlock {
+	old := &pb.CertBlock{}
 
-	for _, mb := range rt.MC {
-		if mb.PublicKey == cert.Issuer.PublicKey.PublicKey {
-			old = mb.CertChain[len(mb.CertChain)-1]
+	for _, mb := range rt.mc.MasterChain {
+		if mb.Block.PublicKey.PublicKey == cert.Issuer.PublicKey.PublicKey {
+			old = mb.CertChain.CertChain[len(mb.CertChain.CertChain)-1]
 		}
 	}
 
-	block := &types.CertBlock{
-		Block: &types.Block{
-			Timestamp: time.Now().UTC(),
-			PrevHash:  old.Hash,
-			Index:     old.Index + 1,
+	block := &pb.CertBlock{
+		Block: &pb.Block{
+			Timestamp: time.Now().UTC().Unix(),
+			PrevHash:  old.Block.Hash,
+			Index:     old.Block.Index + 1,
+			PublicKey: old.Block.PublicKey,
 		},
-		PublicKey: old.PublicKey,
 	}
 
-	hash := sha256.SumString(block.Bytes())
-	block.Hash = hash
-	block.Key = hash
+	hash := sha256.SumString(block.String())
+	block.Block.Hash = hash
+	block.Block.XKey = hash
 
 	return block
 }
 
-func (_ *Runtime) GenesisCertBlock(publicKey string) *types.CertBlock {
-	block := &types.CertBlock{
-		Block: &types.Block{
-			Timestamp: time.Now().UTC(),
+func (_ *Runtime) GenesisCertBlock(publicKey *pb.PublicKey) *pb.CertBlock {
+	block := &pb.CertBlock{
+		Block: &pb.Block{
+			Timestamp: time.Now().UTC().Unix(),
+			PublicKey: publicKey,
 		},
-		PublicKey: publicKey,
 	}
 
-	hash := sha256.SumString(block.Bytes())
+	hash := sha256.SumString(block.String())
 
-	block.Hash = hash
-	block.Key = hash
+	block.Block.Hash = hash
+	block.Block.XKey = hash
 
 	return block
 }
 
-func (rt *Runtime) GenesisMasterBlock() *types.MasterBlock {
-	block := &types.MasterBlock{
-		Block: &types.Block{
-			Timestamp: time.Now().UTC(),
+func (rt *Runtime) GenesisMasterBlock() *pb.MasterBlock {
+	block := &pb.MasterBlock{
+		Block: &pb.Block{
+			Timestamp: time.Now().UTC().Unix(),
+			PublicKey: &pb.PublicKey{
+				PublicKey: "",
+			},
 		},
-		PublicKey: "",
-		CertChain: types.CertChain{rt.GenesisCertBlock("")},
+
+		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{rt.GenesisCertBlock(nil)}},
 	}
 
-	hash := sha256.SumString(block.Bytes())
+	hash := sha256.SumString(block.String())
 
-	block.Hash = hash
-	block.Key = hash
+	block.Block.Hash = hash
+	block.Block.XKey = hash
 
 	return block
 }

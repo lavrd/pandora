@@ -12,8 +12,9 @@ func sum(p []byte) []byte {
 	return sum
 }
 
-func SumString(p []byte) string {
-	return hex.EncodeToString(sum(p))
+func SumString(p string) string {
+	buf, _ := hex.DecodeString(p)
+	return hex.EncodeToString(sum(buf))
 }
 
 func SumBytes(p []byte) []byte {

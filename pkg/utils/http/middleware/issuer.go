@@ -8,10 +8,10 @@ import (
 func Issuer(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// var (
-		// 	acc = r.Context().Value("acc").(*types.Account)
+		// 	acc = r.Context().Value("acc").(*pb.Account)
 		// )
 		//
-		// if acc.Meta.Type != types.TypeIssuer {
+		// if acc.Meta.Type != pb.TypeIssuer {
 		// 	errors.Forbidden().Http(w)
 		// 	return
 		// }

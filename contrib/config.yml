@@ -1,39 +1,26 @@
 # runtime
 runtime:
   verbose: true
-  clean: true
-
-# mail
-mail:
-  send: false
-  token: token
-  endpoint: https://api.sendgrid.com/v3/mail/send
-  email: pandora@doesnotexist.system
-  name: Pandora
-  templates:
-    credentials: ./pkg/utils/mail/templates/credentials.html
-  subjects:
-    credentials: Credentials
-
-# dashboard
-dashboard:
-  template: ./dashboard/index.html
-
-# database
-database:
-  endpoint: http://localhost:8529
-  user: root
-  password: root
-  database: pandora
-
-# broker
-broker:
-  endpoint: nats://localhost:4222
-  user: root
-  password: root
+  clean: false
 
 # membership
 membership:
+  mail:
+    send: false
+    token: env
+    endpoint: https://api.sendgrid.com/v3/mail/send
+    email: pandora@doesnotexist.system
+    name: Pandora
+    templates:
+      # todo rename
+      credentials: ./pkg/utils/mail/templates/credentials.html
+    subjects:
+      credentials: Credentials
+  database:
+    endpoint: http://localhost:8529
+    user: root
+    password: root
+    database: pandora
   endpoint: localhost:2003
 
 # validator
@@ -42,11 +29,18 @@ master:
 
 # node
 node:
-  endpoint: localhost:2004
-  full_name: State University of Aerospace Instrumentation
-  secret_key: secret
-  email: guap@doesnotexists.system
+  dashboard:
+    template: ./dashboard/index.html
+  meta:
+    name: State University of Aerospace Instrumentation
+    email: guap@mail.sys
+    secret_key: env
+  port: 2004
 
 # discovery
 discovery:
+  broker:
+    endpoint: nats://localhost:4222
+    user: root
+    password: root
   endpoint: localhost:2001

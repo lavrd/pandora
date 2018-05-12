@@ -3,7 +3,6 @@ package validator
 import (
 	"regexp"
 
-	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -15,11 +14,6 @@ func IsEmail(email string) bool {
 		log.Error(err)
 	}
 	return matched
-}
-
-// IsPassword checking for valid password
-func IsPassword(password string) bool {
-	return types.MinPasswordLen <= len(password) && len(password) <= types.MaxPasswordLen
 }
 
 // IsSignature checking for valid signature

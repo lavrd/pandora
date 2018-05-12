@@ -33,8 +33,8 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	candidate := request.Candidate{
-		FullName: &config.Viper.Node.FullName,
-		Email:    &config.Viper.Node.Email,
+		Name:  &config.Viper.Node.Meta.Name,
+		Email: &config.Viper.Node.Meta.Email,
 	}
 	if err := candidate.Validate(); err != nil {
 		log.Fatal(err.Message)
@@ -43,14 +43,16 @@ func Daemon() bool {
 	log.Debug(candidate)
 	// todo with either start or once?
 	key, err := rpc.NodeReg(&pb.Candidate{
-		Email:    *candidate.Email,
-		FullName: *candidate.FullName,
+		Email: *candidate.Email,
+		Name:  *candidate.Name,
 	})
 	if err != nil {
 		if err != errors.AlreadyExists {
 			log.Fatal(err)
 		}
 	}
+
+	log.Debug(key)
 
 	netOpts, err := rpc.Network()
 	if err != nil {
@@ -68,10 +70,10 @@ func Daemon() bool {
 	defer brk.Close()
 
 	stg, err := storage.Connect(&storage.Opts{
-		Endpoint: config.Viper.Database.Endpoint,
-		Database: config.Viper.Database.Database,
-		User:     config.Viper.Database.User,
-		Password: config.Viper.Database.Password,
+		Endpoint: config.Viper.Membership.Database.Endpoint,
+		Database: config.Viper.Membership.Database.Database,
+		User:     config.Viper.Membership.Database.User,
+		Password: config.Viper.Membership.Database.Password,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -83,7 +85,7 @@ func Daemon() bool {
 	}
 
 	rt.PublicKey = key.PublicKey
-	rt.FullName = config.Viper.Node.FullName
+	rt.FullName = config.Viper.Node.Meta.Name
 
 	env.SetStorage(stg)
 	env.SetBroker(brk)
@@ -96,7 +98,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes); err != nil {
+		if err := http.Listen(fmt.Sprintf(":%d", config.Viper.Node.Port), routes.Routes); err != nil {
 			log.Fatal(err)
 		}
 	}()

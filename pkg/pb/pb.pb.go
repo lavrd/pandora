@@ -23,394 +23,374 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type Empty struct {
+type CertBlock struct {
+	Block                *Block   `protobuf:"bytes,1,opt,name=block" json:"block,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Empty) Reset()         { *m = Empty{} }
-func (m *Empty) String() string { return proto.CompactTextString(m) }
-func (*Empty) ProtoMessage()    {}
-func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{0}
+func (m *CertBlock) Reset()         { *m = CertBlock{} }
+func (m *CertBlock) String() string { return proto.CompactTextString(m) }
+func (*CertBlock) ProtoMessage()    {}
+func (*CertBlock) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{0}
 }
-func (m *Empty) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Empty.Unmarshal(m, b)
+func (m *CertBlock) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CertBlock.Unmarshal(m, b)
 }
-func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+func (m *CertBlock) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CertBlock.Marshal(b, m, deterministic)
 }
-func (dst *Empty) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Empty.Merge(dst, src)
+func (dst *CertBlock) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CertBlock.Merge(dst, src)
 }
-func (m *Empty) XXX_Size() int {
-	return xxx_messageInfo_Empty.Size(m)
+func (m *CertBlock) XXX_Size() int {
+	return xxx_messageInfo_CertBlock.Size(m)
 }
-func (m *Empty) XXX_DiscardUnknown() {
-	xxx_messageInfo_Empty.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Empty proto.InternalMessageInfo
-
-type PublicKey struct {
-	PublicKey            string   `protobuf:"bytes,1,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+func (m *CertBlock) XXX_DiscardUnknown() {
+	xxx_messageInfo_CertBlock.DiscardUnknown(m)
 }
 
-func (m *PublicKey) Reset()         { *m = PublicKey{} }
-func (m *PublicKey) String() string { return proto.CompactTextString(m) }
-func (*PublicKey) ProtoMessage()    {}
-func (*PublicKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{1}
-}
-func (m *PublicKey) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PublicKey.Unmarshal(m, b)
-}
-func (m *PublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PublicKey.Marshal(b, m, deterministic)
-}
-func (dst *PublicKey) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublicKey.Merge(dst, src)
-}
-func (m *PublicKey) XXX_Size() int {
-	return xxx_messageInfo_PublicKey.Size(m)
-}
-func (m *PublicKey) XXX_DiscardUnknown() {
-	xxx_messageInfo_PublicKey.DiscardUnknown(m)
-}
+var xxx_messageInfo_CertBlock proto.InternalMessageInfo
 
-var xxx_messageInfo_PublicKey proto.InternalMessageInfo
-
-func (m *PublicKey) GetPublicKey() string {
+func (m *CertBlock) GetBlock() *Block {
 	if m != nil {
-		return m.PublicKey
+		return m.Block
+	}
+	return nil
+}
+
+type MasterBlock struct {
+	Block                *Block     `protobuf:"bytes,1,opt,name=block" json:"block,omitempty"`
+	CertChain            *CertChain `protobuf:"bytes,4,opt,name=cert_chain,json=certChain" json:"cert_chain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *MasterBlock) Reset()         { *m = MasterBlock{} }
+func (m *MasterBlock) String() string { return proto.CompactTextString(m) }
+func (*MasterBlock) ProtoMessage()    {}
+func (*MasterBlock) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{1}
+}
+func (m *MasterBlock) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MasterBlock.Unmarshal(m, b)
+}
+func (m *MasterBlock) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MasterBlock.Marshal(b, m, deterministic)
+}
+func (dst *MasterBlock) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MasterBlock.Merge(dst, src)
+}
+func (m *MasterBlock) XXX_Size() int {
+	return xxx_messageInfo_MasterBlock.Size(m)
+}
+func (m *MasterBlock) XXX_DiscardUnknown() {
+	xxx_messageInfo_MasterBlock.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MasterBlock proto.InternalMessageInfo
+
+func (m *MasterBlock) GetBlock() *Block {
+	if m != nil {
+		return m.Block
+	}
+	return nil
+}
+
+func (m *MasterBlock) GetCertChain() *CertChain {
+	if m != nil {
+		return m.CertChain
+	}
+	return nil
+}
+
+type Block struct {
+	XKey                 string     `protobuf:"bytes,1,opt,name=_key,json=Key" json:"_key,omitempty"`
+	Index                int64      `protobuf:"varint,2,opt,name=index" json:"index,omitempty"`
+	Hash                 string     `protobuf:"bytes,3,opt,name=hash" json:"hash,omitempty"`
+	PrevHash             string     `protobuf:"bytes,4,opt,name=prev_hash,json=prevHash" json:"prev_hash,omitempty"`
+	Timestamp            int64      `protobuf:"varint,5,opt,name=timestamp" json:"timestamp,omitempty"`
+	Tx                   string     `protobuf:"bytes,6,opt,name=tx" json:"tx,omitempty"`
+	PublicKey            *PublicKey `protobuf:"bytes,7,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *Block) Reset()         { *m = Block{} }
+func (m *Block) String() string { return proto.CompactTextString(m) }
+func (*Block) ProtoMessage()    {}
+func (*Block) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{2}
+}
+func (m *Block) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Block.Unmarshal(m, b)
+}
+func (m *Block) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Block.Marshal(b, m, deterministic)
+}
+func (dst *Block) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Block.Merge(dst, src)
+}
+func (m *Block) XXX_Size() int {
+	return xxx_messageInfo_Block.Size(m)
+}
+func (m *Block) XXX_DiscardUnknown() {
+	xxx_messageInfo_Block.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Block proto.InternalMessageInfo
+
+func (m *Block) GetXKey() string {
+	if m != nil {
+		return m.XKey
 	}
 	return ""
 }
 
-type Account struct {
-	Meta                 *AccountMeta `protobuf:"bytes,1,opt,name=meta" json:"meta,omitempty"`
-	PublicKey            string       `protobuf:"bytes,2,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
+func (m *Block) GetIndex() int64 {
+	if m != nil {
+		return m.Index
+	}
+	return 0
+}
+
+func (m *Block) GetHash() string {
+	if m != nil {
+		return m.Hash
+	}
+	return ""
+}
+
+func (m *Block) GetPrevHash() string {
+	if m != nil {
+		return m.PrevHash
+	}
+	return ""
+}
+
+func (m *Block) GetTimestamp() int64 {
+	if m != nil {
+		return m.Timestamp
+	}
+	return 0
+}
+
+func (m *Block) GetTx() string {
+	if m != nil {
+		return m.Tx
+	}
+	return ""
+}
+
+func (m *Block) GetPublicKey() *PublicKey {
+	if m != nil {
+		return m.PublicKey
+	}
+	return nil
+}
+
+type CertChain struct {
+	CertChain            []*CertBlock `protobuf:"bytes,1,rep,name=cert_chain,json=certChain" json:"cert_chain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
 }
 
-func (m *Account) Reset()         { *m = Account{} }
-func (m *Account) String() string { return proto.CompactTextString(m) }
-func (*Account) ProtoMessage()    {}
-func (*Account) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{2}
+func (m *CertChain) Reset()         { *m = CertChain{} }
+func (m *CertChain) String() string { return proto.CompactTextString(m) }
+func (*CertChain) ProtoMessage()    {}
+func (*CertChain) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{3}
 }
-func (m *Account) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Account.Unmarshal(m, b)
+func (m *CertChain) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CertChain.Unmarshal(m, b)
 }
-func (m *Account) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Account.Marshal(b, m, deterministic)
+func (m *CertChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CertChain.Marshal(b, m, deterministic)
 }
-func (dst *Account) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Account.Merge(dst, src)
+func (dst *CertChain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CertChain.Merge(dst, src)
 }
-func (m *Account) XXX_Size() int {
-	return xxx_messageInfo_Account.Size(m)
+func (m *CertChain) XXX_Size() int {
+	return xxx_messageInfo_CertChain.Size(m)
 }
-func (m *Account) XXX_DiscardUnknown() {
-	xxx_messageInfo_Account.DiscardUnknown(m)
+func (m *CertChain) XXX_DiscardUnknown() {
+	xxx_messageInfo_CertChain.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Account proto.InternalMessageInfo
+var xxx_messageInfo_CertChain proto.InternalMessageInfo
 
-func (m *Account) GetMeta() *AccountMeta {
+func (m *CertChain) GetCertChain() []*CertBlock {
 	if m != nil {
-		return m.Meta
+		return m.CertChain
 	}
 	return nil
 }
 
-func (m *Account) GetPublicKey() string {
-	if m != nil {
-		return m.PublicKey
-	}
-	return ""
-}
-
-type AccountMeta struct {
-	Email                string   `protobuf:"bytes,1,opt,name=email" json:"email,omitempty"`
-	FullName             string   `protobuf:"bytes,2,opt,name=full_name,json=fullName" json:"full_name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *AccountMeta) Reset()         { *m = AccountMeta{} }
-func (m *AccountMeta) String() string { return proto.CompactTextString(m) }
-func (*AccountMeta) ProtoMessage()    {}
-func (*AccountMeta) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{3}
-}
-func (m *AccountMeta) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AccountMeta.Unmarshal(m, b)
-}
-func (m *AccountMeta) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AccountMeta.Marshal(b, m, deterministic)
-}
-func (dst *AccountMeta) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AccountMeta.Merge(dst, src)
-}
-func (m *AccountMeta) XXX_Size() int {
-	return xxx_messageInfo_AccountMeta.Size(m)
-}
-func (m *AccountMeta) XXX_DiscardUnknown() {
-	xxx_messageInfo_AccountMeta.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AccountMeta proto.InternalMessageInfo
-
-func (m *AccountMeta) GetEmail() string {
-	if m != nil {
-		return m.Email
-	}
-	return ""
-}
-
-func (m *AccountMeta) GetFullName() string {
-	if m != nil {
-		return m.FullName
-	}
-	return ""
-}
-
-type Candidate struct {
-	Email                string   `protobuf:"bytes,1,opt,name=email" json:"email,omitempty"`
-	FullName             string   `protobuf:"bytes,2,opt,name=full_name,json=fullName" json:"full_name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Candidate) Reset()         { *m = Candidate{} }
-func (m *Candidate) String() string { return proto.CompactTextString(m) }
-func (*Candidate) ProtoMessage()    {}
-func (*Candidate) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{4}
-}
-func (m *Candidate) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Candidate.Unmarshal(m, b)
-}
-func (m *Candidate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Candidate.Marshal(b, m, deterministic)
-}
-func (dst *Candidate) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Candidate.Merge(dst, src)
-}
-func (m *Candidate) XXX_Size() int {
-	return xxx_messageInfo_Candidate.Size(m)
-}
-func (m *Candidate) XXX_DiscardUnknown() {
-	xxx_messageInfo_Candidate.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Candidate proto.InternalMessageInfo
-
-func (m *Candidate) GetEmail() string {
-	if m != nil {
-		return m.Email
-	}
-	return ""
-}
-
-func (m *Candidate) GetFullName() string {
-	if m != nil {
-		return m.FullName
-	}
-	return ""
-}
-
-type IssuerMeta struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *IssuerMeta) Reset()         { *m = IssuerMeta{} }
-func (m *IssuerMeta) String() string { return proto.CompactTextString(m) }
-func (*IssuerMeta) ProtoMessage()    {}
-func (*IssuerMeta) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{5}
-}
-func (m *IssuerMeta) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_IssuerMeta.Unmarshal(m, b)
-}
-func (m *IssuerMeta) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_IssuerMeta.Marshal(b, m, deterministic)
-}
-func (dst *IssuerMeta) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssuerMeta.Merge(dst, src)
-}
-func (m *IssuerMeta) XXX_Size() int {
-	return xxx_messageInfo_IssuerMeta.Size(m)
-}
-func (m *IssuerMeta) XXX_DiscardUnknown() {
-	xxx_messageInfo_IssuerMeta.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_IssuerMeta proto.InternalMessageInfo
-
-func (m *IssuerMeta) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-type RecipientMeta struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RecipientMeta) Reset()         { *m = RecipientMeta{} }
-func (m *RecipientMeta) String() string { return proto.CompactTextString(m) }
-func (*RecipientMeta) ProtoMessage()    {}
-func (*RecipientMeta) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{6}
-}
-func (m *RecipientMeta) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RecipientMeta.Unmarshal(m, b)
-}
-func (m *RecipientMeta) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RecipientMeta.Marshal(b, m, deterministic)
-}
-func (dst *RecipientMeta) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RecipientMeta.Merge(dst, src)
-}
-func (m *RecipientMeta) XXX_Size() int {
-	return xxx_messageInfo_RecipientMeta.Size(m)
-}
-func (m *RecipientMeta) XXX_DiscardUnknown() {
-	xxx_messageInfo_RecipientMeta.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RecipientMeta proto.InternalMessageInfo
-
-func (m *RecipientMeta) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-type CertIssuer struct {
-	Meta                 *IssuerMeta `protobuf:"bytes,1,opt,name=meta" json:"meta,omitempty"`
-	Signature            string      `protobuf:"bytes,2,opt,name=signature" json:"signature,omitempty"`
-	PublicKey            *PublicKey  `protobuf:"bytes,3,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *CertIssuer) Reset()         { *m = CertIssuer{} }
-func (m *CertIssuer) String() string { return proto.CompactTextString(m) }
-func (*CertIssuer) ProtoMessage()    {}
-func (*CertIssuer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{7}
-}
-func (m *CertIssuer) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CertIssuer.Unmarshal(m, b)
-}
-func (m *CertIssuer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CertIssuer.Marshal(b, m, deterministic)
-}
-func (dst *CertIssuer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CertIssuer.Merge(dst, src)
-}
-func (m *CertIssuer) XXX_Size() int {
-	return xxx_messageInfo_CertIssuer.Size(m)
-}
-func (m *CertIssuer) XXX_DiscardUnknown() {
-	xxx_messageInfo_CertIssuer.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CertIssuer proto.InternalMessageInfo
-
-func (m *CertIssuer) GetMeta() *IssuerMeta {
-	if m != nil {
-		return m.Meta
-	}
-	return nil
-}
-
-func (m *CertIssuer) GetSignature() string {
-	if m != nil {
-		return m.Signature
-	}
-	return ""
-}
-
-func (m *CertIssuer) GetPublicKey() *PublicKey {
-	if m != nil {
-		return m.PublicKey
-	}
-	return nil
-}
-
-type CertRecipient struct {
-	Meta                 *RecipientMeta `protobuf:"bytes,1,opt,name=meta" json:"meta,omitempty"`
-	Signature            string         `protobuf:"bytes,2,opt,name=signature" json:"signature,omitempty"`
-	PublicKey            *PublicKey     `protobuf:"bytes,3,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
+type MasterChain struct {
+	MasterChain          []*MasterBlock `protobuf:"bytes,1,rep,name=master_chain,json=masterChain" json:"master_chain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *CertRecipient) Reset()         { *m = CertRecipient{} }
-func (m *CertRecipient) String() string { return proto.CompactTextString(m) }
-func (*CertRecipient) ProtoMessage()    {}
-func (*CertRecipient) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{8}
+func (m *MasterChain) Reset()         { *m = MasterChain{} }
+func (m *MasterChain) String() string { return proto.CompactTextString(m) }
+func (*MasterChain) ProtoMessage()    {}
+func (*MasterChain) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{4}
 }
-func (m *CertRecipient) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CertRecipient.Unmarshal(m, b)
+func (m *MasterChain) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MasterChain.Unmarshal(m, b)
 }
-func (m *CertRecipient) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CertRecipient.Marshal(b, m, deterministic)
+func (m *MasterChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MasterChain.Marshal(b, m, deterministic)
 }
-func (dst *CertRecipient) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CertRecipient.Merge(dst, src)
+func (dst *MasterChain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MasterChain.Merge(dst, src)
 }
-func (m *CertRecipient) XXX_Size() int {
-	return xxx_messageInfo_CertRecipient.Size(m)
+func (m *MasterChain) XXX_Size() int {
+	return xxx_messageInfo_MasterChain.Size(m)
 }
-func (m *CertRecipient) XXX_DiscardUnknown() {
-	xxx_messageInfo_CertRecipient.DiscardUnknown(m)
+func (m *MasterChain) XXX_DiscardUnknown() {
+	xxx_messageInfo_MasterChain.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CertRecipient proto.InternalMessageInfo
+var xxx_messageInfo_MasterChain proto.InternalMessageInfo
 
-func (m *CertRecipient) GetMeta() *RecipientMeta {
+func (m *MasterChain) GetMasterChain() []*MasterBlock {
+	if m != nil {
+		return m.MasterChain
+	}
+	return nil
+}
+
+type Cert struct {
+	XKey                 string       `protobuf:"bytes,1,opt,name=_key,json=Key" json:"_key,omitempty"`
+	Id                   string       `protobuf:"bytes,2,opt,name=id" json:"id,omitempty"`
+	Meta                 *CertMeta    `protobuf:"bytes,3,opt,name=meta" json:"meta,omitempty"`
+	Issuer               *Participant `protobuf:"bytes,4,opt,name=issuer" json:"issuer,omitempty"`
+	Recipient            *Participant `protobuf:"bytes,5,opt,name=recipient" json:"recipient,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *Cert) Reset()         { *m = Cert{} }
+func (m *Cert) String() string { return proto.CompactTextString(m) }
+func (*Cert) ProtoMessage()    {}
+func (*Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{5}
+}
+func (m *Cert) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Cert.Unmarshal(m, b)
+}
+func (m *Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Cert.Marshal(b, m, deterministic)
+}
+func (dst *Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Cert.Merge(dst, src)
+}
+func (m *Cert) XXX_Size() int {
+	return xxx_messageInfo_Cert.Size(m)
+}
+func (m *Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Cert proto.InternalMessageInfo
+
+func (m *Cert) GetXKey() string {
+	if m != nil {
+		return m.XKey
+	}
+	return ""
+}
+
+func (m *Cert) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Cert) GetMeta() *CertMeta {
 	if m != nil {
 		return m.Meta
 	}
 	return nil
 }
 
-func (m *CertRecipient) GetSignature() string {
+func (m *Cert) GetIssuer() *Participant {
 	if m != nil {
-		return m.Signature
+		return m.Issuer
+	}
+	return nil
+}
+
+func (m *Cert) GetRecipient() *Participant {
+	if m != nil {
+		return m.Recipient
+	}
+	return nil
+}
+
+type Participant struct {
+	Name                 string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	PublicKey            *PublicKey `protobuf:"bytes,2,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
+	Signature            string     `protobuf:"bytes,3,opt,name=signature" json:"signature,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *Participant) Reset()         { *m = Participant{} }
+func (m *Participant) String() string { return proto.CompactTextString(m) }
+func (*Participant) ProtoMessage()    {}
+func (*Participant) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{6}
+}
+func (m *Participant) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Participant.Unmarshal(m, b)
+}
+func (m *Participant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Participant.Marshal(b, m, deterministic)
+}
+func (dst *Participant) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Participant.Merge(dst, src)
+}
+func (m *Participant) XXX_Size() int {
+	return xxx_messageInfo_Participant.Size(m)
+}
+func (m *Participant) XXX_DiscardUnknown() {
+	xxx_messageInfo_Participant.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Participant proto.InternalMessageInfo
+
+func (m *Participant) GetName() string {
+	if m != nil {
+		return m.Name
 	}
 	return ""
 }
 
-func (m *CertRecipient) GetPublicKey() *PublicKey {
+func (m *Participant) GetPublicKey() *PublicKey {
 	if m != nil {
 		return m.PublicKey
 	}
 	return nil
+}
+
+func (m *Participant) GetSignature() string {
+	if m != nil {
+		return m.Signature
+	}
+	return ""
 }
 
 type CertMeta struct {
@@ -426,7 +406,7 @@ func (m *CertMeta) Reset()         { *m = CertMeta{} }
 func (m *CertMeta) String() string { return proto.CompactTextString(m) }
 func (*CertMeta) ProtoMessage()    {}
 func (*CertMeta) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{9}
+	return fileDescriptor_pb_f689427340814446, []int{7}
 }
 func (m *CertMeta) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CertMeta.Unmarshal(m, b)
@@ -467,360 +447,73 @@ func (m *CertMeta) GetTimestamp() int64 {
 	return 0
 }
 
-type Cert struct {
-	Id                   string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Meta                 *CertMeta      `protobuf:"bytes,2,opt,name=meta" json:"meta,omitempty"`
-	Issuer               *CertIssuer    `protobuf:"bytes,3,opt,name=issuer" json:"issuer,omitempty"`
-	Recipient            *CertRecipient `protobuf:"bytes,4,opt,name=recipient" json:"recipient,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *Cert) Reset()         { *m = Cert{} }
-func (m *Cert) String() string { return proto.CompactTextString(m) }
-func (*Cert) ProtoMessage()    {}
-func (*Cert) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{10}
-}
-func (m *Cert) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Cert.Unmarshal(m, b)
-}
-func (m *Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Cert.Marshal(b, m, deterministic)
-}
-func (dst *Cert) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Cert.Merge(dst, src)
-}
-func (m *Cert) XXX_Size() int {
-	return xxx_messageInfo_Cert.Size(m)
-}
-func (m *Cert) XXX_DiscardUnknown() {
-	xxx_messageInfo_Cert.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Cert proto.InternalMessageInfo
-
-func (m *Cert) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Cert) GetMeta() *CertMeta {
-	if m != nil {
-		return m.Meta
-	}
-	return nil
-}
-
-func (m *Cert) GetIssuer() *CertIssuer {
-	if m != nil {
-		return m.Issuer
-	}
-	return nil
-}
-
-func (m *Cert) GetRecipient() *CertRecipient {
-	if m != nil {
-		return m.Recipient
-	}
-	return nil
-}
-
-type CertBlock struct {
-	PublicKey            *PublicKey `protobuf:"bytes,1,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
-	Block                *Block     `protobuf:"bytes,2,opt,name=block" json:"block,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *CertBlock) Reset()         { *m = CertBlock{} }
-func (m *CertBlock) String() string { return proto.CompactTextString(m) }
-func (*CertBlock) ProtoMessage()    {}
-func (*CertBlock) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{11}
-}
-func (m *CertBlock) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CertBlock.Unmarshal(m, b)
-}
-func (m *CertBlock) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CertBlock.Marshal(b, m, deterministic)
-}
-func (dst *CertBlock) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CertBlock.Merge(dst, src)
-}
-func (m *CertBlock) XXX_Size() int {
-	return xxx_messageInfo_CertBlock.Size(m)
-}
-func (m *CertBlock) XXX_DiscardUnknown() {
-	xxx_messageInfo_CertBlock.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CertBlock proto.InternalMessageInfo
-
-func (m *CertBlock) GetPublicKey() *PublicKey {
-	if m != nil {
-		return m.PublicKey
-	}
-	return nil
-}
-
-func (m *CertBlock) GetBlock() *Block {
-	if m != nil {
-		return m.Block
-	}
-	return nil
-}
-
-type CertChain struct {
-	CertBlock            []*CertBlock `protobuf:"bytes,1,rep,name=cert_block,json=certBlock" json:"cert_block,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
-}
-
-func (m *CertChain) Reset()         { *m = CertChain{} }
-func (m *CertChain) String() string { return proto.CompactTextString(m) }
-func (*CertChain) ProtoMessage()    {}
-func (*CertChain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{12}
-}
-func (m *CertChain) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CertChain.Unmarshal(m, b)
-}
-func (m *CertChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CertChain.Marshal(b, m, deterministic)
-}
-func (dst *CertChain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CertChain.Merge(dst, src)
-}
-func (m *CertChain) XXX_Size() int {
-	return xxx_messageInfo_CertChain.Size(m)
-}
-func (m *CertChain) XXX_DiscardUnknown() {
-	xxx_messageInfo_CertChain.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CertChain proto.InternalMessageInfo
-
-func (m *CertChain) GetCertBlock() []*CertBlock {
-	if m != nil {
-		return m.CertBlock
-	}
-	return nil
-}
-
-// todo public_key -> publicKey
-type MasterBlock struct {
-	Block                *Block     `protobuf:"bytes,1,opt,name=block" json:"block,omitempty"`
-	PublicKey            *PublicKey `protobuf:"bytes,2,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
-	CertChain            *CertChain `protobuf:"bytes,3,opt,name=cert_chain,json=certChain" json:"cert_chain,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *MasterBlock) Reset()         { *m = MasterBlock{} }
-func (m *MasterBlock) String() string { return proto.CompactTextString(m) }
-func (*MasterBlock) ProtoMessage()    {}
-func (*MasterBlock) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{13}
-}
-func (m *MasterBlock) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MasterBlock.Unmarshal(m, b)
-}
-func (m *MasterBlock) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MasterBlock.Marshal(b, m, deterministic)
-}
-func (dst *MasterBlock) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MasterBlock.Merge(dst, src)
-}
-func (m *MasterBlock) XXX_Size() int {
-	return xxx_messageInfo_MasterBlock.Size(m)
-}
-func (m *MasterBlock) XXX_DiscardUnknown() {
-	xxx_messageInfo_MasterBlock.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MasterBlock proto.InternalMessageInfo
-
-func (m *MasterBlock) GetBlock() *Block {
-	if m != nil {
-		return m.Block
-	}
-	return nil
-}
-
-func (m *MasterBlock) GetPublicKey() *PublicKey {
-	if m != nil {
-		return m.PublicKey
-	}
-	return nil
-}
-
-func (m *MasterBlock) GetCertChain() *CertChain {
-	if m != nil {
-		return m.CertChain
-	}
-	return nil
-}
-
-type MasterChain struct {
-	MasterBlock          []*MasterBlock `protobuf:"bytes,1,rep,name=master_block,json=masterBlock" json:"master_block,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *MasterChain) Reset()         { *m = MasterChain{} }
-func (m *MasterChain) String() string { return proto.CompactTextString(m) }
-func (*MasterChain) ProtoMessage()    {}
-func (*MasterChain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{14}
-}
-func (m *MasterChain) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MasterChain.Unmarshal(m, b)
-}
-func (m *MasterChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MasterChain.Marshal(b, m, deterministic)
-}
-func (dst *MasterChain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MasterChain.Merge(dst, src)
-}
-func (m *MasterChain) XXX_Size() int {
-	return xxx_messageInfo_MasterChain.Size(m)
-}
-func (m *MasterChain) XXX_DiscardUnknown() {
-	xxx_messageInfo_MasterChain.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MasterChain proto.InternalMessageInfo
-
-func (m *MasterChain) GetMasterBlock() []*MasterBlock {
-	if m != nil {
-		return m.MasterBlock
-	}
-	return nil
-}
-
-type Block struct {
-	Index                int64    `protobuf:"varint,1,opt,name=index" json:"index,omitempty"`
-	Hash                 string   `protobuf:"bytes,2,opt,name=hash" json:"hash,omitempty"`
-	PrevHash             string   `protobuf:"bytes,3,opt,name=prev_hash,json=prevHash" json:"prev_hash,omitempty"`
-	Timestamp            int64    `protobuf:"varint,4,opt,name=timestamp" json:"timestamp,omitempty"`
+type PublicKey struct {
+	PublicKey            string   `protobuf:"bytes,1,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Block) Reset()         { *m = Block{} }
-func (m *Block) String() string { return proto.CompactTextString(m) }
-func (*Block) ProtoMessage()    {}
-func (*Block) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{15}
+func (m *PublicKey) Reset()         { *m = PublicKey{} }
+func (m *PublicKey) String() string { return proto.CompactTextString(m) }
+func (*PublicKey) ProtoMessage()    {}
+func (*PublicKey) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{8}
 }
-func (m *Block) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Block.Unmarshal(m, b)
+func (m *PublicKey) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PublicKey.Unmarshal(m, b)
 }
-func (m *Block) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Block.Marshal(b, m, deterministic)
+func (m *PublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PublicKey.Marshal(b, m, deterministic)
 }
-func (dst *Block) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Block.Merge(dst, src)
+func (dst *PublicKey) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PublicKey.Merge(dst, src)
 }
-func (m *Block) XXX_Size() int {
-	return xxx_messageInfo_Block.Size(m)
+func (m *PublicKey) XXX_Size() int {
+	return xxx_messageInfo_PublicKey.Size(m)
 }
-func (m *Block) XXX_DiscardUnknown() {
-	xxx_messageInfo_Block.DiscardUnknown(m)
+func (m *PublicKey) XXX_DiscardUnknown() {
+	xxx_messageInfo_PublicKey.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Block proto.InternalMessageInfo
+var xxx_messageInfo_PublicKey proto.InternalMessageInfo
 
-func (m *Block) GetIndex() int64 {
+func (m *PublicKey) GetPublicKey() string {
 	if m != nil {
-		return m.Index
-	}
-	return 0
-}
-
-func (m *Block) GetHash() string {
-	if m != nil {
-		return m.Hash
+		return m.PublicKey
 	}
 	return ""
 }
 
-func (m *Block) GetPrevHash() string {
-	if m != nil {
-		return m.PrevHash
-	}
-	return ""
+type Empty struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Block) GetTimestamp() int64 {
-	if m != nil {
-		return m.Timestamp
-	}
-	return 0
+func (m *Empty) Reset()         { *m = Empty{} }
+func (m *Empty) String() string { return proto.CompactTextString(m) }
+func (*Empty) ProtoMessage()    {}
+func (*Empty) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{9}
+}
+func (m *Empty) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Empty.Unmarshal(m, b)
+}
+func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+}
+func (dst *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(dst, src)
+}
+func (m *Empty) XXX_Size() int {
+	return xxx_messageInfo_Empty.Size(m)
+}
+func (m *Empty) XXX_DiscardUnknown() {
+	xxx_messageInfo_Empty.DiscardUnknown(m)
 }
 
-type NetOpts struct {
-	Broker               *BrokerOpts     `protobuf:"bytes,1,opt,name=broker" json:"broker,omitempty"`
-	Membership           *MembershipOpts `protobuf:"bytes,2,opt,name=membership" json:"membership,omitempty"`
-	Master               *MasterOpts     `protobuf:"bytes,3,opt,name=master" json:"master,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
-}
-
-func (m *NetOpts) Reset()         { *m = NetOpts{} }
-func (m *NetOpts) String() string { return proto.CompactTextString(m) }
-func (*NetOpts) ProtoMessage()    {}
-func (*NetOpts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{16}
-}
-func (m *NetOpts) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NetOpts.Unmarshal(m, b)
-}
-func (m *NetOpts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NetOpts.Marshal(b, m, deterministic)
-}
-func (dst *NetOpts) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NetOpts.Merge(dst, src)
-}
-func (m *NetOpts) XXX_Size() int {
-	return xxx_messageInfo_NetOpts.Size(m)
-}
-func (m *NetOpts) XXX_DiscardUnknown() {
-	xxx_messageInfo_NetOpts.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NetOpts proto.InternalMessageInfo
-
-func (m *NetOpts) GetBroker() *BrokerOpts {
-	if m != nil {
-		return m.Broker
-	}
-	return nil
-}
-
-func (m *NetOpts) GetMembership() *MembershipOpts {
-	if m != nil {
-		return m.Membership
-	}
-	return nil
-}
-
-func (m *NetOpts) GetMaster() *MasterOpts {
-	if m != nil {
-		return m.Master
-	}
-	return nil
-}
+var xxx_messageInfo_Empty proto.InternalMessageInfo
 
 type BrokerOpts struct {
 	Endpoint             string   `protobuf:"bytes,1,opt,name=endpoint" json:"endpoint,omitempty"`
@@ -835,7 +528,7 @@ func (m *BrokerOpts) Reset()         { *m = BrokerOpts{} }
 func (m *BrokerOpts) String() string { return proto.CompactTextString(m) }
 func (*BrokerOpts) ProtoMessage()    {}
 func (*BrokerOpts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{17}
+	return fileDescriptor_pb_f689427340814446, []int{10}
 }
 func (m *BrokerOpts) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BrokerOpts.Unmarshal(m, b)
@@ -887,7 +580,7 @@ func (m *MembershipOpts) Reset()         { *m = MembershipOpts{} }
 func (m *MembershipOpts) String() string { return proto.CompactTextString(m) }
 func (*MembershipOpts) ProtoMessage()    {}
 func (*MembershipOpts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{18}
+	return fileDescriptor_pb_f689427340814446, []int{11}
 }
 func (m *MembershipOpts) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MembershipOpts.Unmarshal(m, b)
@@ -925,7 +618,7 @@ func (m *MasterOpts) Reset()         { *m = MasterOpts{} }
 func (m *MasterOpts) String() string { return proto.CompactTextString(m) }
 func (*MasterOpts) ProtoMessage()    {}
 func (*MasterOpts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_pb_2490bca7042f5b87, []int{19}
+	return fileDescriptor_pb_f689427340814446, []int{12}
 }
 func (m *MasterOpts) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MasterOpts.Unmarshal(m, b)
@@ -952,27 +645,232 @@ func (m *MasterOpts) GetEndpoint() string {
 	return ""
 }
 
+type NetworkOpts struct {
+	Broker               *BrokerOpts     `protobuf:"bytes,1,opt,name=broker" json:"broker,omitempty"`
+	Membership           *MembershipOpts `protobuf:"bytes,2,opt,name=membership" json:"membership,omitempty"`
+	Master               *MasterOpts     `protobuf:"bytes,3,opt,name=master" json:"master,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *NetworkOpts) Reset()         { *m = NetworkOpts{} }
+func (m *NetworkOpts) String() string { return proto.CompactTextString(m) }
+func (*NetworkOpts) ProtoMessage()    {}
+func (*NetworkOpts) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{13}
+}
+func (m *NetworkOpts) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NetworkOpts.Unmarshal(m, b)
+}
+func (m *NetworkOpts) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NetworkOpts.Marshal(b, m, deterministic)
+}
+func (dst *NetworkOpts) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NetworkOpts.Merge(dst, src)
+}
+func (m *NetworkOpts) XXX_Size() int {
+	return xxx_messageInfo_NetworkOpts.Size(m)
+}
+func (m *NetworkOpts) XXX_DiscardUnknown() {
+	xxx_messageInfo_NetworkOpts.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NetworkOpts proto.InternalMessageInfo
+
+func (m *NetworkOpts) GetBroker() *BrokerOpts {
+	if m != nil {
+		return m.Broker
+	}
+	return nil
+}
+
+func (m *NetworkOpts) GetMembership() *MembershipOpts {
+	if m != nil {
+		return m.Membership
+	}
+	return nil
+}
+
+func (m *NetworkOpts) GetMaster() *MasterOpts {
+	if m != nil {
+		return m.Master
+	}
+	return nil
+}
+
+type Member struct {
+	XKey                 string      `protobuf:"bytes,1,opt,name=_key,json=Key" json:"_key,omitempty"`
+	PublicKey            *PublicKey  `protobuf:"bytes,2,opt,name=public_key,json=publicKey" json:"public_key,omitempty"`
+	PrivateKey           []byte      `protobuf:"bytes,3,opt,name=private_key,json=privateKey,proto3" json:"private_key,omitempty"`
+	Meta                 *MemberMeta `protobuf:"bytes,4,opt,name=meta" json:"meta,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *Member) Reset()         { *m = Member{} }
+func (m *Member) String() string { return proto.CompactTextString(m) }
+func (*Member) ProtoMessage()    {}
+func (*Member) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{14}
+}
+func (m *Member) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Member.Unmarshal(m, b)
+}
+func (m *Member) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Member.Marshal(b, m, deterministic)
+}
+func (dst *Member) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Member.Merge(dst, src)
+}
+func (m *Member) XXX_Size() int {
+	return xxx_messageInfo_Member.Size(m)
+}
+func (m *Member) XXX_DiscardUnknown() {
+	xxx_messageInfo_Member.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Member proto.InternalMessageInfo
+
+func (m *Member) GetXKey() string {
+	if m != nil {
+		return m.XKey
+	}
+	return ""
+}
+
+func (m *Member) GetPublicKey() *PublicKey {
+	if m != nil {
+		return m.PublicKey
+	}
+	return nil
+}
+
+func (m *Member) GetPrivateKey() []byte {
+	if m != nil {
+		return m.PrivateKey
+	}
+	return nil
+}
+
+func (m *Member) GetMeta() *MemberMeta {
+	if m != nil {
+		return m.Meta
+	}
+	return nil
+}
+
+type MemberMeta struct {
+	Email                string   `protobuf:"bytes,1,opt,name=email" json:"email,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MemberMeta) Reset()         { *m = MemberMeta{} }
+func (m *MemberMeta) String() string { return proto.CompactTextString(m) }
+func (*MemberMeta) ProtoMessage()    {}
+func (*MemberMeta) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{15}
+}
+func (m *MemberMeta) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MemberMeta.Unmarshal(m, b)
+}
+func (m *MemberMeta) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MemberMeta.Marshal(b, m, deterministic)
+}
+func (dst *MemberMeta) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MemberMeta.Merge(dst, src)
+}
+func (m *MemberMeta) XXX_Size() int {
+	return xxx_messageInfo_MemberMeta.Size(m)
+}
+func (m *MemberMeta) XXX_DiscardUnknown() {
+	xxx_messageInfo_MemberMeta.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MemberMeta proto.InternalMessageInfo
+
+func (m *MemberMeta) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *MemberMeta) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+type Candidate struct {
+	Email                string   `protobuf:"bytes,1,opt,name=email" json:"email,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Candidate) Reset()         { *m = Candidate{} }
+func (m *Candidate) String() string { return proto.CompactTextString(m) }
+func (*Candidate) ProtoMessage()    {}
+func (*Candidate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_pb_f689427340814446, []int{16}
+}
+func (m *Candidate) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Candidate.Unmarshal(m, b)
+}
+func (m *Candidate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Candidate.Marshal(b, m, deterministic)
+}
+func (dst *Candidate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Candidate.Merge(dst, src)
+}
+func (m *Candidate) XXX_Size() int {
+	return xxx_messageInfo_Candidate.Size(m)
+}
+func (m *Candidate) XXX_DiscardUnknown() {
+	xxx_messageInfo_Candidate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Candidate proto.InternalMessageInfo
+
+func (m *Candidate) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *Candidate) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
 func init() {
-	proto.RegisterType((*Empty)(nil), "pb.Empty")
-	proto.RegisterType((*PublicKey)(nil), "pb.PublicKey")
-	proto.RegisterType((*Account)(nil), "pb.Account")
-	proto.RegisterType((*AccountMeta)(nil), "pb.AccountMeta")
-	proto.RegisterType((*Candidate)(nil), "pb.Candidate")
-	proto.RegisterType((*IssuerMeta)(nil), "pb.IssuerMeta")
-	proto.RegisterType((*RecipientMeta)(nil), "pb.RecipientMeta")
-	proto.RegisterType((*CertIssuer)(nil), "pb.CertIssuer")
-	proto.RegisterType((*CertRecipient)(nil), "pb.CertRecipient")
-	proto.RegisterType((*CertMeta)(nil), "pb.CertMeta")
-	proto.RegisterType((*Cert)(nil), "pb.Cert")
-	proto.RegisterType((*CertBlock)(nil), "pb.CertBlock")
-	proto.RegisterType((*CertChain)(nil), "pb.CertChain")
-	proto.RegisterType((*MasterBlock)(nil), "pb.MasterBlock")
-	proto.RegisterType((*MasterChain)(nil), "pb.MasterChain")
-	proto.RegisterType((*Block)(nil), "pb.Block")
-	proto.RegisterType((*NetOpts)(nil), "pb.NetOpts")
-	proto.RegisterType((*BrokerOpts)(nil), "pb.BrokerOpts")
-	proto.RegisterType((*MembershipOpts)(nil), "pb.MembershipOpts")
-	proto.RegisterType((*MasterOpts)(nil), "pb.MasterOpts")
+	proto.RegisterType((*CertBlock)(nil), "pb.cert_block")
+	proto.RegisterType((*MasterBlock)(nil), "pb.master_block")
+	proto.RegisterType((*Block)(nil), "pb.block")
+	proto.RegisterType((*CertChain)(nil), "pb.cert_chain")
+	proto.RegisterType((*MasterChain)(nil), "pb.master_chain")
+	proto.RegisterType((*Cert)(nil), "pb.cert")
+	proto.RegisterType((*Participant)(nil), "pb.participant")
+	proto.RegisterType((*CertMeta)(nil), "pb.cert_meta")
+	proto.RegisterType((*PublicKey)(nil), "pb.public_key")
+	proto.RegisterType((*Empty)(nil), "pb.empty")
+	proto.RegisterType((*BrokerOpts)(nil), "pb.broker_opts")
+	proto.RegisterType((*MembershipOpts)(nil), "pb.membership_opts")
+	proto.RegisterType((*MasterOpts)(nil), "pb.master_opts")
+	proto.RegisterType((*NetworkOpts)(nil), "pb.network_opts")
+	proto.RegisterType((*Member)(nil), "pb.member")
+	proto.RegisterType((*MemberMeta)(nil), "pb.member_meta")
+	proto.RegisterType((*Candidate)(nil), "pb.candidate")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -983,270 +881,11 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Membership service
-
-type MembershipClient interface {
-	Node(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*PublicKey, error)
-	Register(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*Empty, error)
-	Fetch(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*Account, error)
-	Issue(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error)
-}
-
-type membershipClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewMembershipClient(cc *grpc.ClientConn) MembershipClient {
-	return &membershipClient{cc}
-}
-
-func (c *membershipClient) Node(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*PublicKey, error) {
-	out := new(PublicKey)
-	err := grpc.Invoke(ctx, "/pb.Membership/Node", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *membershipClient) Register(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
-	err := grpc.Invoke(ctx, "/pb.Membership/Register", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *membershipClient) Fetch(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*Account, error) {
-	out := new(Account)
-	err := grpc.Invoke(ctx, "/pb.Membership/Fetch", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *membershipClient) Issue(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
-	err := grpc.Invoke(ctx, "/pb.Membership/Issue", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Server API for Membership service
-
-type MembershipServer interface {
-	Node(context.Context, *Candidate) (*PublicKey, error)
-	Register(context.Context, *Candidate) (*Empty, error)
-	Fetch(context.Context, *PublicKey) (*Account, error)
-	Issue(context.Context, *Cert) (*Empty, error)
-}
-
-func RegisterMembershipServer(s *grpc.Server, srv MembershipServer) {
-	s.RegisterService(&_Membership_serviceDesc, srv)
-}
-
-func _Membership_Node_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Candidate)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MembershipServer).Node(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Membership/Node",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MembershipServer).Node(ctx, req.(*Candidate))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Membership_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Candidate)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MembershipServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Membership/Register",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MembershipServer).Register(ctx, req.(*Candidate))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Membership_Fetch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PublicKey)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MembershipServer).Fetch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Membership/Fetch",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MembershipServer).Fetch(ctx, req.(*PublicKey))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Membership_Issue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Cert)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MembershipServer).Issue(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Membership/Issue",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MembershipServer).Issue(ctx, req.(*Cert))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _Membership_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Membership",
-	HandlerType: (*MembershipServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Node",
-			Handler:    _Membership_Node_Handler,
-		},
-		{
-			MethodName: "Register",
-			Handler:    _Membership_Register_Handler,
-		},
-		{
-			MethodName: "Fetch",
-			Handler:    _Membership_Fetch_Handler,
-		},
-		{
-			MethodName: "Issue",
-			Handler:    _Membership_Issue_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb.proto",
-}
-
-// Client API for Master service
-
-type MasterClient interface {
-	CertCandidate(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error)
-	Node(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*MasterChain, error)
-}
-
-type masterClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewMasterClient(cc *grpc.ClientConn) MasterClient {
-	return &masterClient{cc}
-}
-
-func (c *masterClient) CertCandidate(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
-	err := grpc.Invoke(ctx, "/pb.Master/CertCandidate", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *masterClient) Node(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*MasterChain, error) {
-	out := new(MasterChain)
-	err := grpc.Invoke(ctx, "/pb.Master/Node", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Server API for Master service
-
-type MasterServer interface {
-	CertCandidate(context.Context, *Cert) (*Empty, error)
-	Node(context.Context, *PublicKey) (*MasterChain, error)
-}
-
-func RegisterMasterServer(s *grpc.Server, srv MasterServer) {
-	s.RegisterService(&_Master_serviceDesc, srv)
-}
-
-func _Master_CertCandidate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Cert)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MasterServer).CertCandidate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Master/CertCandidate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MasterServer).CertCandidate(ctx, req.(*Cert))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Master_Node_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PublicKey)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MasterServer).Node(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Master/Node",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MasterServer).Node(ctx, req.(*PublicKey))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _Master_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Master",
-	HandlerType: (*MasterServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CertCandidate",
-			Handler:    _Master_CertCandidate_Handler,
-		},
-		{
-			MethodName: "Node",
-			Handler:    _Master_Node_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb.proto",
-}
-
-// Client API for Discovery service
-
+// DiscoveryClient is the client API for Discovery service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DiscoveryClient interface {
-	Network(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*NetOpts, error)
+	Network(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*NetworkOpts, error)
 }
 
 type discoveryClient struct {
@@ -1257,9 +896,9 @@ func NewDiscoveryClient(cc *grpc.ClientConn) DiscoveryClient {
 	return &discoveryClient{cc}
 }
 
-func (c *discoveryClient) Network(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*NetOpts, error) {
-	out := new(NetOpts)
-	err := grpc.Invoke(ctx, "/pb.Discovery/Network", in, out, c.cc, opts...)
+func (c *discoveryClient) Network(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*NetworkOpts, error) {
+	out := new(NetworkOpts)
+	err := c.cc.Invoke(ctx, "/pb.discovery/network", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1269,7 +908,7 @@ func (c *discoveryClient) Network(ctx context.Context, in *Empty, opts ...grpc.C
 // Server API for Discovery service
 
 type DiscoveryServer interface {
-	Network(context.Context, *Empty) (*NetOpts, error)
+	Network(context.Context, *Empty) (*NetworkOpts, error)
 }
 
 func RegisterDiscoveryServer(s *grpc.Server, srv DiscoveryServer) {
@@ -1286,7 +925,7 @@ func _Discovery_Network_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Discovery/Network",
+		FullMethod: "/pb.discovery/Network",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DiscoveryServer).Network(ctx, req.(*Empty))
@@ -1295,11 +934,11 @@ func _Discovery_Network_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 var _Discovery_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Discovery",
+	ServiceName: "pb.discovery",
 	HandlerType: (*DiscoveryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Network",
+			MethodName: "network",
 			Handler:    _Discovery_Network_Handler,
 		},
 	},
@@ -1307,56 +946,283 @@ var _Discovery_serviceDesc = grpc.ServiceDesc{
 	Metadata: "pb.proto",
 }
 
-func init() { proto.RegisterFile("pb.proto", fileDescriptor_pb_2490bca7042f5b87) }
+// MasterClient is the client API for Master service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MasterClient interface {
+	ConfirmCert(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error)
+	ConfirmNode(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*MasterChain, error)
+}
 
-var fileDescriptor_pb_2490bca7042f5b87 = []byte{
-	// 767 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0x4b, 0x6b, 0x14, 0x4b,
-	0x14, 0x9e, 0x9e, 0x47, 0x32, 0x7d, 0x26, 0x99, 0xcb, 0x2d, 0xb2, 0x08, 0xb9, 0x57, 0x1d, 0x2a,
-	0x24, 0x04, 0x09, 0x51, 0xc6, 0x95, 0x1b, 0x31, 0x89, 0x8a, 0x22, 0x13, 0xa5, 0x57, 0x92, 0xcd,
-	0xd8, 0x8f, 0x63, 0xa6, 0x98, 0xe9, 0xee, 0xa2, 0xba, 0x26, 0x71, 0xc0, 0x95, 0x4b, 0xc1, 0x85,
-	0xbf, 0xc1, 0x3f, 0x2a, 0xf5, 0xea, 0xc7, 0x10, 0x22, 0x08, 0xee, 0xea, 0xbc, 0xbe, 0xf3, 0x9d,
-	0xaf, 0x4f, 0x75, 0x41, 0x9f, 0x47, 0x27, 0x5c, 0xe4, 0x32, 0x27, 0x6d, 0x1e, 0xd1, 0x4d, 0xe8,
-	0xbd, 0x4c, 0xb9, 0x5c, 0xd1, 0x87, 0xe0, 0xbf, 0x5f, 0x46, 0x0b, 0x16, 0xbf, 0xc5, 0x15, 0xb9,
-	0x07, 0xc0, 0xb5, 0x31, 0x9d, 0xe3, 0x6a, 0xd7, 0x1b, 0x79, 0x47, 0x7e, 0xe0, 0x73, 0x17, 0xa6,
-	0x13, 0xd8, 0x3c, 0x8d, 0xe3, 0x7c, 0x99, 0x49, 0xb2, 0x0f, 0xdd, 0x14, 0x65, 0xa8, 0x73, 0x06,
-	0xe3, 0x7f, 0x4e, 0x78, 0x74, 0x62, 0x43, 0x13, 0x94, 0x61, 0xa0, 0x83, 0x6b, 0x70, 0xed, 0x75,
-	0xb8, 0xe7, 0x30, 0xa8, 0xd5, 0x90, 0x1d, 0xe8, 0x61, 0x1a, 0xb2, 0x85, 0xed, 0x6b, 0x0c, 0xf2,
-	0x1f, 0xf8, 0x9f, 0x96, 0x8b, 0xc5, 0x34, 0x0b, 0x53, 0xb4, 0x10, 0x7d, 0xe5, 0xb8, 0x08, 0x53,
-	0xa4, 0xcf, 0xc0, 0x3f, 0x0f, 0xb3, 0x84, 0x25, 0xa1, 0xc4, 0x3f, 0xa9, 0x1f, 0x01, 0xbc, 0x29,
-	0x8a, 0x25, 0x0a, 0x4d, 0x80, 0x40, 0x57, 0x67, 0x99, 0x7a, 0x7d, 0xa6, 0xfb, 0xb0, 0x1d, 0x60,
-	0xcc, 0x38, 0x43, 0xcb, 0xf2, 0xb6, 0xa4, 0x2f, 0x00, 0xe7, 0x28, 0xa4, 0x81, 0x22, 0xb4, 0x21,
-	0xcd, 0x50, 0x49, 0x53, 0x35, 0xb1, 0xca, 0xfc, 0x0f, 0x7e, 0xc1, 0xae, 0xb2, 0x50, 0x2e, 0x85,
-	0x63, 0x55, 0x39, 0xc8, 0x71, 0x43, 0xb7, 0x8e, 0xc6, 0xd9, 0x56, 0x38, 0xe5, 0x97, 0xaa, 0xcb,
-	0xf8, 0xd5, 0x83, 0x6d, 0xd5, 0xbe, 0xe4, 0x49, 0x0e, 0x1a, 0x0c, 0xfe, 0x55, 0x95, 0x8d, 0x21,
-	0xfe, 0x02, 0x89, 0x8f, 0xd0, 0x57, 0x1c, 0xdc, 0x87, 0x94, 0x4c, 0x2e, 0x9c, 0x46, 0xc6, 0x20,
-	0x23, 0x18, 0x24, 0x58, 0xc4, 0x82, 0x71, 0xc9, 0xf2, 0xcc, 0xf6, 0xab, 0xbb, 0x14, 0x1f, 0xc9,
-	0x52, 0x2c, 0x64, 0x98, 0x72, 0xdd, 0xb0, 0x13, 0x54, 0x0e, 0xfa, 0xc3, 0x83, 0xae, 0x6a, 0x41,
-	0x86, 0xd0, 0x66, 0x89, 0xc5, 0x6e, 0xb3, 0x84, 0x8c, 0xec, 0xb4, 0x6d, 0x4d, 0x71, 0x4b, 0x51,
-	0x74, 0x54, 0xec, 0xa0, 0x87, 0xb0, 0xc1, 0xf4, 0x17, 0xb0, 0x63, 0x0c, 0x5d, 0x8e, 0xf9, 0x2e,
-	0x81, 0x8d, 0x92, 0x47, 0xe0, 0x0b, 0xa7, 0xd3, 0x6e, 0xb7, 0x12, 0xaf, 0xa1, 0x6e, 0x50, 0xe5,
-	0xd0, 0x4b, 0xf0, 0x55, 0xec, 0x6c, 0x91, 0xc7, 0xf3, 0x35, 0xc1, 0xbc, 0xbb, 0x05, 0x23, 0x0f,
-	0xa0, 0x17, 0xa9, 0x32, 0x4b, 0xdb, 0x57, 0x89, 0x1a, 0x27, 0x30, 0x7e, 0xfa, 0xd4, 0x60, 0x9f,
-	0xcf, 0x42, 0x96, 0x29, 0xec, 0x18, 0x85, 0x9c, 0x9a, 0x12, 0x6f, 0xd4, 0x71, 0xd8, 0x65, 0xfb,
-	0xc0, 0x8f, 0xdd, 0x91, 0x7e, 0xf3, 0x60, 0x30, 0x09, 0x0b, 0x89, 0xc2, 0x30, 0x2b, 0x7b, 0x79,
-	0xb7, 0xf7, 0x5a, 0xa3, 0xde, 0xfe, 0x0d, 0x75, 0x47, 0x26, 0x56, 0xd4, 0xea, 0x9b, 0x51, 0xf2,
-	0x35, 0x64, 0xf4, 0x91, 0x9e, 0x3a, 0x2e, 0x66, 0x92, 0x31, 0x6c, 0xa5, 0xda, 0x6c, 0xcc, 0xa2,
-	0x7f, 0x20, 0x35, 0xca, 0xc1, 0x20, 0xad, 0x0c, 0xba, 0x80, 0x9e, 0x19, 0x64, 0x07, 0x7a, 0x2c,
-	0x4b, 0xf0, 0xb3, 0x1e, 0xa4, 0x13, 0x18, 0x43, 0x5d, 0xc9, 0x59, 0x58, 0xcc, 0xec, 0x4a, 0xe9,
-	0xb3, 0xba, 0xf6, 0x5c, 0xe0, 0xf5, 0x54, 0x07, 0x3a, 0xe6, 0xda, 0x2b, 0xc7, 0x6b, 0x15, 0x6c,
-	0x2c, 0x5a, 0x77, 0x7d, 0xd1, 0xbe, 0x7b, 0xb0, 0x79, 0x81, 0xf2, 0x1d, 0x97, 0x85, 0xda, 0x9c,
-	0x48, 0xe4, 0x73, 0x14, 0xf5, 0xdb, 0x7c, 0xa6, 0x3d, 0x2a, 0x1e, 0xd8, 0x28, 0x19, 0x03, 0xa4,
-	0x98, 0x46, 0x28, 0x8a, 0x19, 0xe3, 0x56, 0x40, 0xa2, 0x67, 0x2a, 0xbd, 0x3a, 0xbf, 0x96, 0xa5,
-	0xb0, 0xcd, 0x90, 0xf5, 0xad, 0x34, 0x1a, 0x18, 0x6c, 0x13, 0xa5, 0x1f, 0x00, 0xaa, 0x8e, 0x64,
-	0x0f, 0xfa, 0x98, 0x25, 0x3c, 0x67, 0x99, 0xb4, 0x77, 0xa0, 0xb4, 0x95, 0x10, 0xcb, 0x02, 0x85,
-	0x13, 0x42, 0x9d, 0x55, 0x3e, 0x0f, 0x8b, 0xe2, 0x26, 0x17, 0x49, 0xa9, 0x83, 0xb5, 0xe9, 0x31,
-	0x0c, 0x9b, 0xfc, 0xee, 0x42, 0xa7, 0x47, 0x00, 0x15, 0xbb, 0xbb, 0x32, 0xc7, 0x3f, 0x3d, 0x80,
-	0x49, 0x7d, 0xd0, 0xee, 0x45, 0x9e, 0x20, 0x31, 0x3b, 0xe2, 0xfe, 0xd7, 0x7b, 0xcd, 0x05, 0xa3,
-	0x2d, 0x72, 0x08, 0xfd, 0x00, 0xaf, 0x98, 0x6a, 0xb1, 0x9e, 0xab, 0x57, 0xd6, 0x3c, 0x58, 0x2d,
-	0x72, 0x00, 0xbd, 0x57, 0x28, 0xe3, 0x19, 0x69, 0x22, 0xec, 0x0d, 0x6a, 0xaf, 0x10, 0x6d, 0x91,
-	0xfb, 0xd0, 0xd3, 0xf7, 0x9b, 0xf4, 0xdd, 0x6e, 0x36, 0x60, 0xc6, 0x97, 0xb0, 0x61, 0xe6, 0x21,
-	0x87, 0xe6, 0x07, 0x5a, 0x3d, 0x25, 0xb7, 0x57, 0x90, 0xa3, 0xfa, 0x20, 0x55, 0xdf, 0xda, 0xf2,
-	0x9a, 0x95, 0x6f, 0x8d, 0x1f, 0x83, 0xff, 0x82, 0x15, 0x71, 0x7e, 0x8d, 0x62, 0x45, 0xf6, 0xf5,
-	0x3e, 0xdd, 0xe4, 0x62, 0x4e, 0x2a, 0x38, 0xc3, 0xd6, 0xee, 0x19, 0x6d, 0x45, 0x1b, 0xfa, 0x6d,
-	0x7e, 0xf2, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x0f, 0x10, 0x39, 0x77, 0xa7, 0x07, 0x00, 0x00,
+type masterClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewMasterClient(cc *grpc.ClientConn) MasterClient {
+	return &masterClient{cc}
+}
+
+func (c *masterClient) ConfirmCert(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/pb.master/confirm_cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *masterClient) ConfirmNode(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*MasterChain, error) {
+	out := new(MasterChain)
+	err := c.cc.Invoke(ctx, "/pb.master/confirm_node", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Master service
+
+type MasterServer interface {
+	ConfirmCert(context.Context, *Cert) (*Empty, error)
+	ConfirmNode(context.Context, *PublicKey) (*MasterChain, error)
+}
+
+func RegisterMasterServer(s *grpc.Server, srv MasterServer) {
+	s.RegisterService(&_Master_serviceDesc, srv)
+}
+
+func _Master_ConfirmCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MasterServer).ConfirmCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.master/ConfirmCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MasterServer).ConfirmCert(ctx, req.(*Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Master_ConfirmNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublicKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MasterServer).ConfirmNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.master/ConfirmNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MasterServer).ConfirmNode(ctx, req.(*PublicKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Master_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.master",
+	HandlerType: (*MasterServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "confirm_cert",
+			Handler:    _Master_ConfirmCert_Handler,
+		},
+		{
+			MethodName: "confirm_node",
+			Handler:    _Master_ConfirmNode_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pb.proto",
+}
+
+// MembershipClient is the client API for Membership service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MembershipClient interface {
+	ConfirmMember(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*PublicKey, error)
+	FetchMember(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*Member, error)
+	SignCert(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error)
+}
+
+type membershipClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewMembershipClient(cc *grpc.ClientConn) MembershipClient {
+	return &membershipClient{cc}
+}
+
+func (c *membershipClient) ConfirmMember(ctx context.Context, in *Candidate, opts ...grpc.CallOption) (*PublicKey, error) {
+	out := new(PublicKey)
+	err := c.cc.Invoke(ctx, "/pb.membership/confirm_member", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *membershipClient) FetchMember(ctx context.Context, in *PublicKey, opts ...grpc.CallOption) (*Member, error) {
+	out := new(Member)
+	err := c.cc.Invoke(ctx, "/pb.membership/fetch_member", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *membershipClient) SignCert(ctx context.Context, in *Cert, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/pb.membership/sign_cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Membership service
+
+type MembershipServer interface {
+	ConfirmMember(context.Context, *Candidate) (*PublicKey, error)
+	FetchMember(context.Context, *PublicKey) (*Member, error)
+	SignCert(context.Context, *Cert) (*Empty, error)
+}
+
+func RegisterMembershipServer(s *grpc.Server, srv MembershipServer) {
+	s.RegisterService(&_Membership_serviceDesc, srv)
+}
+
+func _Membership_ConfirmMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Candidate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServer).ConfirmMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.membership/ConfirmMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServer).ConfirmMember(ctx, req.(*Candidate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Membership_FetchMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublicKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServer).FetchMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.membership/FetchMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServer).FetchMember(ctx, req.(*PublicKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Membership_SignCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServer).SignCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.membership/SignCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServer).SignCert(ctx, req.(*Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Membership_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.membership",
+	HandlerType: (*MembershipServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "confirm_member",
+			Handler:    _Membership_ConfirmMember_Handler,
+		},
+		{
+			MethodName: "fetch_member",
+			Handler:    _Membership_FetchMember_Handler,
+		},
+		{
+			MethodName: "sign_cert",
+			Handler:    _Membership_SignCert_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pb.proto",
+}
+
+func init() { proto.RegisterFile("pb.proto", fileDescriptor_pb_f689427340814446) }
+
+var fileDescriptor_pb_f689427340814446 = []byte{
+	// 730 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0xcd, 0x6e, 0xdb, 0x38,
+	0x10, 0xb6, 0xe4, 0x9f, 0x58, 0x23, 0xaf, 0xb3, 0xcb, 0xdd, 0x83, 0xe1, 0xdd, 0x45, 0xbc, 0x5c,
+	0x14, 0x49, 0xd1, 0x26, 0x40, 0x1d, 0x04, 0x3d, 0xf4, 0x98, 0x4b, 0x81, 0xdc, 0x74, 0xeb, 0xa5,
+	0x06, 0x25, 0x31, 0x35, 0x61, 0x4b, 0x22, 0x28, 0x3a, 0x89, 0xdf, 0xa2, 0x3d, 0xf4, 0x0d, 0xfa,
+	0x1c, 0x7d, 0xb6, 0x82, 0x43, 0xca, 0xa2, 0x8d, 0xa0, 0x49, 0x6f, 0xf3, 0xfb, 0x71, 0x7e, 0x3e,
+	0x8d, 0x60, 0x28, 0xd3, 0x0b, 0xa9, 0x2a, 0x5d, 0x91, 0x50, 0xa6, 0xf4, 0x1c, 0x20, 0xe3, 0x4a,
+	0x2f, 0xd2, 0x75, 0x95, 0xad, 0xc8, 0x09, 0xf4, 0x51, 0x98, 0x04, 0xb3, 0xe0, 0x2c, 0x9e, 0x47,
+	0x17, 0x32, 0xbd, 0x40, 0x43, 0x62, 0xed, 0xf4, 0x23, 0x8c, 0x0a, 0x56, 0x6b, 0xae, 0x9e, 0x99,
+	0x40, 0x1a, 0xfc, 0x6c, 0xc9, 0x44, 0x39, 0xe9, 0x61, 0xd4, 0xd8, 0x44, 0xb5, 0xd6, 0x24, 0x32,
+	0xf2, 0xb5, 0x11, 0xe9, 0xf7, 0xc0, 0x01, 0x92, 0x3f, 0xa0, 0xb7, 0x58, 0xf1, 0x2d, 0x02, 0x47,
+	0x49, 0xf7, 0x86, 0x6f, 0xc9, 0x5f, 0xd0, 0x17, 0x65, 0xce, 0x1f, 0x26, 0xe1, 0x2c, 0x38, 0xeb,
+	0x26, 0x56, 0x21, 0x04, 0x7a, 0x4b, 0x56, 0x2f, 0x27, 0x5d, 0x0c, 0x44, 0x99, 0xfc, 0x0d, 0x91,
+	0x54, 0xfc, 0x6e, 0x81, 0x8e, 0x1e, 0x3a, 0x86, 0xc6, 0xf0, 0xde, 0x38, 0xff, 0x81, 0x48, 0x8b,
+	0x82, 0xd7, 0x9a, 0x15, 0x72, 0xd2, 0x47, 0xa8, 0xd6, 0x40, 0xc6, 0x10, 0xea, 0x87, 0xc9, 0x00,
+	0x73, 0x42, 0xfd, 0x60, 0x1a, 0x90, 0x9b, 0x74, 0x2d, 0x32, 0xac, 0xe6, 0xa8, 0x6d, 0xa0, 0xb5,
+	0x26, 0x91, 0x95, 0x6f, 0xf8, 0x96, 0xbe, 0xf3, 0xfb, 0x3d, 0xe8, 0x3e, 0x98, 0x75, 0xf7, 0xba,
+	0xb7, 0x83, 0xf2, 0xba, 0xbf, 0xde, 0x4d, 0xd7, 0xa6, 0x5f, 0xee, 0xeb, 0x0e, 0xe0, 0x77, 0x03,
+	0xe0, 0x6f, 0x21, 0x89, 0xad, 0x66, 0x41, 0xbe, 0x05, 0xd0, 0x33, 0x90, 0x8f, 0x4d, 0x70, 0x0c,
+	0xa1, 0xc8, 0x71, 0x7c, 0x51, 0x12, 0x8a, 0x9c, 0xfc, 0x07, 0xbd, 0x82, 0x6b, 0x86, 0xb3, 0x8b,
+	0xe7, 0xbf, 0xed, 0x2a, 0x33, 0xc6, 0x04, 0x5d, 0xe4, 0x14, 0x06, 0xa2, 0xae, 0x37, 0x5c, 0xb9,
+	0xe5, 0x1d, 0x63, 0xef, 0x4c, 0x69, 0x91, 0x09, 0xc9, 0x4a, 0x9d, 0x38, 0x37, 0x39, 0x87, 0x48,
+	0xf1, 0x4c, 0x48, 0xc1, 0x4b, 0x8d, 0x63, 0x7d, 0x24, 0xb6, 0x8d, 0xa0, 0x25, 0xc4, 0x9e, 0xc7,
+	0x6c, 0xb1, 0x64, 0x05, 0x77, 0xc5, 0xa2, 0x7c, 0x30, 0xfa, 0xf0, 0x89, 0xd1, 0x9b, 0xbd, 0xd6,
+	0xe2, 0x53, 0xc9, 0xf4, 0x46, 0x71, 0xc7, 0x86, 0xd6, 0x40, 0x19, 0x44, 0xbb, 0xd6, 0x0c, 0x93,
+	0xb4, 0xd0, 0xeb, 0xe6, 0x39, 0xab, 0x90, 0x19, 0xc4, 0x39, 0xaf, 0x33, 0x25, 0xa4, 0x16, 0x55,
+	0xe9, 0xc6, 0xe4, 0x9b, 0xf6, 0xa9, 0xd3, 0x3d, 0xa0, 0x0e, 0x7d, 0xe5, 0xd7, 0x4b, 0xfe, 0xdd,
+	0xab, 0xde, 0x3e, 0xe4, 0x11, 0xe5, 0x08, 0xfa, 0xbc, 0x90, 0x7a, 0x4b, 0x3f, 0x40, 0x9c, 0xaa,
+	0x6a, 0xc5, 0xd5, 0xa2, 0x92, 0xba, 0x26, 0x53, 0x18, 0xf2, 0x32, 0x97, 0x95, 0x28, 0xb5, 0x4b,
+	0xda, 0xe9, 0x66, 0x48, 0x9b, 0x9a, 0x2b, 0x57, 0x19, 0xca, 0x26, 0x5e, 0xb2, 0xba, 0xbe, 0xaf,
+	0x54, 0xee, 0x9a, 0xde, 0xe9, 0xf4, 0x1c, 0x8e, 0x0b, 0x5e, 0xa4, 0x5c, 0xd5, 0x4b, 0x21, 0x9f,
+	0x84, 0xa7, 0x2f, 0xc1, 0x11, 0xe9, 0xe9, 0xd0, 0xaf, 0x01, 0x8c, 0x4a, 0xae, 0xef, 0x2b, 0xb5,
+	0xb2, 0xc1, 0xa7, 0x30, 0xb0, 0x5d, 0xb8, 0x4b, 0x80, 0xab, 0xf7, 0xfa, 0x4a, 0x9c, 0x9b, 0x5c,
+	0x02, 0xb4, 0x35, 0xb9, 0xa5, 0xfe, 0x89, 0x8c, 0xde, 0xaf, 0x34, 0xf1, 0xc2, 0x0c, 0xba, 0xad,
+	0xcc, 0x31, 0xf5, 0xd8, 0xfb, 0x04, 0x2c, 0xba, 0x55, 0xe8, 0xe7, 0x00, 0x06, 0x36, 0xef, 0x31,
+	0xfa, 0xff, 0x22, 0xa1, 0x4e, 0x20, 0x96, 0x4a, 0xdc, 0x31, 0xcd, 0x31, 0xde, 0x3c, 0x3d, 0x4a,
+	0xc0, 0x99, 0x4c, 0xc0, 0xff, 0xee, 0xf3, 0xf1, 0xbe, 0x0c, 0xfb, 0xb8, 0xf7, 0x01, 0xd1, 0xb7,
+	0x10, 0x7b, 0x46, 0x43, 0x3d, 0x5e, 0x30, 0xb1, 0x6e, 0xa8, 0x87, 0xca, 0x8e, 0xfe, 0x61, 0x4b,
+	0x7f, 0x7a, 0x05, 0x51, 0xc6, 0xca, 0x5c, 0xe4, 0x4c, 0xf3, 0xe7, 0xa7, 0xcd, 0xaf, 0x20, 0xca,
+	0x45, 0x9d, 0x55, 0x77, 0x5c, 0x6d, 0xc9, 0x19, 0x1c, 0xb9, 0x35, 0x11, 0xbc, 0xcd, 0x48, 0xb9,
+	0x29, 0x5e, 0x10, 0x7f, 0x7d, 0xb4, 0x33, 0xcf, 0x9a, 0x11, 0x93, 0x17, 0x30, 0xca, 0xaa, 0xf2,
+	0x56, 0xa8, 0x62, 0x81, 0x77, 0x64, 0xd8, 0x9c, 0x85, 0x69, 0x0b, 0x41, 0x3b, 0x64, 0xde, 0x86,
+	0x95, 0x55, 0xce, 0xc9, 0xc1, 0x20, 0xa7, 0xfe, 0x99, 0xc2, 0xf3, 0x45, 0x3b, 0xf3, 0x2f, 0x81,
+	0xbf, 0x7d, 0xf2, 0x06, 0xc6, 0x0d, 0x84, 0x5b, 0x9a, 0x3d, 0x41, 0x4d, 0xd7, 0xd3, 0x03, 0x4c,
+	0xda, 0x21, 0xaf, 0x61, 0x74, 0xcb, 0x75, 0xb6, 0x6c, 0x12, 0x0e, 0x5f, 0x85, 0x76, 0x09, 0xb4,
+	0x43, 0xa8, 0x3d, 0x09, 0x3f, 0xeb, 0x23, 0x1d, 0xe0, 0xcf, 0xf0, 0xf2, 0x47, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0x83, 0x1b, 0x9d, 0xf7, 0x18, 0x07, 0x00, 0x00,
 }

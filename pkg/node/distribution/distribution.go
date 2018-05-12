@@ -7,7 +7,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/node/rpc"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -16,15 +15,15 @@ type Distribution struct{}
 
 func (d *Distribution) Candidate(opts *request.Candidate) error {
 	if err := rpc.Register(&pb.Candidate{
-		FullName: *opts.FullName,
-		Email:    *opts.Email,
+		Name:  *opts.Name,
+		Email: *opts.Email,
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (d *Distribution) FetchAccount(opts *request.AccountFetch) (*types.Account, error) {
+func (d *Distribution) FetchAccount(opts *request.AccountFetch) (*pb.Member, error) {
 	acc, err := rpc.FetchAccount(&pb.PublicKey{
 		PublicKey: *opts.PublicKey,
 	})
@@ -35,11 +34,11 @@ func (d *Distribution) FetchAccount(opts *request.AccountFetch) (*types.Account,
 	log.Debug(acc)
 
 	// todo added convert pkg
-	return &types.Account{
+	return &pb.Member{
 		PublicKey: acc.PublicKey,
-		Meta: &types.AccountMeta{
-			Email:    acc.Meta.Email,
-			FullName: acc.Meta.FullName,
+		Meta: &pb.MemberMeta{
+			Email: acc.Meta.Email,
+			Name:  acc.Meta.Name,
 		},
 	}, nil
 }
@@ -49,20 +48,19 @@ func CertificateIssue(opts *request.CertificateIssue) error {
 		rt = env.GetRuntime()
 	)
 
-	log.Debug(1)
 	if err := rpc.Issue(&pb.Cert{
-		Id: generator.UUID(),
+		Id:  generator.UUID(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().Unix(),
 			Description: *opts.Description,
 			Title:       *opts.Title,
 		},
-		Recipient: &pb.CertRecipient{
+		Recipient: &pb.Participant{
 			PublicKey: &pb.PublicKey{
 				PublicKey: *opts.PublicKey,
 			},
 		},
-		Issuer: &pb.CertIssuer{
+		Issuer: &pb.Participant{
 			PublicKey: &pb.PublicKey{
 				PublicKey: rt.PublicKey,
 			},
@@ -70,7 +68,6 @@ func CertificateIssue(opts *request.CertificateIssue) error {
 	}); err != nil {
 		return err
 	}
-	log.Debug(2)
 
 	return nil
 }

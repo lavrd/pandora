@@ -15,13 +15,13 @@ import (
 
 type server struct{}
 
-func (s *server) CertCandidate(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+func (s *server) ConfirmCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	block := distribution.PrepareBlock(in)
 	env.GetEvents().PCertBlock(block)
 	return &pb.Empty{}, nil
 }
 
-func (s *server) Node(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
+func (s *server) ConfirmNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
 	distribution.AddMasterBlock(in)
 	return distribution.GetMasterChain(), nil
 }

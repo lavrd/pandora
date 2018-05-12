@@ -24,9 +24,9 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	brk, err := broker.Connect(&broker.Opts{
-		Endpoint: config.Viper.Broker.Endpoint,
-		User:     config.Viper.Broker.User,
-		Password: config.Viper.Broker.Password,
+		Endpoint: config.Viper.Discovery.Broker.Endpoint,
+		User:     config.Viper.Discovery.Broker.User,
+		Password: config.Viper.Discovery.Broker.Password,
 	})
 	if err != nil {
 		log.Fatal(err)

@@ -46,7 +46,7 @@ func AccountFetchH(w http.ResponseWriter, r *http.Request) {
 	dist := &distribution.Distribution{}
 
 	if acc, err := dist.FetchAccount(opts); err == nil {
-		response.Ok(acc.Public()).Http(w)
+		response.Ok(acc).Http(w)
 	} else {
 		if err == errors.NotFound {
 			response.NotFound("account").Http(w)
@@ -81,13 +81,13 @@ func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 		rt = env.GetRuntime()
 	)
 
-	response.Ok(rt.MC).Http(w)
+	response.Ok(rt.MC()).Http(w)
 }
 
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
 	// todo move to http utils
 	w.Header().Set("Content-Type", "text/html")
-	tpl, err := template.ParseFiles(config.Viper.Dashboard.Template)
+	tpl, err := template.ParseFiles(config.Viper.Node.Dashboard.Template)
 	if err != nil {
 		response.InternalServerError().Http(w)
 		return

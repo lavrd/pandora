@@ -34,8 +34,8 @@ func SendCredentials(email, publicKey string) error {
 
 	return execute(
 		email,
-		config.Viper.Mail.Subjects.Credentials,
-		config.Viper.Mail.Templates.Credentials,
+		config.Viper.Membership.Mail.Subjects.Credentials,
+		config.Viper.Membership.Mail.Templates.Credentials,
 		data,
 	)
 }

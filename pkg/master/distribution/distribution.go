@@ -3,8 +3,6 @@ package distribution
 import (
 	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/converter"
 )
 
 func AddMasterBlock(publicKey *pb.PublicKey) {
@@ -21,10 +19,10 @@ func GetMasterChain() *pb.MasterChain {
 		rt = env.GetRuntime()
 	)
 
-	return converter.TPBMC(rt.MC)
+	return rt.MC()
 }
 
-func PrepareBlock(cert *pb.Cert) *types.CertBlock {
+func PrepareBlock(cert *pb.Cert) *pb.CertBlock {
 	var (
 		rt = env.GetRuntime()
 	)

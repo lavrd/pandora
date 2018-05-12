@@ -13,12 +13,12 @@ import (
 
 type server struct{}
 
-func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetOpts, error) {
-	return &pb.NetOpts{
+func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, error) {
+	return &pb.NetworkOpts{
 		Broker: &pb.BrokerOpts{
-			Endpoint: config.Viper.Broker.Endpoint,
-			User:     config.Viper.Broker.User,
-			Password: config.Viper.Broker.Password,
+			Endpoint: config.Viper.Discovery.Broker.Endpoint,
+			User:     config.Viper.Discovery.Broker.User,
+			Password: config.Viper.Discovery.Broker.Password,
 		},
 		Membership: &pb.MembershipOpts{
 			Endpoint: config.Viper.Membership.Endpoint,
@@ -27,7 +27,6 @@ func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetOpts, error)
 			Endpoint: config.Viper.Master.Endpoint,
 		},
 	}, nil
-	return &pb.NetOpts{}, nil
 }
 
 func Listen() error {

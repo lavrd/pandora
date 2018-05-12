@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 )
 
@@ -11,10 +11,9 @@ const (
 	CAccount = "CAccount"
 )
 
-// AccountFetchByEmail fetch account from storage by email
-func (s *Storage) AccountFetchByEmail(email string) (*types.Account, error) {
+func (s *Storage) AccountFetchByEmail(email string) (*pb.Member, error) {
 	var (
-		acc   = &types.Account{}
+		acc   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for a in %s filter a.meta.email == @email return a",
 			CAccount,
@@ -36,9 +35,9 @@ func (s *Storage) AccountFetchByEmail(email string) (*types.Account, error) {
 }
 
 // AccountFetchByPublic fetch account from storage by public key
-func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
+func (s *Storage) AccountFetchByPublic(public string) (*pb.Member, error) {
 	var (
-		acc = &types.Account{}
+		acc = &pb.Member{}
 	)
 
 	_, err := s.Read(public, CAccount, acc)
@@ -54,7 +53,7 @@ func (s *Storage) AccountFetchByPublic(public string) (*types.Account, error) {
 }
 
 // AccountSave save account to storage
-func (s *Storage) AccountSave(acc *types.Account) error {
+func (s *Storage) AccountSave(acc *pb.Member) error {
 	_, err := s.Write(CAccount, acc)
 	if err != nil {
 		// todo need handle error that already exists or not? check this level up

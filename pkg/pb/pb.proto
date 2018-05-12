@@ -2,119 +2,107 @@ syntax = "proto3";
 
 package pb;
 
-message Empty {}
-
-service Membership {
-  rpc Node (Candidate) returns (PublicKey) {}
-  rpc Register (Candidate) returns (Empty) {}
-  rpc Fetch (PublicKey) returns (Account) {}
-  rpc Issue (Cert) returns (Empty) {}
+service discovery {
+    rpc network (empty) returns (network_opts) {}
 }
 
-message PublicKey {
-  string public_key = 1;
+service master {
+  rpc confirm_cert (cert) returns (empty) {}
+  rpc confirm_node (public_key) returns (master_chain) {}
 }
 
-message Account {
-  AccountMeta meta = 1;
-  string public_key = 2;
+service membership {
+  rpc confirm_member (candidate) returns (public_key) {}
+  rpc fetch_member (public_key) returns (member) {}
+  rpc sign_cert (cert) returns (empty) {}
 }
 
-message AccountMeta {
-  string email = 1;
-  string full_name = 2;
+message cert_block {
+  block block = 1;
 }
 
-message Candidate {
-  string email = 1;
-  string full_name = 2;
+message master_block {
+  block block = 1;
+  cert_chain cert_chain = 4;
 }
 
-message IssuerMeta {
+message block {
+  string _key = 1;
+  int64 index = 2;
+  string hash = 3;
+  string prev_hash = 4;
+  int64 timestamp = 5;
+  string tx = 6;
+  public_key public_key = 7;
+}
+
+message cert_chain {
+  repeated cert_block cert_chain = 1;
+}
+
+message master_chain {
+  repeated master_block master_chain = 1;
+}
+
+message cert {
+  string _key = 1;
+  string id = 2;
+  cert_meta meta = 3;
+  participant issuer = 4;
+  participant recipient = 5;
+}
+
+message participant {
   string name = 1;
+  public_key public_key = 2;
+  string signature = 3;
 }
 
-message RecipientMeta {
-  string name = 1;
-}
-
-message CertIssuer {
-  IssuerMeta meta = 1;
-  string signature = 2;
-  PublicKey public_key = 3;
-}
-
-message CertRecipient {
-  RecipientMeta meta = 1;
-  string signature = 2;
-  PublicKey public_key = 3;
-}
-
-message CertMeta {
+message cert_meta {
   string title = 1;
   string description = 2;
   int64 timestamp = 3;
 }
 
-message Cert {
-  string id = 1;
-  CertMeta meta = 2;
-  CertIssuer issuer = 3;
-  CertRecipient recipient = 4;
+message public_key {
+  string public_key = 1;
 }
 
-service Master {
-  rpc CertCandidate (Cert) returns (Empty) {}
-  rpc Node (PublicKey) returns (MasterChain) {}
-}
+message empty {}
 
-message CertBlock {
-  PublicKey public_key = 1;
-  Block block = 2;
-}
-
-message CertChain {
-  repeated CertBlock cert_block = 1;
-}
-
-// todo public_key -> publicKey
-message MasterBlock {
-  Block block = 1;
-  PublicKey public_key = 2;
-  CertChain cert_chain = 3;
-}
-
-message MasterChain {
-  repeated MasterBlock master_block = 1;
-}
-
-message Block {
-  int64 index = 1;
-  string hash = 2;
-  string prev_hash = 3;
-  int64 timestamp = 4;
-}
-
-service Discovery {
-  rpc Network (Empty) returns (NetOpts) {}
-}
-
-message NetOpts {
-  BrokerOpts broker = 1;
-  MembershipOpts membership = 2;
-  MasterOpts master = 3;
-}
-
-message BrokerOpts {
+message broker_opts {
   string endpoint = 1;
   string user = 2;
   string password = 3;
 }
 
-message MembershipOpts {
+message membership_opts {
   string endpoint = 1;
 }
 
-message MasterOpts {
+message master_opts {
   string endpoint = 1;
+}
+
+message network_opts {
+  broker_opts broker = 1;
+  membership_opts membership = 2;
+  master_opts master = 3;
+}
+
+message member {
+  string _key = 1 ;
+  public_key public_key = 2;
+  bytes private_key = 3;
+  member_meta meta = 4;
+}
+
+message member_meta {
+  string email = 1;
+  string name = 2;
+}
+
+message candidate {
+  string email = 1;
+  string name = 2;
 }

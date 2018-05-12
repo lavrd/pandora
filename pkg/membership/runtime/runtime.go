@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 )
@@ -15,19 +14,17 @@ func New() *Runtime {
 	return &Runtime{}
 }
 
-func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *types.Account {
+func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *pb.Member {
 	publicKey, privateKey := ed25519.GenerateKeys()
 
-	return &types.Account{
-		Key: hex.EncodeToString(publicKey),
-		Meta: &types.AccountMeta{
-			Email:    candidate.Email,
-			FullName: candidate.FullName,
+	return &pb.Member{
+		XKey: hex.EncodeToString(publicKey),
+		Meta: &pb.MemberMeta{
+			Email: candidate.Email,
+			Name:  candidate.Name,
 		},
-		PublicKey: hex.EncodeToString(publicKey),
-		Secure: &types.AccountSecure{
-			PrivateKey: privateKey,
-		},
+		PublicKey:  &pb.PublicKey{PublicKey: hex.EncodeToString(publicKey)},
+		PrivateKey: privateKey,
 	}
 }
 

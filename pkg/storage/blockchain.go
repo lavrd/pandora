@@ -1,14 +1,14 @@
 package storage
 
 import (
-	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/pb"
 )
 
 const (
 	CBlockchain = "CBlockchain"
 )
 
-func (s *Storage) SaveCertBlock(block *types.CertBlock) error {
+func (s *Storage) SaveCertBlock(block *pb.CertBlock) error {
 	_, err := s.Write(CBlockchain, block)
 	if err != nil {
 		return err

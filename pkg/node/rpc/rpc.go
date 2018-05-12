@@ -23,7 +23,7 @@ func Register(candidate *pb.Candidate) error {
 
 	c := pb.NewMembershipClient(cc)
 
-	_, err = c.Register(context.Background(), candidate)
+	_, err = c.ConfirmMember(context.Background(), candidate)
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
@@ -49,7 +49,7 @@ func Issue(cert *pb.Cert) error {
 
 	c := pb.NewMembershipClient(cc)
 
-	_, err = c.Issue(context.Background(), cert)
+	_, err = c.SignCert(context.Background(), cert)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -68,8 +68,17 @@ func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
 
 	c := pb.NewMembershipClient(cc)
 
-	r, err := c.Node(context.Background(), candidate)
+	r, err := c.ConfirmMember(context.Background(), candidate)
 	if err != nil {
+		st, ok := status.FromError(err)
+		if !ok {
+			return nil, err
+		}
+		if st.Code() == codes.AlreadyExists {
+			log.Debug(r)
+			return r, errors.AlreadyExists
+		}
+
 		log.Error(err)
 		return nil, err
 	}
@@ -78,7 +87,7 @@ func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
 }
 
 // todo through pb struct or only string and convert in this func
-func FetchAccount(key *pb.PublicKey) (*pb.Account, error) {
+func FetchAccount(key *pb.PublicKey) (*pb.Member, error) {
 	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)
@@ -88,7 +97,7 @@ func FetchAccount(key *pb.PublicKey) (*pb.Account, error) {
 
 	c := pb.NewMembershipClient(cc)
 
-	r, err := c.Fetch(context.Background(), key)
+	r, err := c.FetchMember(context.Background(), key)
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
@@ -115,8 +124,9 @@ func Node(key *pb.PublicKey) (*pb.MasterChain, error) {
 
 	c := pb.NewMasterClient(cc)
 
-	mc, err := c.Node(context.Background(), key)
+	mc, err := c.ConfirmNode(context.Background(), key)
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 
@@ -124,7 +134,7 @@ func Node(key *pb.PublicKey) (*pb.MasterChain, error) {
 }
 
 // todo rename and rename at .proto
-func Network() (*pb.NetOpts, error) {
+func Network() (*pb.NetworkOpts, error) {
 	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Error(err)

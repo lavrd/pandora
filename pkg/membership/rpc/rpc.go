@@ -18,21 +18,22 @@ import (
 
 type server struct{}
 
-func (s *server) Register(ctx context.Context, in *pb.Candidate) (*pb.Empty, error) {
+func (s *server) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
 	}
 
-	_, err := dist.AcceptCandidate(in)
+	key, err := dist.AcceptCandidate(in)
 	if err != nil {
 		if err == errors.AlreadyExists {
-			return &pb.Empty{}, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
+			log.Debug(key)
+			return key, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
 		}
-		return &pb.Empty{}, err
+		return &pb.PublicKey{}, err
 	}
 
-	return &pb.Empty{}, nil
+	return key, nil
 }
 
 func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
@@ -55,7 +56,7 @@ func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, err
 	return key, nil
 }
 
-func (s *server) Issue(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+func (s *server) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	cert, err := distribution.New().Issue(in)
 	if err != nil {
 		return &pb.Empty{}, err
@@ -79,7 +80,7 @@ func Issue(cert *pb.Cert) error {
 
 	c := pb.NewMasterClient(cc)
 
-	_, err = c.CertCandidate(context.Background(), cert)
+	_, err = c.ConfirmCert(context.Background(), cert)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -88,7 +89,7 @@ func Issue(cert *pb.Cert) error {
 	return nil
 }
 
-func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, error) {
+func (s *server) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
@@ -98,9 +99,9 @@ func (s *server) Fetch(ctx context.Context, in *pb.PublicKey) (*pb.Account, erro
 	if err != nil {
 		if err == errors.NotFound {
 			// todo may be nil? and in all place
-			return &pb.Account{}, status.Error(codes.NotFound, codes.NotFound.String())
+			return &pb.Member{}, status.Error(codes.NotFound, codes.NotFound.String())
 		}
-		return &pb.Account{}, err
+		return &pb.Member{}, err
 	}
 	return acc, nil
 }

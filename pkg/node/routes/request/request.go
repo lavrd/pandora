@@ -10,8 +10,8 @@ import (
 
 // Candidate
 type Candidate struct {
-	Email    *string `json:"email"`
-	FullName *string `json:"full_name"`
+	Email *string `json:"email"`
+	Name  *string `json:"name"`
 }
 
 // Validate validate incoming data for candidate
@@ -19,8 +19,8 @@ func (c *Candidate) Validate() *response.Error {
 	switch {
 	case c.Email == nil || !validator.IsEmail(*c.Email):
 		return response.BadParameter("email")
-	case c.FullName == nil || len(*c.FullName) == 0:
-		return response.BadParameter("full_name")
+	case c.Name == nil || len(*c.Name) == 0:
+		return response.BadParameter("name")
 	default:
 		return nil
 	}

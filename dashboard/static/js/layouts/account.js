@@ -119,8 +119,8 @@ class AccountCreate extends React.Component {
   }
 }
 
-AccountCreate.propTypes = {
-  submit: PropTypes.func.isRequired
+AccountCreate.proppb = {
+  submit: Proppb.func.isRequired
 };
 
 class AccountFetch extends React.Component {
@@ -164,6 +164,6 @@ class AccountFetch extends React.Component {
   }
 }
 
-AccountFetch.propTypes = {
-  submit: PropTypes.func.isRequired
+AccountFetch.proppb = {
+  submit: Proppb.func.isRequired
 };

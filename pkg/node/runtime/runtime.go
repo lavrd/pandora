@@ -3,19 +3,22 @@ package runtime
 import (
 	"github.com/spacelavr/pandora/pkg/node/rpc"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/types"
-	"github.com/spacelavr/pandora/pkg/utils/converter"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 type Runtime struct {
-	MC  types.MasterChain
-	CC  types.CertChain
-	LMB int
-	LCB int
+	mc  *pb.MasterChain
+	cc  *pb.CertChain
+	lmb int
+	lcb int
 
 	// todo store at runtime or in another place (env?)
 	FullName  string
 	PublicKey string
+}
+
+func (r *Runtime) MC() *pb.MasterChain {
+	return r.mc
 }
 
 func New(key *pb.PublicKey) (*Runtime, error) {
@@ -26,28 +29,31 @@ func New(key *pb.PublicKey) (*Runtime, error) {
 
 	cc := &pb.CertChain{}
 
-	for _, mb := range mc.MasterBlock {
-		if mb.PublicKey.PublicKey == key.PublicKey {
+	for _, mb := range mc.MasterChain {
+		if mb.Block.PublicKey.PublicKey == key.PublicKey {
 			cc = mb.CertChain
 		}
 	}
 
 	return &Runtime{
-		MC:  converter.FPBMC(mc),
-		CC:  converter.FPBCC(cc),
-		LCB: len(cc.CertBlock) - 1,
-		LMB: len(mc.MasterBlock) - 1,
+		mc:  mc,
+		cc:  cc,
+		lcb: len(cc.CertChain) - 1,
+		lmb: len(mc.MasterChain) - 1,
 	}, nil
 }
 
-func (r *Runtime) AddMC(block *types.MasterBlock) {
-	r.MC = append(r.MC, block)
+func (r *Runtime) AddMC(block *pb.MasterBlock) {
+	r.mc.MasterChain = append(r.mc.MasterChain, block)
 }
 
-func (r *Runtime) AddCC(block *types.CertBlock) {
-	for i, mb := range r.MC {
-		if mb.PublicKey == block.PublicKey {
-			r.MC[i].CertChain = append(r.MC[i].CertChain, block)
+func (r *Runtime) AddCC(block *pb.CertBlock) {
+
+	log.Debug(block.Block.PublicKey.PublicKey)
+
+	for i, mb := range r.mc.MasterChain {
+		if mb.Block.PublicKey.PublicKey == block.Block.PublicKey.PublicKey {
+			r.mc.MasterChain[i].CertChain.CertChain = append(r.mc.MasterChain[i].CertChain.CertChain, block)
 		}
 	}
 }

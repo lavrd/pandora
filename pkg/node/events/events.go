@@ -3,14 +3,14 @@ package events
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/pb"
 )
 
 // Listen listen for events
 func Listen() error {
 	var (
-		chrMasterBlock = make(chan *types.MasterBlock)
-		chrCertBlock   = make(chan *types.CertBlock)
+		chrMasterBlock = make(chan *pb.MasterBlock)
+		chrCertBlock   = make(chan *pb.CertBlock)
 		brk            = env.GetBroker()
 		rt             = env.GetRuntime()
 	)

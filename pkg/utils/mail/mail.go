@@ -34,7 +34,7 @@ type email struct {
 }
 
 func send(to, subject, html string) error {
-	if !config.Viper.Mail.Send {
+	if !config.Viper.Membership.Mail.Send {
 		return nil
 	}
 
@@ -50,8 +50,8 @@ func send(to, subject, html string) error {
 		},
 		Subject: subject,
 		From: &email{
-			Name:  config.Viper.Mail.Name,
-			Email: config.Viper.Mail.Email,
+			Name:  config.Viper.Membership.Mail.Name,
+			Email: config.Viper.Membership.Mail.Email,
 		},
 		Content: []*content{
 			{
@@ -67,14 +67,14 @@ func send(to, subject, html string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", config.Viper.Mail.Endpoint, bytes.NewBuffer(buf))
+	req, err := http.NewRequest("POST", config.Viper.Membership.Mail.Endpoint, bytes.NewBuffer(buf))
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	defer req.Body.Close()
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.Viper.Mail.Token))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.Viper.Membership.Mail.Token))
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := (&http.Client{}).Do(req)

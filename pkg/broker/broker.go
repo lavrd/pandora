@@ -2,6 +2,7 @@ package broker
 
 import (
 	"github.com/nats-io/go-nats"
+	"github.com/nats-io/go-nats/encoders/protobuf"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -33,7 +34,7 @@ func Connect(opts *Opts) (*Broker, error) {
 		return nil, err
 	}
 
-	conn, err := nats.NewEncodedConn(c, nats.JSON_ENCODER)
+	conn, err := nats.NewEncodedConn(c, protobuf.PROTOBUF_ENCODER)
 	if err != nil {
 		log.Error(err)
 		return nil, err

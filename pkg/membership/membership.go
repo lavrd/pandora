@@ -23,10 +23,10 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	stg, err := storage.Connect(&storage.Opts{
-		Endpoint: config.Viper.Database.Endpoint,
-		Database: config.Viper.Database.Database,
-		User:     config.Viper.Database.User,
-		Password: config.Viper.Database.Password,
+		Endpoint: config.Viper.Membership.Database.Endpoint,
+		Database: config.Viper.Membership.Database.Database,
+		User:     config.Viper.Membership.Database.User,
+		Password: config.Viper.Membership.Database.Password,
 	})
 	if err != nil {
 		log.Fatal(err)

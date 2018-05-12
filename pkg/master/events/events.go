@@ -2,12 +2,12 @@ package events
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/types"
+	"github.com/spacelavr/pandora/pkg/pb"
 )
 
 type Events struct {
-	chsMasterBlock chan *types.MasterBlock
-	chsCertBlock   chan *types.CertBlock
+	chsMasterBlock chan *pb.MasterBlock
+	chsCertBlock   chan *pb.CertBlock
 }
 
 type Opts struct {
@@ -16,8 +16,8 @@ type Opts struct {
 
 func New() *Events {
 	return &Events{
-		chsMasterBlock: make(chan *types.MasterBlock),
-		chsCertBlock:   make(chan *types.CertBlock),
+		chsMasterBlock: make(chan *pb.MasterBlock),
+		chsCertBlock:   make(chan *pb.CertBlock),
 	}
 }
 
@@ -35,10 +35,10 @@ func (e *Events) Listen(opts *Opts) error {
 	}
 }
 
-func (e *Events) PMasterBlock(block *types.MasterBlock) {
+func (e *Events) PMasterBlock(block *pb.MasterBlock) {
 	e.chsMasterBlock <- block
 }
 
-func (e *Events) PCertBlock(block *types.CertBlock) {
+func (e *Events) PCertBlock(block *pb.CertBlock) {
 	e.chsCertBlock <- block
 }
