@@ -68,7 +68,9 @@ const Header = () => (
 );
 
 const Footer = () => (
-  <footer className="mt-5 d-flex align-items-center justify-content-center fixed-bottom mb-5">
+  <footer
+    className="d-none d-md-flex pt-5 pb-5 align-items-center justify-content-center fixed-bottom bg-white"
+  >
     <i className="fas fa-university"/>
     <i className="fas fa-plus"/>
     <i className="fas fa-user-graduate"/>

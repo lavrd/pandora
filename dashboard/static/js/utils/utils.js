@@ -30,3 +30,11 @@ const request = (method, endpoint, body) => {
 String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
+
+const VERIFY_STATUS = {
+  // todo is this correct?
+  NONE: 'NONE',
+  VERIFIED: 'VERIFIED',
+  // todo is this correct word for verified antonym?
+  DENY: 'DENY'
+};

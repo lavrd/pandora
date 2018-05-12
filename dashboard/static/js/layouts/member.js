@@ -41,11 +41,11 @@ class Account extends React.Component {
     })
       .then(() => this.setState({success: 'Member successfully confirmed', pending: false}))
       .catch((error) => this.setState({error: error, pending: false}));
-    this.setState({pending: true, data: this.EMPTY_DATA});
+    this.setState({pending: true});
   };
 
   handleClose = () => {
-    this.setState({member: null, error: null, success: null});
+    this.setState({member: null, error: null, success: null, data: this.EMPTY_DATA});
   };
 
   handleFetch = () => {
@@ -54,19 +54,14 @@ class Account extends React.Component {
     })
       .then((member) => this.setState({member: member, pending: false}))
       .catch((error) => this.setState({error: error, pending: false}));
-    this.setState({pending: true, data: this.EMPTY_DATA});
+    this.setState({pending: true});
   };
 
   render() {
-
-    console.log(this.state);
-
     if (this.state.pending) return <Preloader/>;
     if (this.state.error) return <Error error={this.state.error} close={this.handleClose}/>;
     if (this.state.success) return <Alert text={this.state.success} close={this.handleClose}/>;
     if (this.state.member) return <Member member={this.state.member} close={this.handleClose}/>;
-
-    console.log('>>>>>>>>>');
 
     return (
       <div className="card shadow">

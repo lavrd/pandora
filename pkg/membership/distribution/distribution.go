@@ -6,7 +6,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 )
 
@@ -65,7 +64,6 @@ func (d *Distribution) AccountFetch(key *pb.PublicKey) (*pb.Member, error) {
 func (d *Distribution) Issue(cert *pb.Cert) (*pb.Cert, error) {
 	recipient, err := d.Storage.AccountFetchByPublic(cert.Recipient.PublicKey.PublicKey)
 	if err != nil {
-		log.Debug(1111111111111111)
 		return nil, err
 	}
 	if recipient == nil {
@@ -74,7 +72,6 @@ func (d *Distribution) Issue(cert *pb.Cert) (*pb.Cert, error) {
 
 	issuer, err := d.Storage.AccountFetchByPublic(cert.Issuer.PublicKey.PublicKey)
 	if err != nil {
-		log.Debug(2222222222222222)
 		return nil, err
 	}
 	if issuer == nil {

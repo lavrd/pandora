@@ -4,10 +4,22 @@ class Certificate extends React.Component {
     this.state = {
       state: this.STATE.FETCH,
       pending: false,
-      error: null
+      error: null,
+      success: '',
+      data: this.EMPTY_DATA,
+      cert: null,
+      verifyStatus: VERIFY_STATUS.NONE
     };
   }
 
+  EMPTY_DATA = {
+    title: '',
+    description: '',
+    publicKey: '',
+    id: ''
+  };
+
+  // todo move to utils and in account
   STATE = {
     FETCH: 'FETCH',
     CREATE: 'CREATE'
@@ -18,17 +30,50 @@ class Certificate extends React.Component {
     this.setState({state: key});
   };
 
+  handleChange = (e) => {
+    const target = e.target;
+    const name = target.name;
+    const value = target.value;
+    this.setState({data: {...this.state.data, [name]: value}});
+  };
+
   handleCreate = () => {
+    api.CertCreate({
+      public_Key: this.state.data.publicKey,
+      title: this.state.data.title,
+      description: this.state.data.description
+    })
+      .then(() => this.setState({success: 'Certificate successfully confirmed', pending: false}))
+      .catch((error) => this.setState({error: error, pending: false}));
+    this.setState({pending: true});
+  };
+
+  handleClose = () => {
+    this.setState({cert: null, error: null, success: null, verifyStatus: VERIFY_STATUS.NONE, data: this.EMPTY_DATA});
+  };
+
+  handleVerify = () => {
+    api.CertVerify(this.state.cert)
+      .then(() => this.setState({verifyStatus: VERIFY_STATUS.VERIFIED, pending: false}))
+      .catch(() => this.setState({verifyStatus: VERIFY_STATUS.DENY, pending: false}));
     this.setState({pending: true});
   };
 
   handleFetch = () => {
+    api.CertFetch({
+      id: this.state.data.id
+    })
+      .then((cert) => this.setState({cert: cert, pending: false}))
+      .catch((error) => this.setState({error: error, pending: false}));
     this.setState({pending: true});
   };
 
   render() {
     if (this.state.pending) return <Preloader/>;
-    if (this.state.error) return <Error error={this.state.error}/>;
+    if (this.state.error) return <Error error={this.state.error} close={this.handleClose}/>;
+    if (this.state.success) return <Alert text={this.state.success} close={this.handleClose}/>;
+    if (this.state.cert) return <Cert cert={this.state.cert} verify={this.handleVerify}
+                                      close={this.handleClose} verifyStatus={this.state.verifyStatus}/>;
 
     return (
       <div className="card shadow">
@@ -56,8 +101,18 @@ class Certificate extends React.Component {
         <div className="card-body">
           {
             this.state.state === this.STATE.FETCH ?
-              <CertificateFetch submit={this.handleFetch}/> :
-              <CertificateCreate submit={this.handleCreate}/>
+              <CertFetch
+                submit={this.handleFetch}
+                change={this.handleChange}
+                id={this.state.data.id}
+              /> :
+              <CertCreate
+                submit={this.handleCreate}
+                change={this.handleChange}
+                publicKey={this.state.data.publicKey}
+                description={this.state.data.description}
+                title={this.state.data.title}
+              />
           }
         </div>
       </div>
@@ -65,118 +120,143 @@ class Certificate extends React.Component {
   }
 }
 
-class CertificateCreate extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      publicKey: '',
-      title: '',
-      description: ''
-    };
-  }
+const Cert = ({cert, close, verify, verifyStatus}) => (
+  <div className="card shadow text-center">
+    <div className="card-header">Certificate</div>
 
-  handleChange = (e) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
-    this.setState({[name]: value});
-  };
+    <div className="card-body">
+      <h5 className="card-title">{cert.meta.title}</h5>
+      <p className="card-text">{cert.meta.description}</p>
+      <p className="card-text">{dayjs(cert.meta.timestamp).toString()}</p>
 
-  render() {
-    return (
-      <section>
-        <div className="form-group">
-          <label>Public key</label>
-          <input
-            name="publicKey"
-            onChange={this.handleChange}
-            value={this.state.publicKey}
-            type="text"
-            className="form-control"
-            placeholder="787c8ef36e46f02a58f014ac7507c27fb29e757d0ca323ffd8d517ec70e3caa9"
-          />
+      <div className="row">
+        <div className="col-6">
+          {/* todo move to independent component*/}
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">{cert.issuer.name}</h5>
+              <p className="card-text">{cert.issuer.public_key.public_key}</p>
+            </div>
+          </div>
         </div>
 
-        <div className="form-group">
-          <label>Title</label>
-          <input
-            name="title"
-            onChange={this.handleChange}
-            value={this.state.title}
-            type="text"
-            className="form-control"
-            placeholder="Pandora certificate"
-          />
+        <div className="col-6">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">{cert.recipient.name}</h5>
+              <p className="card-text">{cert.recipient.public_key.public_key}</p>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div className="form-group">
-          <label>Description</label>
-          <textarea
-            name="description"
-            onChange={this.handleChange}
-            value={this.state.description}
-            rows={2}
-            className="form-control"
-            placeholder="For the successful completion of the courses"
-          />
-        </div>
+    <div className="card-footer d-flex align-items-center justify-content-between">
+      <button
+        onClick={verify}
+        className={`btn float-left ${verifyStatus === VERIFY_STATUS.NONE ?
+          'btn-primary' : verifyStatus === VERIFY_STATUS.VERIFIED ? 'btn-success' : 'btn-danger' }`}
+      >
+        <i className="fas fa-check"/>
+      </button>
 
-        <button
-          className="btn btn-primary"
-          onClick={this.props.submit}
-        >
-          Submit
-        </button>
-      </section>
-    );
-  }
-}
+      <button
+        className="close"
+        onClick={close}
+      >
+        <span>&times;</span>
+      </button>
+    </div>
+  </div>
+);
 
-CertificateCreate.propTypes = {
+Cert.propTypes = {
+  verifyStatus: PropTypes.string.isRequired,
+  verify: PropTypes.func.isRequired,
+  cert: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired
+};
+
+const CertCreate = ({publicKey, title, description, submit, change}) => (
+  <section>
+    <div className="form-group">
+      <label>Public key</label>
+      <input
+        name="publicKey"
+        onChange={change}
+        value={publicKey}
+        type="text"
+        className="form-control"
+        placeholder="787c8ef36e46f02a58f014ac7507c27fb29e757d0ca323ffd8d517ec70e3caa9"
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Title</label>
+      <input
+        name="title"
+        onChange={change}
+        value={title}
+        type="text"
+        className="form-control"
+        placeholder="Pandora certificate"
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Description</label>
+      <textarea
+        name="description"
+        onChange={change}
+        value={description}
+        rows={2}
+        className="form-control"
+        placeholder="For the successful completion of the courses"
+      />
+    </div>
+
+    <button
+      className="btn btn-primary"
+      onClick={submit}
+    >
+      Submit
+    </button>
+  </section>
+);
+
+CertCreate.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  publicKey: PropTypes.string.isRequired,
+  change: PropTypes.func.isRequired,
   submit: PropTypes.func.isRequired
 };
 
-class CertificateFetch extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      id: ''
-    };
-  }
+const CertFetch = ({change, id, submit}) => (
+  <section>
+    <div className="form-group">
+      <label>Id</label>
+      <input
+        name="id"
+        onChange={change}
+        value={id}
+        type="text"
+        className="form-control"
+        placeholder="068b7dfa-26fa-4716-ba20-cb0943a8486a"
+      />
+    </div>
 
-  handleChange = (e) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
-    this.setState({[name]: value});
-  };
+    <button
+      className="btn btn-primary"
+      onClick={submit}
+    >
+      Submit
+    </button>
+  </section>
+);
 
-  render() {
-    return (
-      <section>
-        <div className="form-group">
-          <label>Id</label>
-          <input
-            name="id"
-            onChange={this.handleChange}
-            value={this.state.id}
-            type="text"
-            className="form-control"
-            placeholder="068b7dfa-26fa-4716-ba20-cb0943a8486a"
-          />
-        </div>
-
-        <button
-          className="btn btn-primary"
-          onClick={this.props.submit}
-        >
-          Submit
-        </button>
-      </section>
-    );
-  }
-}
-
-CertificateFetch.propTypes = {
-  submit: PropTypes.func.isRequired
+CertFetch.propTypes = {
+  submit: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
+  change: PropTypes.func.isRequired
 };

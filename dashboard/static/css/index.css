@@ -19,6 +19,10 @@ body {
   font-size: 1em !important;
 }
 
+.fa-check {
+  font-size: 1em !important;
+}
+
 .svg-inline--fa {
   font-size: 3em;
   margin: 0 5px;

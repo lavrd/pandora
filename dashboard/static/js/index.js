@@ -3,8 +3,8 @@ const App = () => (
     <section className="container mt-5">
       <Header/>
 
-      <div className="row">
-        <div className="col-md-7">
+      <div className="row mb-5">
+        <div className="col-md-7 mb-3">
           <Certificate/>
         </div>
 
