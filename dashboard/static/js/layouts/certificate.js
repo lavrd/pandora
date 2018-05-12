@@ -135,7 +135,7 @@ const Cert = ({cert, close, verify, verifyStatus}) => (
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{cert.issuer.name}</h5>
-              <p className="card-text">{cert.issuer.public_key.public_key}</p>
+              <small className="text-muted">{cert.issuer.public_key.public_key}</small>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ const Cert = ({cert, close, verify, verifyStatus}) => (
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{cert.recipient.name}</h5>
-              <p className="card-text">{cert.recipient.public_key.public_key}</p>
+              <small className="text-muted">{cert.recipient.public_key.public_key}</small>
             </div>
           </div>
         </div>

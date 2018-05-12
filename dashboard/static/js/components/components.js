@@ -83,6 +83,11 @@ const Footer = () => (
     <i className="fas fa-caret-right"/>
     <i className="fas fa-handshake"/>
     <i className="fas fa-caret-right"/>
-    <i className="fas fa-heartbeat"/>Pandora
+    <a
+      href="https://github.com/spacelavr/pandora"
+      target="_blank"
+    >
+      <i className="fas fa-heartbeat"/>Pandora
+    </a>
   </footer>
 );
