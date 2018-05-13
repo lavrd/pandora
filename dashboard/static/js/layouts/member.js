@@ -61,7 +61,7 @@ class Account extends React.Component {
     if (this.state.pending) return <Preloader/>;
     if (this.state.error) return <Error error={this.state.error} close={this.handleClose}/>;
     if (this.state.success) return <Alert text={this.state.success} close={this.handleClose}/>;
-    if (this.state.member) return <Member member={this.state.member} close={this.handleClose}/>;
+    if (this.state.member) return <MemberCard member={this.state.member} close={this.handleClose}/>;
 
     return (
       <div className="card shadow">
@@ -89,12 +89,12 @@ class Account extends React.Component {
         <div className="card-body">
           {
             this.state.state === this.STATE.FETCH ?
-              <MemberFetch
+              <MemberFetchCard
                 publicKey={this.state.data.publicKey}
                 change={this.handleChange}
                 submit={this.handleFetch}
               /> :
-              <AccountCreate
+              <MemberCreateCard
                 change={this.handleChange}
                 name={this.state.data.name}
                 email={this.state.data.email}
@@ -107,7 +107,7 @@ class Account extends React.Component {
   }
 }
 
-const Member = ({member, close}) => (
+const MemberCard = ({member, close}) => (
   <div className="card shadow">
     <img className="card-img-top" src="/static/img/graduate.jpg" alt=""/>
 
@@ -127,12 +127,12 @@ const Member = ({member, close}) => (
   </div>
 );
 
-Member.propTypes = {
+MemberCard.propTypes = {
   member: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired
 };
 
-const AccountCreate = ({email, name, submit, change}) => (
+const MemberCreateCard = ({email, name, submit, change}) => (
   <section>
     <div className="form-group">
       <label>Email</label>
@@ -142,7 +142,7 @@ const AccountCreate = ({email, name, submit, change}) => (
         value={email}
         type="email"
         className="form-control"
-        placeholder="thomas@mail.system"
+        placeholder="thomas@mail.sys"
       />
     </div>
 
@@ -167,14 +167,14 @@ const AccountCreate = ({email, name, submit, change}) => (
   </section>
 );
 
-AccountCreate.propTypes = {
+MemberCreateCard.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
   change: PropTypes.func.isRequired
 };
 
-const MemberFetch = ({submit, change, publicKey}) => (
+const MemberFetchCard = ({submit, change, publicKey}) => (
   <section>
     <div className="form-group">
       <label>Public key</label>
@@ -197,7 +197,7 @@ const MemberFetch = ({submit, change, publicKey}) => (
   </section>
 );
 
-MemberFetch.propTypes = {
+MemberFetchCard.propTypes = {
   submit: PropTypes.func.isRequired,
   change: PropTypes.func.isRequired,
   publicKey: PropTypes.string.isRequired

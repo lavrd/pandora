@@ -8,9 +8,15 @@ class Certificate extends React.Component {
       success: '',
       data: this.EMPTY_DATA,
       cert: null,
-      verifyStatus: VERIFY_STATUS.NONE
+      verifyStatus: this.VERIFY_STATUS.NONE
     };
   }
+
+  VERIFY_STATUS = {
+    NONE: 'NONE',
+    VERIFIED: 'VERIFIED',
+    FAILED: 'FAILED'
+  };
 
   EMPTY_DATA = {
     title: '',
@@ -19,7 +25,6 @@ class Certificate extends React.Component {
     id: ''
   };
 
-  // todo move to utils and in account
   STATE = {
     FETCH: 'FETCH',
     CREATE: 'CREATE'
@@ -49,13 +54,19 @@ class Certificate extends React.Component {
   };
 
   handleClose = () => {
-    this.setState({cert: null, error: null, success: null, verifyStatus: VERIFY_STATUS.NONE, data: this.EMPTY_DATA});
+    this.setState({
+      cert: null,
+      error: null,
+      success: null,
+      verifyStatus: this.VERIFY_STATUS.NONE,
+      data: this.EMPTY_DATA
+    });
   };
 
   handleVerify = () => {
     api.CertVerify(this.state.cert)
-      .then(() => this.setState({verifyStatus: VERIFY_STATUS.VERIFIED, pending: false}))
-      .catch(() => this.setState({verifyStatus: VERIFY_STATUS.DENY, pending: false}));
+      .then(() => this.setState({verifyStatus: this.VERIFY_STATUS.VERIFIED, pending: false}))
+      .catch(() => this.setState({verifyStatus: this.VERIFY_STATUS.FAILED, pending: false}));
     this.setState({pending: true});
   };
 
@@ -120,33 +131,42 @@ class Certificate extends React.Component {
   }
 }
 
-const Cert = ({cert, close, verify, verifyStatus}) => (
+const CertMemberCard = ({name, public_key}) => (
+  <div className="card">
+    <div className="card-body">
+      <h5 className="card-title">{name}</h5>
+      <small className="text-muted">{public_key}</small>
+    </div>
+  </div>
+);
+
+CertMemberCard.propTypes = {
+  name: PropTypes.string.isRequired,
+  public_key: PropTypes.string.isRequired
+};
+
+const CertCard = ({cert, close, verify, verifyStatus}) => (
   <div className="card shadow text-center">
     <div className="card-header">Certificate</div>
 
     <div className="card-body">
       <h5 className="card-title">{cert.meta.title}</h5>
       <p className="card-text">{cert.meta.description}</p>
-      <p className="card-text">{dayjs(cert.meta.timestamp).toString()}</p>
+      <p className="card-text">{new Date(cert.meta.timestamp).toString()}</p>
 
       <div className="row">
         <div className="col-6">
-          {/* todo move to independent component*/}
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">{cert.issuer.name}</h5>
-              <small className="text-muted">{cert.issuer.public_key.public_key}</small>
-            </div>
-          </div>
+          <CertMemberCard
+            name={cert.issuer.name}
+            public_key={cert.issuer.public_key.public_key}
+          />
         </div>
 
         <div className="col-6">
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">{cert.recipient.name}</h5>
-              <small className="text-muted">{cert.recipient.public_key.public_key}</small>
-            </div>
-          </div>
+          <CertMemberCard
+            name={cert.recipient.name}
+            public_key={cert.recipient.public_key.public_key}
+          />
         </div>
       </div>
     </div>
@@ -177,7 +197,7 @@ Cert.propTypes = {
   close: PropTypes.func.isRequired
 };
 
-const CertCreate = ({publicKey, title, description, submit, change}) => (
+const CertCreateCard = ({publicKey, title, description, submit, change}) => (
   <section>
     <div className="form-group">
       <label>Public key</label>
@@ -224,7 +244,7 @@ const CertCreate = ({publicKey, title, description, submit, change}) => (
   </section>
 );
 
-CertCreate.propTypes = {
+CertCreateCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   publicKey: PropTypes.string.isRequired,
@@ -232,7 +252,7 @@ CertCreate.propTypes = {
   submit: PropTypes.func.isRequired
 };
 
-const CertFetch = ({change, id, submit}) => (
+const CertFetchCard = ({change, id, submit}) => (
   <section>
     <div className="form-group">
       <label>Id</label>
@@ -255,7 +275,7 @@ const CertFetch = ({change, id, submit}) => (
   </section>
 );
 
-CertFetch.propTypes = {
+CertFetchCard.propTypes = {
   submit: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
   change: PropTypes.func.isRequired
