@@ -1,4 +1,4 @@
-const endpoint = 'http://localhost:2004';
+const endpoint = 'https://127.0.0.1:2004';
 const route_cert = 'cert';
 const route_member = 'account';
 

@@ -9,6 +9,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type server struct{}
@@ -30,17 +31,23 @@ func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, er
 }
 
 func Listen() error {
+	creds, err := credentials.NewServerTLSFromFile("./contrib/cert.pem", "./contrib/key.pem")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	s := grpc.NewServer(grpc.Creds(creds))
+	defer s.GracefulStop()
+
+	pb.RegisterDiscoveryServer(s, &server{})
+
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	defer listen.Close()
-
-	s := grpc.NewServer()
-	defer s.GracefulStop()
-
-	pb.RegisterDiscoveryServer(s, &server{})
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)

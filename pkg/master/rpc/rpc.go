@@ -11,6 +11,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type server struct{}
@@ -35,7 +36,13 @@ func Listen() error {
 	}
 	defer listen.Close()
 
-	s := grpc.NewServer()
+	creds, err := credentials.NewServerTLSFromFile("./contrib/cert.pem", "./contrib/key.pem")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
 	pb.RegisterMasterServer(s, &server{})

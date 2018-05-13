@@ -1,10 +1,10 @@
 package node
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/env"
@@ -37,7 +37,6 @@ func Daemon() bool {
 		log.Fatal(err.Message)
 	}
 
-	log.Debug(candidate)
 	// todo with either start or once?
 	key, err := rpc.NodeReg(&pb.Candidate{
 		Email: *candidate.Email,
@@ -48,8 +47,6 @@ func Daemon() bool {
 			log.Fatal(err)
 		}
 	}
-
-	log.Debug(key)
 
 	netOpts, err := rpc.Network()
 	if err != nil {
@@ -84,7 +81,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := http.Listen(fmt.Sprintf(":%d", config.Viper.Node.Port), routes.Routes); err != nil {
+		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes); err != nil {
 			log.Fatal(err)
 		}
 	}()

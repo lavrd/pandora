@@ -2,11 +2,9 @@ package http
 
 import (
 	"net/http"
-	"net/http/pprof"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/spacelavr/pandora/pkg/utils/http/middleware"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -45,17 +43,10 @@ func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 
 // Listen start listen http requests
 func Listen(endpoint string, routes []Route) error {
-	log.Debugf("listen http server on :%s", endpoint)
+	log.Debugf("listen http server on %s", endpoint)
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/debug/pprof/", pprof.Index)
-	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	r.HandleFunc("/debug/pprof/trace", pprof.Trace)
-
-	// todo need a flag? its need only for node, fot other no
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
 
 	for _, route := range routes {
@@ -63,13 +54,17 @@ func Listen(endpoint string, routes []Route) error {
 	}
 
 	srv := &http.Server{
-		Handler:      middleware.Logger(r),
-		Addr:         endpoint,
-		ReadTimeout:  time.Second * 5,
-		WriteTimeout: time.Second * 5,
+		Handler:           r,
+		Addr:              endpoint,
+		ReadHeaderTimeout: time.Second * 5,
+		IdleTimeout:       time.Second * 5,
+		ReadTimeout:       time.Second * 5,
+		WriteTimeout:      time.Second * 5,
 	}
 
-	return srv.ListenAndServe()
+	// todo need to regenerate cert and key for other domain
+	// todo to config
+	return srv.ListenAndServeTLS("./contrib/cert.pem", "./contrib/key.pem")
 }
 
 // DefaultHeaders add default headers

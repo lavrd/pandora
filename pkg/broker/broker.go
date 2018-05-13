@@ -1,6 +1,8 @@
 package broker
 
 import (
+	"crypto/tls"
+
 	"github.com/nats-io/go-nats"
 	"github.com/nats-io/go-nats/encoders/protobuf"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -26,9 +28,22 @@ type Opts struct {
 
 // Connect connect to broker
 func Connect(opts *Opts) (*Broker, error) {
+	cert, err := tls.LoadX509KeyPair("./contrib/cert.pem", "./contrib/key.pem")
+	if err != nil {
+		return nil, err
+	}
+
+	tlsConfig := &tls.Config{
+		ServerName:         opts.Endpoint,
+		InsecureSkipVerify: true,
+		Certificates:       []tls.Certificate{cert},
+		MinVersion:         tls.VersionTLS12,
+	}
+
 	c, err := nats.Connect(
 		opts.Endpoint,
 		nats.UserInfo(opts.User, opts.Password),
+		nats.Secure(tlsConfig),
 	)
 	if err != nil {
 		log.Error(err)

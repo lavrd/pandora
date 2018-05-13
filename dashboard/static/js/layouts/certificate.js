@@ -1,4 +1,4 @@
-class Certificate extends React.Component {
+class Cert extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -83,8 +83,8 @@ class Certificate extends React.Component {
     if (this.state.pending) return <Preloader/>;
     if (this.state.error) return <Error error={this.state.error} close={this.handleClose}/>;
     if (this.state.success) return <Alert text={this.state.success} close={this.handleClose}/>;
-    if (this.state.cert) return <Cert cert={this.state.cert} verify={this.handleVerify}
-                                      close={this.handleClose} verifyStatus={this.state.verifyStatus}/>;
+    if (this.state.cert) return <CertCard cert={this.state.cert} verify={this.handleVerify}
+                                          close={this.handleClose} verifyStatus={this.state.verifyStatus}/>;
 
     return (
       <div className="card shadow">
@@ -112,12 +112,12 @@ class Certificate extends React.Component {
         <div className="card-body">
           {
             this.state.state === this.STATE.FETCH ?
-              <CertFetch
+              <CertFetchCard
                 submit={this.handleFetch}
                 change={this.handleChange}
                 id={this.state.data.id}
               /> :
-              <CertCreate
+              <CertCreateCard
                 submit={this.handleCreate}
                 change={this.handleChange}
                 publicKey={this.state.data.publicKey}
@@ -190,7 +190,7 @@ const CertCard = ({cert, close, verify, verifyStatus}) => (
   </div>
 );
 
-Cert.propTypes = {
+CertCard.propTypes = {
   verifyStatus: PropTypes.string.isRequired,
   verify: PropTypes.func.isRequired,
   cert: PropTypes.object.isRequired,

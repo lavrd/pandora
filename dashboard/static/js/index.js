@@ -5,7 +5,7 @@ const App = () => (
 
       <div className="row mb-5">
         <div className="col-md-7 mb-3">
-          <Certificate/>
+          <Cert/>
         </div>
 
         <div className="col-md-5">

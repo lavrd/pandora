@@ -17,17 +17,17 @@ membership:
     subjects:
       credentials: Credentials
   database:
-    endpoint: http://localhost:8529
+    endpoint: http://127.0.0.1:8529
     user: root
     password: root
     database: pandora
-  endpoint: localhost:2003
+  endpoint: 127.0.0.1:2003
 
-# validator
+# master
 master:
   database:
     filepath: ./contrib/master.db
-  endpoint: localhost:2002
+  endpoint: 127.0.0.1:2002
 
 # node
 node:
@@ -39,14 +39,14 @@ node:
     name: State University of Aerospace Instrumentation
     email: guap@mail.sys
     secret_key: env
-  port: 2004
+  endpoint: 127.0.0.1:2004
 
 # discovery
 discovery:
   database:
     filepath: ./contrib/discovery.db
   broker:
-    endpoint: nats://localhost:4222
+    endpoint: nats://127.0.0.1:4222
     user: root
     password: root
-  endpoint: localhost:2001
+  endpoint: 127.0.0.1:2001

@@ -6,7 +6,6 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/pandora/pkg/discovery/rpc"
-	"github.com/spacelavr/pandora/pkg/utils/generator"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -19,21 +18,11 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	log.Debug(generator.UUID())
-
 	go func() {
 		if err := rpc.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()
-
-	// defer func() {
-	// if config.Viper.Runtime.Clean {
-	// 	if err := stg.Clean(); err != nil {
-	// 		log.Error(err)
-	// 	}
-	// }
-	// }()
 
 	<-sig
 	log.Debug("handle SIGINT and SIGTERM")

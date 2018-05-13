@@ -10,11 +10,18 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 )
 
 func Register(candidate *pb.Candidate) error {
-	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -41,7 +48,13 @@ func Register(candidate *pb.Candidate) error {
 }
 
 func Issue(cert *pb.Cert) error {
-	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 	}
@@ -59,7 +72,13 @@ func Issue(cert *pb.Cert) error {
 }
 
 func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
-	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -88,7 +107,13 @@ func NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
 
 // todo through pb struct or only string and convert in this func
 func FetchAccount(key *pb.PublicKey) (*pb.Member, error) {
-	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Membership.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -115,7 +140,13 @@ func FetchAccount(key *pb.PublicKey) (*pb.Member, error) {
 }
 
 func Node(key *pb.PublicKey) (*pb.MasterChain, error) {
-	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -135,7 +166,13 @@ func Node(key *pb.PublicKey) (*pb.MasterChain, error) {
 
 // todo rename and rename at .proto
 func Network() (*pb.NetworkOpts, error) {
-	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err

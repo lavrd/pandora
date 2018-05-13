@@ -46,7 +46,7 @@ var (
 				Name      string
 				SecretKey string `mapstructure:"secret_key"`
 			}
-			Port int
+			Endpoint string
 		}
 		Discovery struct {
 			Database struct {

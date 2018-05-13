@@ -13,6 +13,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 )
 
@@ -72,7 +73,13 @@ func (s *server) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 }
 
 func Issue(cert *pb.Cert) error {
-	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 	}
@@ -114,7 +121,13 @@ func Listen() error {
 	}
 	defer listen.Close()
 
-	s := grpc.NewServer()
+	creds, err := credentials.NewServerTLSFromFile("./contrib/cert.pem", "./contrib/key.pem")
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
 	pb.RegisterMembershipServer(s, &server{})
