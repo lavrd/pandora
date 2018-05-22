@@ -56,7 +56,11 @@ Error.propTypes = {
 const Header = () => (
   <header className="row mb-5 d-flex align-items-center">
     <div className="col-md-3">
-      <h1 className="display-4">Pandora</h1>
+      <a
+        className="display-4 text-dark"
+        href="/dashboard"
+      >
+        Pandora</a>
     </div>
 
     <div className="col-md-9">

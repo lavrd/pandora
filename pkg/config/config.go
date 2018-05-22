@@ -13,12 +13,6 @@ var (
 				Endpoint string
 				Email    string
 				Name     string
-				Templates struct {
-					Credentials string
-				}
-				Subjects struct {
-					Credentials string
-				}
 			}
 			Database struct {
 				Endpoint string

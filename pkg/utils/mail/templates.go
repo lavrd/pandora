@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/spacelavr/pandora/pkg/pb"
 )
 
 func execute(email, subject, path string, data interface{}) error {
@@ -25,17 +25,30 @@ func execute(email, subject, path string, data interface{}) error {
 	return send(email, subject, buf.String())
 }
 
-func SendCredentials(email, publicKey string) error {
-	data := &struct {
-		PublicKey string
-	}{
-		PublicKey: publicKey,
-	}
+func SendCertificate(email string, cert *pb.Cert) error {
+	const (
+		Subject  = "Certificate"
+		Template = "./pkg/utils/mail/templates/certificate.html"
+	)
 
 	return execute(
 		email,
-		config.Viper.Membership.Mail.Subjects.Credentials,
-		config.Viper.Membership.Mail.Templates.Credentials,
-		data,
+		Subject,
+		Template,
+		cert,
+	)
+}
+
+func SendCredentials(email string, publicKey *pb.PublicKey) error {
+	const (
+		Subject  = "Credentials"
+		Template = "./pkg/utils/mail/templates/credentials.html"
+	)
+
+	return execute(
+		email,
+		Subject,
+		Template,
+		publicKey,
 	)
 }

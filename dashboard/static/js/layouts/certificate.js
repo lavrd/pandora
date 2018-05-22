@@ -8,15 +8,9 @@ class Cert extends React.Component {
       success: '',
       data: this.EMPTY_DATA,
       cert: null,
-      verifyStatus: this.VERIFY_STATUS.NONE
+      verifyStatus: VERIFY_STATUS.NONE
     };
   }
-
-  VERIFY_STATUS = {
-    NONE: 'NONE',
-    VERIFIED: 'VERIFIED',
-    FAILED: 'FAILED'
-  };
 
   EMPTY_DATA = {
     title: '',
@@ -58,15 +52,15 @@ class Cert extends React.Component {
       cert: null,
       error: null,
       success: null,
-      verifyStatus: this.VERIFY_STATUS.NONE,
+      verifyStatus: VERIFY_STATUS.NONE,
       data: this.EMPTY_DATA
     });
   };
 
   handleVerify = () => {
     api.CertVerify(this.state.cert)
-      .then(() => this.setState({verifyStatus: this.VERIFY_STATUS.VERIFIED, pending: false}))
-      .catch(() => this.setState({verifyStatus: this.VERIFY_STATUS.FAILED, pending: false}));
+      .then(() => this.setState({verifyStatus: VERIFY_STATUS.VERIFIED, pending: false}))
+      .catch(() => this.setState({verifyStatus: VERIFY_STATUS.FAILED, pending: false}));
     this.setState({pending: true});
   };
 

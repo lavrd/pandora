@@ -6,16 +6,11 @@ runtime:
 # membership
 membership:
   mail:
-    send: false
+    send: true
     token: env
     endpoint: https://api.sendgrid.com/v3/mail/send
     email: pandora@doesnotexist.system
     name: Pandora
-    templates:
-      # todo rename
-      credentials: ./pkg/utils/mail/templates/credentials.html
-    subjects:
-      credentials: Credentials
   database:
     endpoint: http://127.0.0.1:8529
     user: root

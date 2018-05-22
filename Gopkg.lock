@@ -10,7 +10,7 @@
     "http",
     "util"
   ]
-  revision = "b523826203f3c01955ef884a70347d07907b157d"
+  revision = "e07ca71bf1f39cb0a32627001a746ee76b4fd7e5"
 
 [[projects]]
   branch = "master"
@@ -46,19 +46,19 @@
   branch = "master"
   name = "github.com/golang/snappy"
   packages = ["."]
-  revision = "553a641470496b2327abcac10b36396bd98e45c9"
+  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
-  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
-  version = "v1.1"
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
 
 [[projects]]
   branch = "master"
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "5e55a4adb89fb64e8b13bbd302eeedac7a4ba5d8"
+  revision = "c85619274f5d55a67491010f883a91f568b3a9b0"
 
 [[projects]]
   branch = "master"
@@ -86,8 +86,8 @@
 [[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
-  revision = "c3beff4c2358b44d0493c7dda585e7db7ff28ae6"
-  version = "v1.7.6"
+  revision = "c2353362d570a7bfa228149c62842019201cfb71"
+  version = "v1.8.0"
 
 [[projects]]
   branch = "master"
@@ -104,7 +104,7 @@
     "encoders/protobuf",
     "util"
   ]
-  revision = "997d01c243192e6c27011e674fd5992072f6f8d7"
+  revision = "d4841f2d6a3ab7745d940768bfbc2fe9d60c65ed"
 
 [[projects]]
   name = "github.com/nats-io/nuid"
@@ -126,15 +126,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/satori/go.uuid"
-  packages = ["."]
-  revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
-
-[[projects]]
-  branch = "master"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "778f2e774c725116edbc3d039dc0dfc1cc62aae8"
+  revision = "0dad3b6953e73d351ec8ebfd8a8c6b088d320381"
 
 [[projects]]
   name = "github.com/spf13/afero"
@@ -152,10 +146,10 @@
   version = "v1.2.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
 
 [[projects]]
   branch = "master"
@@ -198,7 +192,7 @@
     "leveldb/table",
     "leveldb/util"
   ]
-  revision = "ae970a0732be3a1f5311da86118d37b9f4bd2a5a"
+  revision = "5d6fca44a948d2be89a9702de7717f0168403d3d"
 
 [[projects]]
   branch = "master"
@@ -213,7 +207,7 @@
     "salsa20/salsa",
     "ssh/terminal"
   ]
-  revision = "2d027ae1dddd4694d54f7a8b6cbe78dca8720226"
+  revision = "1a580b3eff7814fc9b40602fd35256c63b50f491"
 
 [[projects]]
   branch = "master"
@@ -227,7 +221,7 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "2491c5de3490fced2f6cff376127c667efeed857"
+  revision = "8e0cdda24ed423affc8f35c241e5e9b16180338e"
 
 [[projects]]
   branch = "master"
@@ -237,7 +231,7 @@
     "unix",
     "windows"
   ]
-  revision = "d0faeb539838e250bd0a9db4182d48d4a1915181"
+  revision = "7f59abf37be6a6007f075af1bc7f16f137bc176b"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -264,7 +258,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "86e600f69ee4704c6efbf6a2a40a5c10700e76c2"
+  revision = "11a468237815f3a3ddf9f7c6e8b6b3b382a24d15"
 
 [[projects]]
   branch = "master"
@@ -295,7 +289,7 @@
     "tap",
     "transport"
   ]
-  revision = "a36eb4675a1a7cbb473953b7cb273855c3bd555a"
+  revision = "c16e07b13065171d4025e2646d041a1c864bde46"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -306,6 +300,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "60ff0003dbb1838e77d0c09a2f4c5ca0a170aed619716762bcccb986d43d1594"
+  inputs-digest = "c49ed9b0ab7fadb228b277d8cc061a15f2dc91bc4b257651f16577b2b186d6b6"
   solver-name = "gps-cdcl"
   solver-version = 1

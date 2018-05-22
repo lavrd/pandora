@@ -28,7 +28,6 @@ func (s *server) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.Publi
 	key, err := dist.AcceptCandidate(in)
 	if err != nil {
 		if err == errors.AlreadyExists {
-			log.Debug(key)
 			return key, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
 		}
 		return &pb.PublicKey{}, err
@@ -43,16 +42,10 @@ func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, err
 		Runtime: env.GetRuntime(),
 	}
 
-	log.Debug(99999, in)
-
 	key, err := dist.AcceptCandidate(in)
 	if err != nil && err != errors.AlreadyExists {
-		log.Debug(1)
 		return &pb.PublicKey{}, err
 	}
-
-	log.Debug(8777)
-	log.Debug(key)
 
 	return key, nil
 }
@@ -63,11 +56,9 @@ func (s *server) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 		return &pb.Empty{}, err
 	}
 
-	log.Debug(10)
 	if err := Issue(cert); err != nil {
 		return &pb.Empty{}, err
 	}
-	log.Debug(11)
 
 	return &pb.Empty{}, nil
 }

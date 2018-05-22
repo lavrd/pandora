@@ -36,7 +36,7 @@ func (d *Distribution) AcceptCandidate(candidate *pb.Candidate) (*pb.PublicKey, 
 		return nil, err
 	}
 
-	if err = mail.SendCredentials(candidate.Email, acc.PublicKey.PublicKey); err != nil {
+	if err = mail.SendCredentials(candidate.Email, acc.PublicKey); err != nil {
 		return nil, err
 	}
 
@@ -82,6 +82,10 @@ func (d *Distribution) Issue(cert *pb.Cert) (*pb.Cert, error) {
 
 	cert.Recipient.Name = recipient.Meta.Name
 	cert.Issuer.Name = issuer.Meta.Name
+
+	if err := mail.SendCertificate(recipient.Meta.Email, cert); err != nil {
+		return nil, err
+	}
 
 	return cert, nil
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+<section class="container-fluid p-0">
+  <div class="alert alert-primary">
+    <h4 class="alert-heading">Certificate</h4>
+
+    <h5>Title</h5>
+    <p>{{ .Meta.Title }}</p>
+
+    <h5>Description</h5>
+    <p>{{ .Meta.Description }}</p>
+
+    <h5>Issuer</h5>
+    <p>{{ .Issuer.Name }}</p>
+
+    <h5>Recipient</h5>
+    <p>{{ .Recipient.Name }}</p>
+
+    <h5>Id</h5>
+    <p>{{ .Id }}</p>
+
+    <hr>
+    <p class="mb-0">You have been issued a certificate</p>
+  </div>
+</section>
+</body>
+</html>

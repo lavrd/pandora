@@ -49,7 +49,7 @@ func CertificateIssue(opts *request.CertificateIssue) error {
 	)
 
 	if err := rpc.Issue(&pb.Cert{
-		Id: generator.UUID(),
+		Id: generator.Id(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().UnixNano() / 1000000,
 			Description: *opts.Description,

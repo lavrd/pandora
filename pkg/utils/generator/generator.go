@@ -1,11 +1,23 @@
 package generator
 
 import (
-	"github.com/satori/go.uuid"
+	"math/rand"
 )
 
-// todo rename
-func UUID() string {
-	v4, _ := uuid.NewV4()
-	return v4.String()
+func Id() string {
+	const (
+		length = 12
+	)
+
+	var (
+		letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	)
+
+	b := make([]rune, length)
+
+	for i := range b {
+		b[i] = letter[rand.Intn(len(letter))]
+	}
+
+	return string(b)
 }

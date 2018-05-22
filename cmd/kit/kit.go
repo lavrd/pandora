@@ -90,6 +90,7 @@ var (
 
 func init() {
 	CLI.Flags().StringVarP(&cfg, "config", "c", "./contrib/config.yml", "/path/to/config.yml")
+
 	viper.BindEnv("membership.mail.token")
 	viper.BindEnv("node.meta.secret_key")
 }
