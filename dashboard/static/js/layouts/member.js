@@ -1,20 +1,17 @@
-class Account extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      state: this.STATE.FETCH,
-      pending: false,
-      error: null,
-      success: null,
-      data: this.EMPTY_DATA,
-      member: null
-    };
-  }
-
+class MemberLayout extends React.Component {
   EMPTY_DATA = {
     name: '',
     email: '',
     publicKey: ''
+  };
+
+  state = {
+    state: this.STATE.FETCH,
+    pending: false,
+    error: null,
+    success: null,
+    data: this.EMPTY_DATA,
+    member: null
   };
 
   STATE = {
@@ -109,7 +106,7 @@ class Account extends React.Component {
 
 const MemberCard = ({member, close}) => (
   <div className="card shadow">
-    <img className="card-img-top" src="/static/img/graduate.jpg" alt=""/>
+    <div className="card-header">Member</div>
 
     <div className="card-body">
       <h5 className="card-title">{member.meta.name}</h5>

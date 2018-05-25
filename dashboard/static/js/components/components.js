@@ -47,7 +47,6 @@ const Error = ({error, close}) => (
   </div>
 );
 
-// todo check prop-types everywhere
 Error.propTypes = {
   close: PropTypes.func.isRequired,
   error: PropTypes.object.isRequired

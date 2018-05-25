@@ -1,10 +1,15 @@
 package config
 
 var (
+	// Viper config struct
 	Viper = &struct {
 		Runtime struct {
 			Verbose bool
 			Clean   bool
+		}
+		TLS struct {
+			Cert string
+			Key  string
 		}
 		Membership struct {
 			Mail struct {

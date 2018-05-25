@@ -1,4 +1,4 @@
-package argon2
+package crypto
 
 import (
 	"crypto/rand"
@@ -16,7 +16,7 @@ const (
 	saltSize = 256
 )
 
-func Key(key []byte) []byte {
+func Argon2Key(key []byte) []byte {
 	var (
 		nonce = [saltSize]byte{}
 		salt  []byte

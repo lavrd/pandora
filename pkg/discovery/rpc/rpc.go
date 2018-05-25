@@ -12,9 +12,13 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type server struct{}
+type gRPC struct{}
 
-func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, error) {
+func New() *gRPC {
+	return &gRPC{}
+}
+
+func (_ *gRPC) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, error) {
 	return &pb.NetworkOpts{
 		Broker: &pb.BrokerOpts{
 			Endpoint: config.Viper.Discovery.Broker.Endpoint,
@@ -30,8 +34,8 @@ func (s *server) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, er
 	}, nil
 }
 
-func Listen() error {
-	creds, err := credentials.NewServerTLSFromFile("./contrib/cert.pem", "./contrib/key.pem")
+func (_ *gRPC) Listen() error {
+	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -40,7 +44,7 @@ func Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterDiscoveryServer(s, &server{})
+	pb.RegisterDiscoveryServer(s, &gRPC{})
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
 	if err != nil {

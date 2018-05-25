@@ -1,14 +1,28 @@
-package storage
+package leveldb
 
 import (
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"encoding/hex"
+	"os"
+
 	"github.com/golang/protobuf/proto"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/utils/log"
+	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
 )
+
+type LevelDB struct {
+	file string
+}
+
+func (ldb *LevelDB) Clean() error {
+	if err := os.RemoveAll(ldb.file); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
 
 func Put(key string, cert *pb.Cert) error {
 	db, err := leveldb.OpenFile(config.Viper.Node.Database.FilePath, nil)

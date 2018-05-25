@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	// todo надо ли выносить?
 	// Routes
 	Routes = []http.Route{
 		{Path: "/health", Method: http.GET, Middleware: nil, Handler: handlers.HealthH},

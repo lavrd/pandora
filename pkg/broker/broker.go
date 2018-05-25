@@ -5,13 +5,14 @@ import (
 
 	"github.com/nats-io/go-nats"
 	"github.com/nats-io/go-nats/encoders/protobuf"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 const (
-	SubMB   = "SubMB"
-	SubCB   = "SubCB"
-	SubCert = "SubCert"
+	SubMB   = "sub master block"
+	SubCB   = "sub cert block"
+	SubCert = "sub cert"
 )
 
 // Broker
@@ -19,30 +20,24 @@ type Broker struct {
 	conn *nats.EncodedConn
 }
 
-// Opts
-type Opts struct {
-	Endpoint string
-	User     string
-	Password string
-}
-
 // Connect connect to broker
-func Connect(opts *Opts) (*Broker, error) {
-	cert, err := tls.LoadX509KeyPair("./contrib/cert.pem", "./contrib/key.pem")
+func Connect(endpoint, user, password string) (*Broker, error) {
+	cert, err := tls.LoadX509KeyPair(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 
 	tlsConfig := &tls.Config{
-		ServerName:         opts.Endpoint,
+		ServerName:         endpoint,
 		InsecureSkipVerify: true,
 		Certificates:       []tls.Certificate{cert},
 		MinVersion:         tls.VersionTLS12,
 	}
 
 	c, err := nats.Connect(
-		opts.Endpoint,
-		nats.UserInfo(opts.User, opts.Password),
+		endpoint,
+		nats.UserInfo(user, password),
 		nats.Secure(tlsConfig),
 	)
 	if err != nil {
@@ -62,15 +57,6 @@ func Connect(opts *Opts) (*Broker, error) {
 // Close close connection with broker server
 func (b *Broker) Close() {
 	b.conn.Close()
-}
-
-// QSubscribe bind receive queue channel to subject
-func (b *Broker) QSubscribe(subject, queue string, ch interface{}) error {
-	if _, err := b.conn.BindRecvQueueChan(subject, queue, ch); err != nil {
-		log.Error(err)
-		return err
-	}
-	return nil
 }
 
 // Subscribe bind receive channel to subject

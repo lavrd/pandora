@@ -1,22 +1,25 @@
-class Cert extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      state: this.STATE.FETCH,
-      pending: false,
-      error: null,
-      success: '',
-      data: this.EMPTY_DATA,
-      cert: null,
-      verifyStatus: VERIFY_STATUS.NONE
-    };
-  }
+const VERIFY_STATUS = {
+  NONE: 'NONE',
+  VERIFIED: 'VERIFIED',
+  FAILED: 'FAILED'
+};
 
+class CertLayout extends React.Component {
   EMPTY_DATA = {
     title: '',
     description: '',
     publicKey: '',
     id: ''
+  };
+
+  state = {
+    state: this.STATE.FETCH,
+    pending: false,
+    error: null,
+    success: '',
+    data: this.EMPTY_DATA,
+    cert: null,
+    verifyStatus: VERIFY_STATUS.NONE
   };
 
   STATE = {

@@ -5,11 +5,11 @@ const App = () => (
 
       <div className="row mb-5">
         <div className="col-md-7 mb-3">
-          <Cert/>
+          <CertLayout/>
         </div>
 
         <div className="col-md-5">
-          <Account/>
+          <MemberLayout/>
         </div>
       </div>
 

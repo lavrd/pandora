@@ -1,4 +1,4 @@
-package runtime
+package node
 
 import (
 	"github.com/spacelavr/pandora/pkg/node/rpc"

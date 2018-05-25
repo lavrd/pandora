@@ -1,4 +1,4 @@
-package storage
+package arangodb
 
 import (
 	"github.com/spacelavr/pandora/pkg/pb"
@@ -10,7 +10,7 @@ const (
 )
 
 // CertificateSave save certificate to storage
-func (s *Storage) CertificateSave(cert *pb.Cert) error {
+func (s *ArangoDB) CertificateSave(cert *pb.Cert) error {
 	_, err := s.Write(CCertificates, cert)
 	if err != nil {
 		return err
@@ -20,7 +20,7 @@ func (s *Storage) CertificateSave(cert *pb.Cert) error {
 }
 
 // CertificateFetch fetch certificate from storage
-func (s *Storage) CertificateFetch(id string) (*pb.Cert, error) {
+func (s *ArangoDB) CertificateFetch(id string) (*pb.Cert, error) {
 	var (
 		cert = &pb.Cert{}
 	)

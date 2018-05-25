@@ -1,4 +1,4 @@
-package distribution
+package membership
 
 import (
 	"github.com/spacelavr/pandora/pkg/membership/env"

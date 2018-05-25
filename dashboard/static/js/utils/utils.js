@@ -29,9 +29,3 @@ const request = (method, endpoint, body) => {
 String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
-
-const VERIFY_STATUS = {
-  NONE: 'NONE',
-  VERIFIED: 'VERIFIED',
-  FAILED: 'FAILED'
-};

@@ -1,4 +1,4 @@
-package events
+package node
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"

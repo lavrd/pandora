@@ -1,4 +1,4 @@
-package ed25519
+package crypto
 
 import (
 	"crypto/rand"

@@ -5,8 +5,6 @@ import (
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/membership/distribution"
-	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -17,9 +15,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type server struct{}
+type gRPC struct {
+}
 
-func (s *server) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
+func New() *gRPC {
+	return &gRPC{}
+}
+
+func (_ *gRPC) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
@@ -36,7 +39,7 @@ func (s *server) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.Publi
 	return key, nil
 }
 
-func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
+func (_ *gRPC) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
@@ -50,7 +53,7 @@ func (s *server) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, err
 	return key, nil
 }
 
-func (s *server) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+func (_ *gRPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	cert, err := distribution.New().Issue(in)
 	if err != nil {
 		return &pb.Empty{}, err
@@ -63,7 +66,7 @@ func (s *server) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	return &pb.Empty{}, nil
 }
 
-func Issue(cert *pb.Cert) error {
+func (_ *gRPC) Issue(cert *pb.Cert) error {
 	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
 	if err != nil {
 		log.Error(err)
@@ -87,7 +90,7 @@ func Issue(cert *pb.Cert) error {
 	return nil
 }
 
-func (s *server) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
+func (_ *gRPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
 	dist := &distribution.Distribution{
 		Storage: env.GetStorage(),
 		Runtime: env.GetRuntime(),
@@ -104,7 +107,7 @@ func (s *server) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member,
 	return acc, nil
 }
 
-func Listen() error {
+func (_ *gRPC) Listen() error {
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Membership.Endpoint))
 	if err != nil {
 		log.Error(err)

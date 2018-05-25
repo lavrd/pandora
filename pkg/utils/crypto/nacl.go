@@ -1,4 +1,4 @@
-package nacl
+package crypto
 
 import (
 	"crypto/rand"
@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/argon2"
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
@@ -21,8 +20,8 @@ func key() [SecretKeySize]byte {
 	)
 
 	// todo not only node
-	keyBytes, _ := hex.DecodeString(config.Viper.Node.SecretKey)
-	keyBytes = argon2.Key(keyBytes)
+	keyBytes, _ := hex.DecodeString(config.Viper.Node.Meta.SecretKey)
+	keyBytes = Argon2Key(keyBytes)
 
 	copy(key[:], keyBytes)
 

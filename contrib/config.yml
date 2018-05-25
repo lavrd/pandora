@@ -3,13 +3,18 @@ runtime:
   verbose: true
   clean: true
 
+# tls
+tls:
+  cert: ./contrib/cert.pem
+  key: ./contrib/key.pem
+
 # membership
 membership:
   mail:
     send: true
     token: env
     endpoint: https://api.sendgrid.com/v3/mail/send
-    email: pandora@doesnotexist.system
+    email: pandora@mail.sys
     name: Pandora
   database:
     endpoint: http://127.0.0.1:8529
@@ -31,8 +36,8 @@ node:
   dashboard:
     template: ./dashboard/index.html
   meta:
-    name: State University of Aerospace Instrumentation
-    email: suai@mail.sys
+    name: Pandora university
+    email: pandora@mail.sys
     secret_key: env
   endpoint: 127.0.0.1:2004
 

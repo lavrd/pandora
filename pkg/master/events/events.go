@@ -11,10 +11,6 @@ type Events struct {
 	chsCert        chan *pb.Cert
 }
 
-type Opts struct {
-	*broker.Broker
-}
-
 func New() *Events {
 	return &Events{
 		chsCert:        make(chan *pb.Cert),
@@ -23,16 +19,16 @@ func New() *Events {
 	}
 }
 
-func (e *Events) Listen(opts *Opts) error {
-	if err := opts.Broker.Publish(broker.SubMB, e.chsMasterBlock); err != nil {
+func (e *Events) Listen(brk *broker.Broker) error {
+	if err := brk.Publish(broker.SubMB, e.chsMasterBlock); err != nil {
 		return err
 	}
 
-	if err := opts.Broker.Publish(broker.SubCB, e.chsCertBlock); err != nil {
+	if err := brk.Publish(broker.SubCB, e.chsCertBlock); err != nil {
 		return err
 	}
 
-	if err := opts.Broker.Publish(broker.SubCert, e.chsCert); err != nil {
+	if err := brk.Publish(broker.SubCert, e.chsCert); err != nil {
 		return err
 	}
 

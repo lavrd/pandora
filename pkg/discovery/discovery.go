@@ -19,7 +19,7 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		if err := rpc.Listen(); err != nil {
+		if err := rpc.New().Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()

@@ -1,4 +1,4 @@
-package sha256
+package crypto
 
 import (
 	"crypto/sha256"
@@ -15,8 +15,4 @@ func sum(p []byte) []byte {
 func SumString(p string) string {
 	buf, _ := hex.DecodeString(p)
 	return hex.EncodeToString(sum(buf))
-}
-
-func SumBytes(p []byte) []byte {
-	return sum(p)
 }

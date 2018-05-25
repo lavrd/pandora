@@ -1,17 +1,16 @@
-package runtime
+package membership
 
 import (
 	"encoding/hex"
 
 	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/storage"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 )
 
-type Runtime struct{}
-
-func New() *Runtime {
-	return &Runtime{}
+type runtime struct {
+	storage *storage.Storage
 }
 
 func (r *Runtime) AcceptCandidate(candidate *pb.Candidate) *pb.Member {

@@ -88,9 +88,7 @@ func Daemon() bool {
 
 	defer func() {
 		if config.Viper.Runtime.Clean {
-			if err := os.RemoveAll(config.Viper.Node.Database.FilePath); err != nil {
-				log.Error(err)
-			}
+			// todo clean database
 		}
 	}()
 
