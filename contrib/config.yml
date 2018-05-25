@@ -32,7 +32,7 @@ node:
     template: ./dashboard/index.html
   meta:
     name: State University of Aerospace Instrumentation
-    email: guap@mail.sys
+    email: suai@mail.sys
     secret_key: env
   endpoint: 127.0.0.1:2004
 

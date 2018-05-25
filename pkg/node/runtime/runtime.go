@@ -29,6 +29,7 @@ func New(key *pb.PublicKey) (*Runtime, error) {
 
 	cc := &pb.CertChain{}
 
+	// todo for what with start?
 	for _, mb := range mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == key.PublicKey {
 			cc = mb.CertChain

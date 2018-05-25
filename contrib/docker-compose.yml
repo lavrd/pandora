@@ -1,0 +1,27 @@
+version: '3'
+services:
+  arangodb:
+    container_name: pandora-arangodb
+    image: arangodb
+    ports:
+      - 28015:28015
+    environment:
+      - ARANGO_ROOT_PASSWORD=root
+  kit:
+    container_name: pandora-kit
+    build: .
+    ports:
+      - 2004:2004
+    links:
+      - nats
+      - arangodb
+  nats:
+    container_name: pandora-nats
+    image: nats
+    ports:
+      - 4222:4222
+      - 8222:8222
+      - 6222:6222
+    volumes:
+      - ./contrib:/tls
+    command: --user root --pass root --tls --tlscert /tls/cert.pem --tlskey /tls/key.pem

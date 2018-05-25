@@ -256,7 +256,7 @@ const CertFetchCard = ({change, id, submit}) => (
         value={id}
         type="text"
         className="form-control"
-        placeholder="068b7dfa-26fa-4716-ba20-cb0943a8486a"
+        placeholder="WGWObCD2602O"
       />
     </div>
 

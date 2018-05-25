@@ -60,7 +60,8 @@ const Header = () => (
         className="display-4 text-dark"
         href="/dashboard"
       >
-        Pandora</a>
+        Pandora
+      </a>
     </div>
 
     <div className="col-md-9">
