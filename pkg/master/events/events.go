@@ -11,30 +11,30 @@ type Events struct {
 	chsCert        chan *pb.Cert
 }
 
-func New() *Events {
+func New(brk *broker.Broker) (*Events, error) {
+	var (
+		chsCert        = make(chan *pb.Cert)
+		chsMasterBlock = make(chan *pb.MasterBlock)
+		chsCertBlock   = make(chan *pb.CertBlock)
+	)
+
+	if err := brk.Publish(broker.SubMB, chsMasterBlock); err != nil {
+		return nil, err
+	}
+
+	if err := brk.Publish(broker.SubCB, chsCertBlock); err != nil {
+		return nil, err
+	}
+
+	if err := brk.Publish(broker.SubCert, chsCert); err != nil {
+		return nil, err
+	}
+
 	return &Events{
-		chsCert:        make(chan *pb.Cert),
-		chsMasterBlock: make(chan *pb.MasterBlock),
-		chsCertBlock:   make(chan *pb.CertBlock),
-	}
-}
-
-func (e *Events) Listen(brk *broker.Broker) error {
-	if err := brk.Publish(broker.SubMB, e.chsMasterBlock); err != nil {
-		return err
-	}
-
-	if err := brk.Publish(broker.SubCB, e.chsCertBlock); err != nil {
-		return err
-	}
-
-	if err := brk.Publish(broker.SubCert, e.chsCert); err != nil {
-		return err
-	}
-
-	for {
-		select {}
-	}
+		chsCert:        chsCert,
+		chsMasterBlock: chsMasterBlock,
+		chsCertBlock:   chsCertBlock,
+	}, nil
 }
 
 func (e *Events) PMasterBlock(block *pb.MasterBlock) {

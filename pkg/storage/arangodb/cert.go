@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	CCertificates = "CCertificates"
+	CollectionCertificate = "certificate"
 )
 
-// CertificateSave save certificate to storage
+// CertificateSave save certificate
 func (s *ArangoDB) CertificateSave(cert *pb.Cert) error {
-	_, err := s.Write(CCertificates, cert)
+	_, err := s.Write(CollectionCertificate, cert)
 	if err != nil {
 		return err
 	}
@@ -19,13 +19,13 @@ func (s *ArangoDB) CertificateSave(cert *pb.Cert) error {
 	return nil
 }
 
-// CertificateFetch fetch certificate from storage
+// CertificateFetch fetch certificate
 func (s *ArangoDB) CertificateFetch(id string) (*pb.Cert, error) {
 	var (
 		cert = &pb.Cert{}
 	)
 
-	_, err := s.Read(id, CCertificates, cert)
+	_, err := s.Read(id, CollectionCertificate, cert)
 	if err != nil {
 		if err == errors.NotFound {
 			return nil, nil

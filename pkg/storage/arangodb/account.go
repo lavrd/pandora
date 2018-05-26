@@ -8,15 +8,16 @@ import (
 )
 
 const (
-	CAccount = "CAccount"
+	CollectionAccount = "account"
 )
 
+// AccountFetchByEmail fetch account by email
 func (s *ArangoDB) AccountFetchByEmail(email string) (*pb.Member, error) {
 	var (
 		acc   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for a in %s filter a.meta.email == @email return a",
-			CAccount,
+			CollectionAccount,
 		)
 		vars = map[string]interface{}{
 			"email": email,
@@ -34,13 +35,13 @@ func (s *ArangoDB) AccountFetchByEmail(email string) (*pb.Member, error) {
 	return acc, nil
 }
 
-// AccountFetchByPublic fetch account from storage by public key
+// AccountFetchByPublic fetch account by public key
 func (s *ArangoDB) AccountFetchByPublic(public string) (*pb.Member, error) {
 	var (
 		acc   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for a in %s filter a.public_key.public_key == @public return a",
-			CAccount,
+			CollectionAccount,
 		)
 		vars = map[string]interface{}{
 			"public": public,
@@ -58,9 +59,9 @@ func (s *ArangoDB) AccountFetchByPublic(public string) (*pb.Member, error) {
 	return acc, nil
 }
 
-// AccountSave save account to storage
+// AccountSave save account
 func (s *ArangoDB) AccountSave(acc *pb.Member) error {
-	_, err := s.Write(CAccount, acc)
+	_, err := s.Write(CollectionAccount, acc)
 	if err != nil {
 		// todo need handle error that already exists or not? check this level up
 		return err

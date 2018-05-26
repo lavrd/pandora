@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
-	"github.com/spacelavr/pandora/pkg/master/runtime"
+	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
@@ -21,35 +21,27 @@ func New() *gRPC {
 
 func (_ *gRPC) ConfirmCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	var (
-		r = runtime.Get()
+		evt = env.GetEvents()
+		bc  = env.GetBlockchain()
 	)
 
-	block := r.Chain.PrepareCertBlock(in)
-
-	r.Events.PCertBlock(block)
-	r.Events.PubCert(in)
+	evt.PCertBlock(bc.PrepareCertBlock(in))
+	evt.PubCert(in)
 
 	return &pb.Empty{}, nil
 }
 
 func (_ *gRPC) ConfirmNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
 	var (
-		r = runtime.Get()
+		bc = env.GetBlockchain()
 	)
 
-	r.Chain.AddMasterBlock(in)
+	bc.AddMasterBlock(in)
 
-	return r.Chain.GetMC(), nil
+	return bc.MC(), nil
 }
 
 func (_ *gRPC) Listen() error {
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Master.Endpoint))
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	defer listen.Close()
-
 	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
@@ -60,6 +52,13 @@ func (_ *gRPC) Listen() error {
 	defer s.GracefulStop()
 
 	pb.RegisterMasterServer(s, &gRPC{})
+
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Master.Endpoint))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	defer listen.Close()
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)

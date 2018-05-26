@@ -1,4 +1,4 @@
-package node
+package env
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"

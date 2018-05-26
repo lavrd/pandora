@@ -12,25 +12,38 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type gRPC struct{}
-
-func New() *gRPC {
-	return &gRPC{}
+type gRPC struct {
+	master     string
+	membership string
+	broker     *pb.BrokerOpts
 }
 
-func (_ *gRPC) Network(ctx context.Context, in *pb.Empty) (*pb.NetworkOpts, error) {
-	return &pb.NetworkOpts{
-		Broker: &pb.BrokerOpts{
+func New() *gRPC {
+	return &gRPC{
+		broker: &pb.BrokerOpts{
 			Endpoint: config.Viper.Discovery.Broker.Endpoint,
 			User:     config.Viper.Discovery.Broker.User,
 			Password: config.Viper.Discovery.Broker.Password,
 		},
-		Membership: &pb.MembershipOpts{
-			Endpoint: config.Viper.Membership.Endpoint,
-		},
-		Master: &pb.MasterOpts{
-			Endpoint: config.Viper.Master.Endpoint,
-		},
+	}
+}
+
+func (g *gRPC) InitMaster(ctx context.Context, in *pb.Endpoint) (*pb.Empty, error) {
+	g.master = in.Endpoint
+	return &pb.Empty{}, nil
+}
+
+func (g *gRPC) InitMembership(ctx context.Context, in *pb.Endpoint) (*pb.Empty, error) {
+	g.membership = in.Endpoint
+	return &pb.Empty{}, nil
+}
+
+func (g *gRPC) InitNode(ctx context.Context, in *pb.Endpoint) (*pb.InitNetworkOpts, error) {
+	// todo if master or membership not started, send message
+	return &pb.InitNetworkOpts{
+		Broker:     g.broker,
+		Master:     g.master,
+		Membership: g.membership,
 	}, nil
 }
 

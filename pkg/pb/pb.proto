@@ -3,7 +3,9 @@ syntax = "proto3";
 package pb;
 
 service discovery {
-    rpc network (empty) returns (network_opts) {}
+    rpc init_node (empty) returns (init_network_opts) {}
+    rpc init_master (endpoint) returns (empty) {}
+    rpc init_membership (endpoint) returns (empty) {}
 }
 
 service master {
@@ -15,6 +17,10 @@ service membership {
   rpc confirm_member (candidate) returns (public_key) {}
   rpc fetch_member (public_key) returns (member) {}
   rpc sign_cert (cert) returns (empty) {}
+}
+
+message endpoint {
+  string endpoint = 1;
 }
 
 message cert_block {
@@ -74,18 +80,10 @@ message broker_opts {
   string password = 3;
 }
 
-message membership_opts {
-  string endpoint = 1;
-}
-
-message master_opts {
-  string endpoint = 1;
-}
-
-message network_opts {
+message init_network_opts {
   broker_opts broker = 1;
-  membership_opts membership = 2;
-  master_opts master = 3;
+  string membership = 2;
+  string master = 3;
 }
 
 message member {

@@ -8,9 +8,9 @@ import (
 	"github.com/spacelavr/pandora/pkg/blockchain"
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/master/events"
 	"github.com/spacelavr/pandora/pkg/master/rpc"
-	"github.com/spacelavr/pandora/pkg/master/runtime"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -40,13 +40,13 @@ func Daemon() bool {
 		}
 	}()
 
-	runtime.Set(blockchain.New(), events.New())
+	evt, err := events.New(brk)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	go func() {
-		if err := runtime.Get().Events.Listen(brk); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	env.SetBlockchain(blockchain.New())
+	env.SetEvents(evt)
 
 	defer func() {
 		if config.Viper.Runtime.Clean {

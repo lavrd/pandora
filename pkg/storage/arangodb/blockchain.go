@@ -5,11 +5,11 @@ import (
 )
 
 const (
-	CBlockchain = "CBlockchain"
+	CollectionBlockchain = "blockchain"
 )
 
 func (s *ArangoDB) SaveCertBlock(block *pb.CertBlock) error {
-	_, err := s.Write(CBlockchain, block)
+	_, err := s.Write(CollectionBlockchain, block)
 	if err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@ func New() *Blockchain {
 	return chain
 }
 
-func (b *Blockchain) GetMC() *pb.MasterChain {
+func (b *Blockchain) MC() *pb.MasterChain {
 	return b.mc
 }
 

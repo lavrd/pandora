@@ -1,4 +1,4 @@
-package node
+package events
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
@@ -7,7 +7,6 @@ import (
 	"github.com/spacelavr/pandora/pkg/storage"
 )
 
-// Listen listen for events
 func Listen() error {
 	var (
 		chrMasterBlock = make(chan *pb.MasterBlock)
