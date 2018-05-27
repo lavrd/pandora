@@ -41,9 +41,8 @@ var (
 				Template string
 			}
 			Meta struct {
-				Email     string
-				Name      string
-				SecretKey string `mapstructure:"secret_key"`
+				Email string
+				Name  string
 			}
 			Endpoint string
 		}

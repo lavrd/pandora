@@ -60,7 +60,7 @@ func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts
 	}, nil
 }
 
-func (_ *rpc) Listen() error {
+func (rpc *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
@@ -70,7 +70,7 @@ func (_ *rpc) Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterDiscoveryServer(s, &rpc{})
+	pb.RegisterDiscoveryServer(s, rpc)
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
 	if err != nil {

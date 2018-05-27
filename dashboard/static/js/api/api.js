@@ -1,6 +1,6 @@
 const endpoint = 'https://127.0.0.1:2004';
 const route_cert = 'cert';
-const route_member = 'account';
+const route_member = 'member';
 
 class api {
   static MemberCreate(data) {

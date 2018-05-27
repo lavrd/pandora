@@ -18,7 +18,6 @@ type Template struct {
 	tpl *template.Template
 }
 
-// todo mey not here
 type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`

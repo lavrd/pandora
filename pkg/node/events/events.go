@@ -51,7 +51,7 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			if err := distribution.New().CertSave(cert); err != nil {
+			if err := distribution.New().SaveCert(cert); err != nil {
 				return err
 			}
 		case block, ok := <-e.chrMasterBlock:

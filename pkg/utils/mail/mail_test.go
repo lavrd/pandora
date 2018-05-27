@@ -24,16 +24,16 @@ func TestBadRequest(t *testing.T) {
 	url, teardown := setup(t, http.StatusBadRequest)
 	defer teardown(t)
 
-	config.Viper.Mail.Send = true
-	config.Viper.Mail.Endpoint = url
+	config.Viper.Membership.Mail.Send = true
+	config.Viper.Membership.Mail.Endpoint = url
 
 	err := send("", "", "")
 	assert.Equal(t, errors.SendMailError, err)
 }
 
 func TestBadEndpoint(t *testing.T) {
-	config.Viper.Mail.Send = true
-	config.Viper.Mail.Endpoint = "invalid endpoint"
+	config.Viper.Membership.Mail.Send = true
+	config.Viper.Membership.Mail.Endpoint = "invalid endpoint"
 
 	err := send("", "", "")
 	assert.Error(t, err)

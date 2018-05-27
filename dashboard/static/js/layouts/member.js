@@ -1,22 +1,20 @@
 class MemberLayout extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      state: STATE.FETCH,
+      pending: false,
+      error: null,
+      success: null,
+      data: this.EMPTY_DATA,
+      member: null
+    };
+  }
+
   EMPTY_DATA = {
     name: '',
     email: '',
     publicKey: ''
-  };
-
-  state = {
-    state: this.STATE.FETCH,
-    pending: false,
-    error: null,
-    success: null,
-    data: this.EMPTY_DATA,
-    member: null
-  };
-
-  STATE = {
-    FETCH: 'FETCH',
-    CREATE: 'CREATE'
   };
 
   handleState = (e, key) => {
@@ -65,7 +63,7 @@ class MemberLayout extends React.Component {
         <div className="card-header">
           <ul className="nav nav-pills nav-fill">
             {
-              Object.keys(this.STATE).map((key, index) => (
+              Object.keys(STATE).map((key, index) => (
                 <li
                   className="nav-item"
                   key={index}
@@ -85,7 +83,7 @@ class MemberLayout extends React.Component {
 
         <div className="card-body">
           {
-            this.state.state === this.STATE.FETCH ?
+            this.state.state === STATE.FETCH ?
               <MemberFetchCard
                 publicKey={this.state.data.publicKey}
                 change={this.handleChange}

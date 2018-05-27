@@ -37,8 +37,8 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if acc, err := distribution.New().FetchMember(opts); err == nil {
-		response.Ok(acc).Http(w)
+	if mem, err := distribution.New().FetchMember(opts); err == nil {
+		response.Ok(mem).Http(w)
 	} else {
 		if err == errors.NotFound {
 			response.NotFound("member").Http(w)
@@ -48,19 +48,23 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
-	opts := &request.CertificateIssue{}
+func CertIssueH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertIssue{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
 	}
 
-	if err := distribution.New().CertIssue(opts); err != nil {
-		response.InternalServerError().Http(w)
+	if err := distribution.New().SignCert(opts); err != nil {
+		if err == errors.NotFound {
+			response.NotFound("recipient").Http(w)
+		} else {
+			response.InternalServerError().Http(w)
+		}
 	}
 }
 
-func CertificateViewH(w http.ResponseWriter, r *http.Request) {
+func CertViewH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.CertView{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
@@ -70,12 +74,26 @@ func CertificateViewH(w http.ResponseWriter, r *http.Request) {
 	if cert, err := distribution.New().LoadCert(*opts.Id); err == nil {
 		response.Ok(cert).Http(w)
 	} else {
-		response.InternalServerError().Http(w)
+		if err != errors.NotFound {
+			response.NotFound("certificate").Http(w)
+		} else {
+			response.InternalServerError().Http(w)
+		}
 	}
 }
 
-func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
-	response.Ok(nil).Http(w)
+func CertVerifyH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.CertVerify{}
+	if err := opts.DecodeAndValidate(r.Body); err != nil {
+		err.Http(w)
+		return
+	}
+
+	if ok := distribution.New().VerifyCert(opts); ok {
+		response.Ok(nil).Http(w)
+	} else {
+		response.InternalServerError().Http(w)
+	}
 }
 
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {

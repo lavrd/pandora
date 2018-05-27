@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	SubMasterBlock = "sub master block"
-	SubCertBlock   = "sub cert block"
-	SubCert        = "sub cert"
+	SubMasterBlock = "SubMasterBlock"
+	SubCertBlock   = "SubCertBlock"
+	SubCert        = "SubCert"
 )
 
 // Broker
@@ -32,7 +32,6 @@ func New(endpoint, user, password string) (*Broker, error) {
 		ServerName:         endpoint,
 		InsecureSkipVerify: true,
 		Certificates:       []tls.Certificate{cert},
-		MinVersion:         tls.VersionTLS12,
 	}
 
 	c, err := nats.Connect(

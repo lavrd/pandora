@@ -71,13 +71,13 @@ func (cv *CertView) DecodeAndValidate(reader io.Reader) *response.Error {
 	return cv.Validate()
 }
 
-type CertificateIssue struct {
+type CertIssue struct {
 	PublicKey   *string `json:"public_key"`
 	Title       *string `json:"title"`
 	Description *string `json:"description"`
 }
 
-func (ci *CertificateIssue) Validate() *response.Error {
+func (ci *CertIssue) Validate() *response.Error {
 	switch {
 	case ci.PublicKey == nil || !validator.IsPublicKey(*ci.PublicKey):
 		return response.BadParameter("public_key")
@@ -91,9 +91,29 @@ func (ci *CertificateIssue) Validate() *response.Error {
 	}
 }
 
-func (ci *CertificateIssue) DecodeAndValidate(reader io.Reader) *response.Error {
+func (ci *CertIssue) DecodeAndValidate(reader io.Reader) *response.Error {
 	if err := json.NewDecoder(reader).Decode(ci); err != nil {
 		return response.InvalidJSON()
 	}
 	return ci.Validate()
+}
+
+type CertVerify struct {
+	Id *string `json:"id"`
+}
+
+func (cv *CertVerify) Validate() *response.Error {
+	switch {
+	case cv.Id == nil || len(*cv.Id) == 0:
+		return response.BadParameter("id")
+	default:
+		return nil
+	}
+}
+
+func (cv *CertVerify) DecodeAndValidate(reader io.Reader) *response.Error {
+	if err := json.NewDecoder(reader).Decode(cv); err != nil {
+		return response.InvalidJSON()
+	}
+	return cv.Validate()
 }

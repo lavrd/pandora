@@ -13,9 +13,7 @@ type Blockchain struct {
 }
 
 func New() *Blockchain {
-	bc := &Blockchain{
-		limb: 0,
-	}
+	bc := &Blockchain{limb: 0}
 	bc.mc = &pb.MasterChain{MasterChain: []*pb.MasterBlock{bc.GenesisMaster()}}
 	return bc
 }
@@ -35,6 +33,7 @@ func (bc *Blockchain) GenesisMaster() *pb.MasterBlock {
 	b := &pb.MasterBlock{
 		Block: &pb.Block{
 			Timestamp: time.Now().UTC().Unix(),
+			PublicKey: &pb.PublicKey{},
 		},
 		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.GenesisCert(nil)}},
 	}
@@ -64,6 +63,7 @@ func (bc *Blockchain) PrepareCertBlock(cert *pb.Cert) *pb.CertBlock {
 	for _, mb := range bc.mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == cert.Issuer.PublicKey.PublicKey {
 			old = mb.CertChain.CertChain[len(mb.CertChain.CertChain)-1]
+			break
 		}
 	}
 
@@ -101,18 +101,15 @@ func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
 }
 
 func (bc *Blockchain) CommitMasterBlock(b *pb.MasterBlock) {
-	for _, mb := range bc.mc.MasterChain {
-		if mb.Block.PublicKey.PublicKey == b.Block.PublicKey.PublicKey {
-			bc.mc.MasterChain = append(bc.mc.MasterChain, b)
-			bc.limb++
-		}
-	}
+	bc.mc.MasterChain = append(bc.mc.MasterChain, b)
+	bc.limb++
 }
 
 func (bc *Blockchain) CommitCertBlock(b *pb.CertBlock) {
 	for i, mb := range bc.mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == b.Block.PublicKey.PublicKey {
 			bc.mc.MasterChain[i].CertChain.CertChain = append(bc.mc.MasterChain[i].CertChain.CertChain, b)
+			break
 		}
 	}
 }

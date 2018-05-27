@@ -11,9 +11,9 @@ var (
 		{Path: "/health", Method: http.GET, Middleware: nil, Handler: handlers.HealthH},
 		{Path: "/member/create", Method: http.POST, Middleware: nil, Handler: handlers.MemberCreateH},
 		{Path: "/member/fetch", Method: http.POST, Middleware: nil, Handler: handlers.MemberFetchH},
-		{Path: "/cert/issue", Method: http.POST, Middleware: nil, Handler: handlers.CertificateIssueH},
-		{Path: "/cert/view", Method: http.POST, Middleware: nil, Handler: handlers.CertificateViewH},
-		{Path: "/cert/verify", Method: http.POST, Middleware: nil, Handler: handlers.CertificateVerifyH},
+		{Path: "/cert/issue", Method: http.POST, Middleware: nil, Handler: handlers.CertIssueH},
+		{Path: "/cert/view", Method: http.POST, Middleware: nil, Handler: handlers.CertViewH},
+		{Path: "/cert/verify", Method: http.POST, Middleware: nil, Handler: handlers.CertVerifyH},
 		{Path: "/blockchain", Method: http.GET, Middleware: nil, Handler: handlers.BlockchainH},
 		{Path: "/dashboard", Method: http.GET, Middleware: nil, Handler: handlers.DashboardH},
 	}

@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"time"
 
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/pb"
@@ -37,10 +38,24 @@ func New() (*RPC, error) {
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
-	ino, err := discoveryC.InitNode(context.Background(), &pb.Empty{})
-	if err != nil {
-		log.Error(err)
-		return nil, err
+	ino := &pb.InitNetworkOpts{}
+
+	tick := time.NewTicker(time.Millisecond * 500).C
+	timer := time.NewTimer(time.Second * 3).C
+
+loop:
+	for {
+		select {
+		case <-tick:
+			if ino, err = discoveryC.InitNode(context.Background(), &pb.Empty{}); err != nil {
+				log.Error("request discovery to init node failed")
+				continue
+			}
+			break loop
+		case <-timer:
+			log.Error(err)
+			return nil, err
+		}
 	}
 
 	membershipCC, err := grpc.Dial(ino.Membership, grpc.WithTransportCredentials(creds))
@@ -96,16 +111,22 @@ func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	return key, nil
 }
 
-func (g *RPC) CertIssue(cert *pb.Cert) error {
-	if _, err := g.membership.SignCert(context.Background(), cert); err != nil {
+func (rpc *RPC) SignCert(cert *pb.Cert) error {
+	if _, err := rpc.membership.SignCert(context.Background(), cert); err != nil {
+		if st, ok := status.FromError(err); ok {
+			if st.Code() == codes.NotFound {
+				return errors.NotFound
+			}
+		}
+
 		log.Error(err)
 		return err
 	}
 	return nil
 }
 
-func (g *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
-	r, err := g.membership.FetchMember(context.Background(), key)
+func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
+	r, err := rpc.membership.FetchMember(context.Background(), key)
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			if st.Code() == codes.NotFound {

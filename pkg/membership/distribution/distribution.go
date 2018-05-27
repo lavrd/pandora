@@ -22,7 +22,7 @@ func New() *Distribution {
 
 func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	mem, err := d.storage.MemberFetchByEmail(candidate.Email)
-	if err != nil || err != errors.NotFound {
+	if err != nil && err != errors.NotFound {
 		return nil, err
 	}
 	if mem != nil {
@@ -55,7 +55,7 @@ func (d *Distribution) MemberFetch(key *pb.PublicKey) (*pb.Member, error) {
 	return d.storage.MemberFetchByPublic(key)
 }
 
-func (d *Distribution) IssueCert(cert *pb.Cert) (*pb.Cert, error) {
+func (d *Distribution) SignCert(cert *pb.Cert) (*pb.Cert, error) {
 	recipient, err := d.storage.MemberFetchByPublic(cert.Recipient.PublicKey)
 	if err != nil {
 		return nil, err

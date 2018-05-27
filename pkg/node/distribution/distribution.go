@@ -3,6 +3,7 @@ package distribution
 import (
 	"time"
 
+	"github.com/spacelavr/pandora/pkg/blockchain"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/node/rpc"
@@ -15,6 +16,7 @@ type Distribution struct {
 	storage *leveldb.LevelDB
 	rpc     *rpc.RPC
 	key     *pb.PublicKey
+	bc      *blockchain.Blockchain
 }
 
 func New() *Distribution {
@@ -22,10 +24,22 @@ func New() *Distribution {
 		storage: env.GetStorage(),
 		key:     env.GetKey(),
 		rpc:     env.GetRPC(),
+		bc:      env.GetBlockchain(),
 	}
 }
 
-func (d *Distribution) CertSave(cert *pb.Cert) error {
+func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
+	for _, mb := range d.bc.GetMasterChain().MasterChain {
+		for _, cb := range mb.CertChain.CertChain {
+			if cb.Block.Tx == *opts.Id {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (d *Distribution) SaveCert(cert *pb.Cert) error {
 	return d.storage.Put(cert)
 }
 
@@ -58,8 +72,8 @@ func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error
 	return mem, nil
 }
 
-func (d *Distribution) CertIssue(opts *request.CertificateIssue) error {
-	return d.rpc.CertIssue(&pb.Cert{
+func (d *Distribution) SignCert(opts *request.CertIssue) error {
+	return d.rpc.SignCert(&pb.Cert{
 		Id: generator.Id(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().UnixNano() / 1000000,

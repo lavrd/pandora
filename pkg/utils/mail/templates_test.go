@@ -4,22 +4,21 @@ import (
 	"testing"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/mail"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSendAccountCreated(t *testing.T) {
-	config.Viper.Mail.Send = false
-	config.Viper.Mail.Templates.Account.Created = "./templates/account/created.html"
+func TestSendCredentials(t *testing.T) {
+	config.Viper.Membership.Mail.Send = false
 
-	err := mail.SendAccountCreated("", "")
+	err := mail.SendCredentials("", &pb.PublicKey{})
 	assert.NoError(t, err)
 }
 
-func TestSendAccountRecovery(t *testing.T) {
-	config.Viper.Mail.Send = false
-	config.Viper.Mail.Templates.Account.Recovery = "./templates/account/recovery.html"
+func TestSendCertificate(t *testing.T) {
+	config.Viper.Membership.Mail.Send = false
 
-	err := mail.SendAccountRecovery("", "")
+	err := mail.SendCertificate("", &pb.Cert{})
 	assert.NoError(t, err)
 }

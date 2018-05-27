@@ -39,12 +39,13 @@ func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, 
 
 	b := bc.PrepareMasterBlock(in)
 	bc.CommitMasterBlock(b)
+
 	evt.PubMasterBlock(b)
 
 	return bc.GetMasterChain(), nil
 }
 
-func (_ *rpc) Listen() error {
+func (rpc *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
@@ -54,7 +55,7 @@ func (_ *rpc) Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterMasterServer(s, &rpc{})
+	pb.RegisterMasterServer(s, rpc)
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Master.Endpoint))
 	if err != nil {

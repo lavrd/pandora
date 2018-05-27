@@ -40,29 +40,3 @@ func TestIsEmail(t *testing.T) {
 		})
 	}
 }
-
-func TestIsPassword(t *testing.T) {
-	cases := []struct {
-		password string
-		valid    bool
-	}{
-		{
-			"1111111111",
-			true,
-		},
-		{
-			"111",
-			false,
-		},
-		{
-			"11111111111111111111111111111111111111111111111111111111111111111",
-			false,
-		},
-	}
-
-	for _, c := range cases {
-		t.Run(c.password, func(t *testing.T) {
-			assert.Equal(t, c.valid, validator.IsPassword(c.password))
-		})
-	}
-}

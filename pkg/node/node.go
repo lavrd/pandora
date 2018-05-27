@@ -44,6 +44,8 @@ func Daemon() bool {
 	}
 	defer r.Close()
 
+	env.SetRPC(r)
+
 	key, err := distribution.New().ProposeMember(candidate)
 	if err != nil {
 		if err != errors.AlreadyExists {
@@ -70,7 +72,15 @@ func Daemon() bool {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer stg.Close()
+	defer func() {
+		stg.Close()
+
+		if config.Viper.Runtime.Clean {
+			if err := stg.Clean(); err != nil {
+				log.Error(err)
+			}
+		}
+	}()
 
 	evt, err := events.New(brk)
 	if err != nil {
@@ -80,7 +90,6 @@ func Daemon() bool {
 	env.SetBlockchain(blockchain.Sync(mc))
 	env.SetStorage(stg)
 	env.SetKey(key)
-	env.SetRPC(r)
 
 	go func() {
 		if err := evt.Listen(); err != nil {
@@ -91,14 +100,6 @@ func Daemon() bool {
 	go func() {
 		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes, "./dashboard/static/"); err != nil {
 			log.Fatal(err)
-		}
-	}()
-
-	defer func() {
-		if config.Viper.Runtime.Clean {
-			if err := stg.Clean(); err != nil {
-				log.Error(err)
-			}
 		}
 	}()
 

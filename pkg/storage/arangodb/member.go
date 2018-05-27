@@ -12,7 +12,7 @@ const (
 
 func (s *ArangoDB) MemberFetchByEmail(email string) (*pb.Member, error) {
 	var (
-		acc   = &pb.Member{}
+		mem   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for m in %s filter m.meta.email == @email return m",
 			CollectionMember,
@@ -22,11 +22,11 @@ func (s *ArangoDB) MemberFetchByEmail(email string) (*pb.Member, error) {
 		}
 	)
 
-	if _, err := s.Exec(query, vars, acc); err != nil {
+	if _, err := s.Exec(query, vars, mem); err != nil {
 		return nil, err
 	}
 
-	return acc, nil
+	return mem, nil
 }
 
 func (s *ArangoDB) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {

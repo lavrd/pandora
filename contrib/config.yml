@@ -38,7 +38,6 @@ node:
   meta:
     name: Pandora university
     email: pandora@mail.sys
-    secret_key: env
   endpoint: 127.0.0.1:2004
 
 # discovery

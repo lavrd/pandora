@@ -1,30 +1,22 @@
-const VERIFY_STATUS = {
-  NONE: 'NONE',
-  VERIFIED: 'VERIFIED',
-  FAILED: 'FAILED'
-};
-
 class CertLayout extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      state: STATE.FETCH,
+      pending: false,
+      error: null,
+      success: '',
+      data: this.EMPTY_DATA,
+      cert: null,
+      verifyStatus: VERIFY_STATUS.NONE
+    };
+  }
+
   EMPTY_DATA = {
     title: '',
     description: '',
     publicKey: '',
     id: ''
-  };
-
-  state = {
-    state: this.STATE.FETCH,
-    pending: false,
-    error: null,
-    success: '',
-    data: this.EMPTY_DATA,
-    cert: null,
-    verifyStatus: VERIFY_STATUS.NONE
-  };
-
-  STATE = {
-    FETCH: 'FETCH',
-    CREATE: 'CREATE'
   };
 
   handleState = (e, key) => {
@@ -61,7 +53,7 @@ class CertLayout extends React.Component {
   };
 
   handleVerify = () => {
-    api.CertVerify(this.state.cert)
+    api.CertVerify({id: this.state.cert.id})
       .then(() => this.setState({verifyStatus: VERIFY_STATUS.VERIFIED, pending: false}))
       .catch(() => this.setState({verifyStatus: VERIFY_STATUS.FAILED, pending: false}));
     this.setState({pending: true});
@@ -88,7 +80,7 @@ class CertLayout extends React.Component {
         <div className="card-header">
           <ul className="nav nav-pills nav-fill">
             {
-              Object.keys(this.STATE).map((key, index) => (
+              Object.keys(STATE).map((key, index) => (
                 <li
                   className="nav-item"
                   key={index}
@@ -108,7 +100,7 @@ class CertLayout extends React.Component {
 
         <div className="card-body">
           {
-            this.state.state === this.STATE.FETCH ?
+            this.state.state === STATE.FETCH ?
               <CertFetchCard
                 submit={this.handleFetch}
                 change={this.handleChange}
