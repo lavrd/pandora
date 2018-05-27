@@ -5,15 +5,16 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/spacelavr/pandora/pkg/blockchain"
 	"github.com/spacelavr/pandora/pkg/broker"
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/node/distribution"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
 	"github.com/spacelavr/pandora/pkg/node/routes"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/node/rpc"
-	"github.com/spacelavr/pandora/pkg/node/runtime"
-	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/storage/leveldb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/http"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -29,7 +30,7 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	candidate := request.Candidate{
+	candidate := &request.Candidate{
 		Name:  &config.Viper.Node.Meta.Name,
 		Email: &config.Viper.Node.Meta.Email,
 	}
@@ -37,58 +38,67 @@ func Daemon() bool {
 		log.Fatal(err.Message)
 	}
 
-	// todo with either start or once?
-	key, err := rpc.NodeReg(&pb.Candidate{
-		Email: *candidate.Email,
-		Name:  *candidate.Name,
-	})
+	r, err := rpc.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer r.Close()
+
+	key, err := distribution.New().ProposeMember(candidate)
 	if err != nil {
 		if err != errors.AlreadyExists {
 			log.Fatal(err)
 		}
 	}
 
-	netOpts, err := rpc.Network()
+	mc, brkOpts, err := r.InitNode(key)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
-	brk, err := broker.Connect(&broker.Opts{
-		Endpoint: netOpts.Broker.Endpoint,
-		User:     netOpts.Broker.User,
-		Password: netOpts.Broker.Password,
-	})
+	brk, err := broker.New(
+		brkOpts.Endpoint,
+		brkOpts.User,
+		brkOpts.Password,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer brk.Close()
 
-	rt, err := runtime.New(key)
+	stg, err := leveldb.New(config.Viper.Node.Database.FilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stg.Close()
+
+	evt, err := events.New(brk)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rt.PublicKey = key.PublicKey
-	rt.FullName = config.Viper.Node.Meta.Name
-
-	env.SetBroker(brk)
-	env.SetRuntime(rt)
+	env.SetBlockchain(blockchain.Sync(mc))
+	env.SetStorage(stg)
+	env.SetKey(key)
+	env.SetRPC(r)
 
 	go func() {
-		if err := events.Listen(); err != nil {
+		if err := evt.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	go func() {
-		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes); err != nil {
+		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes, "./dashboard/static/"); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	defer func() {
 		if config.Viper.Runtime.Clean {
-			// todo clean database
+			if err := stg.Clean(); err != nil {
+				log.Error(err)
+			}
 		}
 	}()
 

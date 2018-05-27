@@ -9,12 +9,12 @@ service discovery {
 }
 
 service master {
-  rpc commit_cert (cert) returns (empty) {}
+  rpc propose_cert (cert) returns (empty) {}
   rpc init_node (public_key) returns (master_chain) {}
 }
 
 service membership {
-  rpc confirm_member (candidate) returns (public_key) {}
+  rpc propose_member (member_meta) returns (public_key) {}
   rpc fetch_member (public_key) returns (member) {}
   rpc sign_cert (cert) returns (empty) {}
 }
@@ -93,11 +93,6 @@ message member {
 }
 
 message member_meta {
-  string email = 1;
-  string name = 2;
-}
-
-message candidate {
   string email = 1;
   string name = 2;
 }

@@ -1,15 +1,15 @@
-package errors
+package response_test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/spacelavr/pandora/pkg/utils/errors"
+	"github.com/spacelavr/pandora/pkg/utils/http/response"
 	"github.com/stretchr/testify/assert"
 )
 
-func setup(_ *testing.T, r *errors.Response) (string, func(t *testing.T)) {
+func setup(_ *testing.T, r *response.Error) (string, func(t *testing.T)) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		r.Http(w)
 	}))
@@ -21,47 +21,47 @@ func setup(_ *testing.T, r *errors.Response) (string, func(t *testing.T)) {
 
 func TestResponses(t *testing.T) {
 	cases := []struct {
-		response *errors.Response
+		response *response.Error
 		name     string
 		code     int
 	}{
 		{
-			errors.NotImplemented(),
+			response.NotImplemented(),
 			"NotImplemented",
 			http.StatusNotImplemented,
 		},
 		{
-			errors.Unauthorized(),
+			response.Unauthorized(),
 			"Unauthorized",
 			http.StatusUnauthorized,
 		},
 		{
-			errors.Forbidden(),
+			response.Forbidden(),
 			"Forbidden",
 			http.StatusForbidden,
 		},
 		{
-			errors.InvalidJSON(),
+			response.InvalidJSON(),
 			"InvalidJSON",
 			http.StatusUnprocessableEntity,
 		},
 		{
-			errors.NotFound(""),
+			response.NotFound(""),
 			"NotFound",
 			http.StatusNotFound,
 		},
 		{
-			errors.AlreadyExists(""),
+			response.AlreadyExists(""),
 			"AlreadyExists",
 			http.StatusConflict,
 		},
 		{
-			errors.InternalServerError(),
+			response.InternalServerError(),
 			"InternalServerError",
 			http.StatusInternalServerError,
 		},
 		{
-			errors.BadParameter(""),
+			response.BadParameter(""),
 			"BadParameter",
 			http.StatusUnprocessableEntity,
 		},

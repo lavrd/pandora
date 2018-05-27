@@ -35,8 +35,8 @@ func Daemon() bool {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer r.Close()
 
-	env.SetRPC(r)
 	env.SetStorage(stg)
 
 	go func() {

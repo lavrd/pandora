@@ -18,6 +18,7 @@ func IsEmail(email string) bool {
 
 // IsSignature checking for valid signature
 func IsSignature(signature string) bool {
+	// todo how to check
 	return len(signature) == 512
 }
 

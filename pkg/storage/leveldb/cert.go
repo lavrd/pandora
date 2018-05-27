@@ -30,7 +30,7 @@ func (ldb *LevelDB) Put(cert *pb.Cert) error {
 	return nil
 }
 
-func (ldb *LevelDB) Get(key string) (*pb.Cert, error) {
+func (ldb *LevelDB) Load(key string) (*pb.Cert, error) {
 	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, key))
 
 	buf, err := ldb.db.Get(k, nil)

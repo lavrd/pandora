@@ -18,6 +18,7 @@ import (
 
 type RPC struct {
 	master pb.MasterClient
+	mcc    *grpc.ClientConn
 }
 
 func New() (*RPC, error) {
@@ -47,15 +48,20 @@ func New() (*RPC, error) {
 		log.Error(err)
 		return nil, err
 	}
-	defer masterCC.Close()
 
 	masterC := pb.NewMasterClient(masterCC)
 
-	return &RPC{master: masterC}, nil
+	return &RPC{master: masterC, mcc: masterCC}, nil
 }
 
-func (_ *RPC) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
-	key, err := distribution.New().ConfirmCandidate(in)
+func (rpc *RPC) Close() {
+	if err := rpc.mcc.Close(); err != nil {
+		log.Error(err)
+	}
+}
+
+func (_ *RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicKey, error) {
+	key, err := distribution.New().ConfirmMember(in)
 	if err != nil {
 		return &pb.PublicKey{}, err
 	}
@@ -68,7 +74,7 @@ func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 		return &pb.Empty{}, err
 	}
 
-	if _, err := rpc.master.CommitCert(context.Background(), cert); err != nil {
+	if _, err := rpc.master.ProposeCert(context.Background(), cert); err != nil {
 		log.Error(err)
 		return &pb.Empty{}, err
 	}
@@ -111,14 +117,5 @@ func (_ *RPC) Listen() error {
 		return err
 	}
 
-	return nil
-}
-
-func (rpc *RPC) Issue(cert *pb.Cert) error {
-	_, err := rpc.master.CommitCert(context.Background(), cert)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
 	return nil
 }

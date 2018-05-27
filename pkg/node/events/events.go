@@ -2,54 +2,70 @@ package events
 
 import (
 	"github.com/spacelavr/pandora/pkg/broker"
+	"github.com/spacelavr/pandora/pkg/node/distribution"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/storage"
 )
 
-func Listen() error {
+type events struct {
+	chrMasterBlock chan *pb.MasterBlock
+	chrCertBlock   chan *pb.CertBlock
+	chrCert        chan *pb.Cert
+}
+
+func New(brk *broker.Broker) (*events, error) {
 	var (
+		chrCert        = make(chan *pb.Cert)
 		chrMasterBlock = make(chan *pb.MasterBlock)
 		chrCertBlock   = make(chan *pb.CertBlock)
-		chrCert        = make(chan *pb.Cert)
-		brk            = env.GetBroker()
-		rt             = env.GetRuntime()
 	)
 
-	if err := brk.Subscribe(broker.SubCB, chrCertBlock); err != nil {
-		return err
+	if err := brk.Subscribe(broker.SubCertBlock, chrCertBlock); err != nil {
+		return nil, err
 	}
 
 	if err := brk.Subscribe(broker.SubCert, chrCert); err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := brk.Subscribe(broker.SubMB, chrMasterBlock); err != nil {
-		return err
+	if err := brk.Subscribe(broker.SubMasterBlock, chrMasterBlock); err != nil {
+		return nil, err
 	}
+
+	return &events{
+		chrCert:        chrCert,
+		chrMasterBlock: chrMasterBlock,
+		chrCertBlock:   chrCertBlock,
+	}, nil
+}
+
+func (e *events) Listen() error {
+	var (
+		bc = env.GetBlockchain()
+	)
 
 	for {
 		select {
-		case cert, ok := <-chrCert:
+		case cert, ok := <-e.chrCert:
 			if !ok {
 				return nil
 			}
 
-			if err := storage.Put(cert.Id, cert); err != nil {
+			if err := distribution.New().CertSave(cert); err != nil {
 				return err
 			}
-		case block, ok := <-chrMasterBlock:
+		case block, ok := <-e.chrMasterBlock:
 			if !ok {
 				return nil
 			}
 
-			rt.AddMC(block)
-		case block, ok := <-chrCertBlock:
+			bc.CommitMasterBlock(block)
+		case block, ok := <-e.chrCertBlock:
 			if !ok {
 				return nil
 			}
 
-			rt.AddCC(block)
+			bc.CommitCertBlock(block)
 		}
 	}
 }

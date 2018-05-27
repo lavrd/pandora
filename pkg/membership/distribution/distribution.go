@@ -3,7 +3,7 @@ package distribution
 import (
 	"encoding/hex"
 
-	"github.com/spacelavr/pandora/pkg/node/env"
+	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/storage/arangodb"
 	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
@@ -17,10 +17,10 @@ type Distribution struct {
 }
 
 func New() *Distribution {
-	return &Distribution{env.GetStorage()}
+	return &Distribution{storage: env.GetStorage()}
 }
 
-func (d *Distribution) ConfirmCandidate(candidate *pb.Candidate) (*pb.PublicKey, error) {
+func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	mem, err := d.storage.MemberFetchByEmail(candidate.Email)
 	if err != nil || err != errors.NotFound {
 		return nil, err

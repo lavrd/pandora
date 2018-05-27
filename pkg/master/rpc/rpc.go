@@ -15,46 +15,31 @@ import (
 
 type rpc struct{}
 
-func New() (*rpc, *pb.BrokerOpts, error) {
-	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
-	if err != nil {
-		log.Error(err)
-		return nil, nil, err
-	}
-
-	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		log.Error(err)
-		return nil, nil, err
-	}
-	defer cc.Close()
-
-	c := pb.NewDiscoveryClient(cc)
-
-	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: config.Viper.Master.Endpoint})
-	if err != nil {
-		log.Error(err)
-		return nil, nil, err
-	}
-
-	return &rpc{}, opts, nil
+func New() *rpc {
+	return &rpc{}
 }
 
-func (_ *rpc) CommitCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+func (_ *rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	var (
 		evt = env.GetEvents()
 		bc  = env.GetBlockchain()
 	)
 
-	evt.PCertBlock(bc.PrepareCertBlock(in))
+	evt.PubCertBlock(bc.PrepareCertBlock(in))
 	evt.PubCert(in)
 
 	return &pb.Empty{}, nil
 }
 
 func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
-	bc := env.GetBlockchain()
-	bc.CommitMasterBlock(bc.PrepareMasterBlock(in))
+	var (
+		evt = env.GetEvents()
+		bc  = env.GetBlockchain()
+	)
+
+	b := bc.PrepareMasterBlock(in)
+	bc.CommitMasterBlock(b)
+	evt.PubMasterBlock(b)
 
 	return bc.GetMasterChain(), nil
 }
@@ -84,4 +69,29 @@ func (_ *rpc) Listen() error {
 	}
 
 	return nil
+}
+
+func (_ *rpc) InitMaster() (*pb.BrokerOpts, error) {
+	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	defer cc.Close()
+
+	c := pb.NewDiscoveryClient(cc)
+
+	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: config.Viper.Master.Endpoint})
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return opts, nil
 }

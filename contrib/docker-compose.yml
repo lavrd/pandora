@@ -12,6 +12,9 @@ services:
     build: .
     ports:
       - 2004:2004
+    enviroments:
+      - membership.mail.token token
+      - node.meta.secret_key secret
     links:
       - nats
       - arangodb

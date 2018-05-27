@@ -1,9 +1,10 @@
 package env
 
 import (
-	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/node/runtime"
-	"github.com/spacelavr/pandora/pkg/storage"
+	"github.com/spacelavr/pandora/pkg/blockchain"
+	"github.com/spacelavr/pandora/pkg/node/rpc"
+	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/storage/leveldb"
 )
 
 var (
@@ -11,38 +12,40 @@ var (
 )
 
 type env struct {
-	broker  *broker.Broker
-	storage *storage.Storage
-	runtime *runtime.Runtime
+	storage *leveldb.LevelDB
+	rpc     *rpc.RPC
+	key     *pb.PublicKey
+	bc      *blockchain.Blockchain
 }
 
-// SetStorage set storage to env
-func SetStorage(stg *storage.Storage) {
+func SetBlockchain(bc *blockchain.Blockchain) {
+	e.bc = bc
+}
+
+func GetBlockchain() *blockchain.Blockchain {
+	return e.bc
+}
+
+func SetStorage(stg *leveldb.LevelDB) {
 	e.storage = stg
 }
 
-// GetStorage get storage from env
-func GetStorage() *storage.Storage {
+func GetStorage() *leveldb.LevelDB {
 	return e.storage
 }
 
-// SetStorage set storage to env
-func SetRuntime(r *runtime.Runtime) {
-	e.runtime = r
+func SetRPC(rpc *rpc.RPC) {
+	e.rpc = rpc
 }
 
-// GetStorage get storage from env
-func GetRuntime() *runtime.Runtime {
-	return e.runtime
+func GetRPC() *rpc.RPC {
+	return e.rpc
 }
 
-// SetBroker set broker to env
-func SetBroker(brk *broker.Broker) {
-	e.broker = brk
+func SetKey(key *pb.PublicKey) {
+	e.key = key
 }
 
-// GetBroker returns broker from env
-func GetBroker() *broker.Broker {
-	return e.broker
+func GetKey() *pb.PublicKey {
+	return e.key
 }
-

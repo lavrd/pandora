@@ -9,7 +9,4 @@ RUN dep ensure
 WORKDIR /go/src/pandora/cmd/kit
 RUN go build
 
-ENV membership.mail.token token
-ENV node.meta.secret_key secret
-
 CMD ["./kit"]

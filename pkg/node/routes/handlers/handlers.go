@@ -1,57 +1,47 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 
 	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/node/distribution"
-	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/http/response"
-	"github.com/spacelavr/pandora/pkg/utils/log"
-	"github.com/spacelavr/pandora/pkg/storage"
-	"fmt"
 )
 
 func HealthH(w http.ResponseWriter, _ *http.Request) {
 	response.NotImplemented().Http(w)
 }
 
-func CandidateH(w http.ResponseWriter, r *http.Request) {
+func MemberCreateH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.Candidate{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
 	}
 
-	dist := &distribution.Distribution{}
-
-	if err := dist.Candidate(opts); err != nil {
-		log.Debug(err)
+	if _, err := distribution.New().ProposeMember(opts); err != nil {
 		if err == errors.AlreadyExists {
-			response.AlreadyExists("account").Http(w)
+			response.AlreadyExists("member").Http(w)
 		} else {
 			response.InternalServerError().Http(w)
 		}
 	}
 }
 
-func AccountFetchH(w http.ResponseWriter, r *http.Request) {
-	opts := &request.AccountFetch{}
+func MemberFetchH(w http.ResponseWriter, r *http.Request) {
+	opts := &request.MemberFetch{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
 		err.Http(w)
 		return
 	}
 
-	dist := &distribution.Distribution{}
-
-	if acc, err := dist.FetchAccount(opts); err == nil {
+	if acc, err := distribution.New().FetchMember(opts); err == nil {
 		response.Ok(acc).Http(w)
 	} else {
 		if err == errors.NotFound {
-			response.NotFound("account").Http(w)
+			response.NotFound("member").Http(w)
 		} else {
 			response.InternalServerError().Http(w)
 		}
@@ -65,7 +55,7 @@ func CertificateIssueH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := distribution.CertificateIssue(opts); err != nil {
+	if err := distribution.New().CertIssue(opts); err != nil {
 		response.InternalServerError().Http(w)
 	}
 }
@@ -77,7 +67,7 @@ func CertificateViewH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cert, err := storage.Get(*opts.Id); err == nil {
+	if cert, err := distribution.New().LoadCert(*opts.Id); err == nil {
 		response.Ok(cert).Http(w)
 	} else {
 		response.InternalServerError().Http(w)
@@ -89,26 +79,9 @@ func CertificateVerifyH(w http.ResponseWriter, _ *http.Request) {
 }
 
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {
-	var (
-		rt = env.GetRuntime()
-	)
-
-	response.Ok(rt.MC()).Http(w)
+	response.Ok(distribution.New().MasterChain()).Http(w)
 }
 
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
-	// todo move to http utils
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Println(config.Viper.Node.Dashboard.Template)
-	tpl, err := template.ParseFiles(config.Viper.Node.Dashboard.Template)
-	if err != nil {
-		response.InternalServerError().Http(w)
-		return
-	}
-
-	tpl = template.Must(tpl, err)
-
-	if err = tpl.Execute(w, nil); err != nil {
-		response.InternalServerError().Http(w)
-	}
+	response.Execute(config.Viper.Node.Dashboard.Template).Http(w)
 }

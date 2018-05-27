@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -42,12 +43,14 @@ func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 }
 
 // Listen start listen http requests
-func Listen(endpoint string, routes []Route) error {
+func Listen(endpoint string, routes []Route, static string) error {
 	log.Debugf("listen http server on %s", endpoint)
 
 	r := mux.NewRouter()
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
+	if static != "" {
+		r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(static))))
+	}
 
 	for _, route := range routes {
 		r.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
@@ -62,9 +65,7 @@ func Listen(endpoint string, routes []Route) error {
 		WriteTimeout:      time.Second * 5,
 	}
 
-	// todo need to regenerate cert and key for other domain
-	// todo to config
-	return srv.ListenAndServeTLS("./contrib/cert.pem", "./contrib/key.pem")
+	return srv.ListenAndServeTLS(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 }
 
 // DefaultHeaders add default headers

@@ -67,7 +67,7 @@ func send(to, subject, html string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", config.Viper.Membership.Mail.Endpoint, bytes.NewBuffer(buf))
+	req, err := http.NewRequest(http.MethodPost, config.Viper.Membership.Mail.Endpoint, bytes.NewBuffer(buf))
 	if err != nil {
 		log.Error(err)
 		return err

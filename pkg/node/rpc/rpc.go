@@ -13,74 +13,90 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type gRPC struct {
-	master     pb.MasterClient
-	membership pb.MembershipClient
+type RPC struct {
+	master       pb.MasterClient
+	membership   pb.MembershipClient
+	discovery    pb.DiscoveryClient
+	discoveryCC  *grpc.ClientConn
+	membershipCC *grpc.ClientConn
+	masterCC     *grpc.ClientConn
 }
 
-func New() (*gRPC, *pb.BrokerOpts, error) {
+func New() (*RPC, error) {
 	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
 	discoveryCC, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
-	defer discoveryCC.Close()
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
 	ino, err := discoveryC.InitNode(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
 	membershipCC, err := grpc.Dial(ino.Membership, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
-	defer membershipCC.Close()
 
 	membershipC := pb.NewMembershipClient(membershipCC)
 
 	masterCC, err := grpc.Dial(ino.Master, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
-		return nil, nil, err
+		return nil, err
 	}
-	defer masterCC.Close()
 
 	masterC := pb.NewMasterClient(masterCC)
 
-	return &gRPC{
-		master:     masterC,
-		membership: membershipC,
-	}, ino.Broker, nil
+	return &RPC{
+		master:       masterC,
+		membership:   membershipC,
+		discovery:    discoveryC,
+		masterCC:     masterCC,
+		discoveryCC:  discoveryCC,
+		membershipCC: membershipCC,
+	}, nil
 }
 
-func (g *gRPC) Register(candidate *pb.Candidate) error {
-	if _, err := g.membership.ConfirmMember(context.Background(), candidate); err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return err
-		}
-		if st.Code() == codes.AlreadyExists {
-			return errors.AlreadyExists
+func (rpc *RPC) Close() {
+	if err := rpc.membershipCC.Close(); err != nil {
+		log.Error(err)
+	}
+	if err := rpc.discoveryCC.Close(); err != nil {
+		log.Error(err)
+	}
+	if err := rpc.masterCC.Close(); err != nil {
+		log.Error(err)
+	}
+}
+
+func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
+	key, err := rpc.membership.ProposeMember(context.Background(), candidate);
+	if err != nil {
+		if st, ok := status.FromError(err); ok {
+			if st.Code() == codes.AlreadyExists {
+				return key, errors.AlreadyExists
+			}
 		}
 
 		log.Error(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return key, nil
 }
 
-func (g *gRPC) Issue(cert *pb.Cert) error {
+func (g *RPC) CertIssue(cert *pb.Cert) error {
 	if _, err := g.membership.SignCert(context.Background(), cert); err != nil {
 		log.Error(err)
 		return err
@@ -88,46 +104,34 @@ func (g *gRPC) Issue(cert *pb.Cert) error {
 	return nil
 }
 
-func (g *gRPC) NodeReg(candidate *pb.Candidate) (*pb.PublicKey, error) {
-	r, err := g.membership.ConfirmMember(context.Background(), candidate)
-	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, err
-		}
-		if st.Code() == codes.AlreadyExists {
-			log.Debug(r)
-			return r, errors.AlreadyExists
-		}
-
-		log.Error(err)
-		return nil, err
-	}
-	return r, nil
-}
-
-func (g *gRPC) FetchAccount(key *pb.PublicKey) (*pb.Member, error) {
+func (g *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 	r, err := g.membership.FetchMember(context.Background(), key)
 	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, err
-		}
-		if st.Code() == codes.NotFound {
-			return nil, errors.NotFound
+		if st, ok := status.FromError(err); ok {
+			if st.Code() == codes.NotFound {
+				return nil, errors.NotFound
+			}
 		}
 
 		log.Error(err)
 		return nil, err
 	}
+
 	return r, nil
 }
 
-func (g *gRPC) Node(key *pb.PublicKey) (*pb.MasterChain, error) {
-	mc, err := g.master.ConfirmNode(context.Background(), key)
+func (rpc *RPC) InitNode(key *pb.PublicKey) (*pb.MasterChain, *pb.BrokerOpts, error) {
+	ino, err := rpc.discovery.InitNode(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Error(err)
-		return nil, err
+		return nil, nil, err
 	}
-	return mc, nil
+
+	mc, err := rpc.master.InitNode(context.Background(), key)
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
+
+	return mc, ino.Broker, nil
 }

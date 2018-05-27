@@ -18,11 +18,11 @@ func New(brk *broker.Broker) (*Events, error) {
 		chsCertBlock   = make(chan *pb.CertBlock)
 	)
 
-	if err := brk.Publish(broker.SubMB, chsMasterBlock); err != nil {
+	if err := brk.Publish(broker.SubMasterBlock, chsMasterBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Publish(broker.SubCB, chsCertBlock); err != nil {
+	if err := brk.Publish(broker.SubCertBlock, chsCertBlock); err != nil {
 		return nil, err
 	}
 
@@ -37,7 +37,7 @@ func New(brk *broker.Broker) (*Events, error) {
 	}, nil
 }
 
-func (e *Events) PMasterBlock(block *pb.MasterBlock) {
+func (e *Events) PubMasterBlock(block *pb.MasterBlock) {
 	e.chsMasterBlock <- block
 }
 
@@ -45,6 +45,6 @@ func (e *Events) PubCert(cert *pb.Cert) {
 	e.chsCert <- cert
 }
 
-func (e *Events) PCertBlock(block *pb.CertBlock) {
+func (e *Events) PubCertBlock(block *pb.CertBlock) {
 	e.chsCertBlock <- block
 }

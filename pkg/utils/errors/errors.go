@@ -10,7 +10,7 @@ var (
 	NotFound      = New("NotFound")
 )
 
-// New returns new errors with text
+// New returns new error
 func New(text string) error {
 	return errors.New(text)
 }

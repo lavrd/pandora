@@ -7,7 +7,6 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/blockchain"
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/config"
 	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/master/events"
 	"github.com/spacelavr/pandora/pkg/master/rpc"
@@ -23,7 +22,9 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	r, brkOpts, err := rpc.New()
+	r := rpc.New()
+
+	brkOpts, err := r.InitMaster()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,12 +39,6 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
-	go func() {
-		if err := r.Listen(); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
 	evt, err := events.New(brk)
 	if err != nil {
 		log.Fatal(err)
@@ -52,9 +47,9 @@ func Daemon() bool {
 	env.SetBlockchain(blockchain.New())
 	env.SetEvents(evt)
 
-	defer func() {
-		if config.Viper.Runtime.Clean {
-			// todo clean database
+	go func() {
+		if err := r.Listen(); err != nil {
+			log.Fatal(err)
 		}
 	}()
 

@@ -4,18 +4,27 @@ import (
 	"time"
 
 	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/crypto"
+	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
 )
 
 type Blockchain struct {
 	mc   *pb.MasterChain
-	limb int64
+	limb int
 }
 
 func New() *Blockchain {
-	bc := &Blockchain{}
+	bc := &Blockchain{
+		limb: 0,
+	}
 	bc.mc = &pb.MasterChain{MasterChain: []*pb.MasterBlock{bc.GenesisMaster()}}
 	return bc
+}
+
+func Sync(mc *pb.MasterChain) *Blockchain {
+	return &Blockchain{
+		limb: len(mc.MasterChain) - 1,
+		mc:   mc,
+	}
 }
 
 func (bc *Blockchain) GetMasterChain() *pb.MasterChain {
@@ -30,7 +39,7 @@ func (bc *Blockchain) GenesisMaster() *pb.MasterBlock {
 		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.GenesisCert(nil)}},
 	}
 
-	hash := crypto.SumString(b.String())
+	hash := sha256.SumString(b.String())
 	b.Block.Hash = hash
 
 	return b
@@ -44,7 +53,7 @@ func (bc *Blockchain) GenesisCert(key *pb.PublicKey) *pb.CertBlock {
 		},
 	}
 
-	hash := crypto.SumString(b.String())
+	hash := sha256.SumString(b.String())
 	b.Block.Hash = hash
 
 	return b
@@ -68,7 +77,7 @@ func (bc *Blockchain) PrepareCertBlock(cert *pb.Cert) *pb.CertBlock {
 		},
 	}
 
-	hash := crypto.SumString(b.String())
+	hash := sha256.SumString(b.String())
 	b.Block.Hash = hash
 
 	return b
@@ -85,7 +94,7 @@ func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
 		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.GenesisCert(key)}},
 	}
 
-	hash := crypto.SumString(b.String())
+	hash := sha256.SumString(b.String())
 	b.Block.Hash = hash
 
 	return b
@@ -95,6 +104,7 @@ func (bc *Blockchain) CommitMasterBlock(b *pb.MasterBlock) {
 	for _, mb := range bc.mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == b.Block.PublicKey.PublicKey {
 			bc.mc.MasterChain = append(bc.mc.MasterChain, b)
+			bc.limb++
 		}
 	}
 }

@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	SubMB   = "sub master block"
-	SubCB   = "sub cert block"
-	SubCert = "sub cert"
+	SubMasterBlock = "sub master block"
+	SubCertBlock   = "sub cert block"
+	SubCert        = "sub cert"
 )
 
 // Broker
