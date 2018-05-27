@@ -13,13 +13,34 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type gRPC struct{}
+type rpc struct{}
 
-func New() *gRPC {
-	return &gRPC{}
+func New() (*rpc, *pb.BrokerOpts, error) {
+	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
+
+	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
+	defer cc.Close()
+
+	c := pb.NewDiscoveryClient(cc)
+
+	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: config.Viper.Master.Endpoint})
+	if err != nil {
+		log.Error(err)
+		return nil, nil, err
+	}
+
+	return &rpc{}, opts, nil
 }
 
-func (_ *gRPC) ConfirmCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+func (_ *rpc) CommitCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	var (
 		evt = env.GetEvents()
 		bc  = env.GetBlockchain()
@@ -31,17 +52,14 @@ func (_ *gRPC) ConfirmCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) 
 	return &pb.Empty{}, nil
 }
 
-func (_ *gRPC) ConfirmNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
-	var (
-		bc = env.GetBlockchain()
-	)
+func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
+	bc := env.GetBlockchain()
+	bc.CommitMasterBlock(bc.PrepareMasterBlock(in))
 
-	bc.AddMasterBlock(in)
-
-	return bc.MC(), nil
+	return bc.GetMasterChain(), nil
 }
 
-func (_ *gRPC) Listen() error {
+func (_ *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
@@ -51,7 +69,7 @@ func (_ *gRPC) Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterMasterServer(s, &gRPC{})
+	pb.RegisterMasterServer(s, &rpc{})
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Master.Endpoint))
 	if err != nil {

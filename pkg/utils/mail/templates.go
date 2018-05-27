@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/pb"
+	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 func execute(email, subject, path string, data interface{}) error {

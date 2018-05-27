@@ -6,8 +6,9 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/membership/rpc"
-	"github.com/spacelavr/pandora/pkg/storage"
+	"github.com/spacelavr/pandora/pkg/storage/arangodb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -20,7 +21,7 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	stg, err := storage.Connect(
+	stg, err := arangodb.New(
 		config.Viper.Membership.Database.Endpoint,
 		config.Viper.Membership.Database.Database,
 		config.Viper.Membership.Database.User,
@@ -30,15 +31,25 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 
+	r, err := rpc.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	env.SetRPC(r)
+	env.SetStorage(stg)
+
 	go func() {
-		if err := rpc.New().Listen(); err != nil {
+		if err := r.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	defer func() {
 		if config.Viper.Runtime.Clean {
-			// todo clean database
+			if err := stg.Clean(); err != nil {
+				log.Error(err)
+			}
 		}
 	}()
 

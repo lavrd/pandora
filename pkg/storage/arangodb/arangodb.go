@@ -14,8 +14,8 @@ type ArangoDB struct {
 	client   driver.Client
 }
 
-// Connect connect to database
-func Connect(endpoint, database, user, password string) (*ArangoDB, error) {
+// New connect to database
+func New(endpoint, database, user, password string) (*ArangoDB, error) {
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{endpoint},
 	})
@@ -88,39 +88,13 @@ func (s *ArangoDB) InitDatabase(db *driver.Database) error {
 func (s *ArangoDB) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
-	ok, err := (*db).CollectionExists(ctx, CollectionAccount)
+	ok, err := (*db).CollectionExists(ctx, CollectionMember)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 	if !ok {
-		_, err = (*db).CreateCollection(ctx, CollectionAccount, nil)
-		if err != nil {
-			log.Error(err)
-			return err
-		}
-	}
-
-	ok, err = (*db).CollectionExists(ctx, CollectionCertificate)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if !ok {
-		_, err := (*db).CreateCollection(ctx, CollectionCertificate, nil)
-		if err != nil {
-			log.Error(err)
-			return err
-		}
-	}
-
-	ok, err = (*db).CollectionExists(ctx, CollectionBlockchain)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	if !ok {
-		_, err := (*db).CreateCollection(ctx, CollectionBlockchain, nil)
+		_, err = (*db).CreateCollection(ctx, CollectionMember, nil)
 		if err != nil {
 			log.Error(err)
 			return err
@@ -211,32 +185,6 @@ func (s *ArangoDB) Exec(query string, vars map[string]interface{}, document inte
 	}
 }
 
-// Read read document from collection
-func (s *ArangoDB) Read(key, collection string, document interface{}) (*driver.DocumentMeta, error) {
-	ctx := context.Background()
-
-	db, err := s.Database()
-	if err != nil {
-		return nil, err
-	}
-
-	col, err := db.Collection(ctx, collection)
-	if err != nil {
-		return nil, nil
-	}
-
-	meta, err := col.ReadDocument(ctx, key, document)
-	if err != nil {
-		if driver.IsNotFound(err) {
-			return nil, errors.NotFound
-		}
-
-		return nil, err
-	}
-
-	return &meta, nil
-}
-
 // Write write document to collection
 func (s *ArangoDB) Write(collection string, document interface{}) (*driver.DocumentMeta, error) {
 	ctx := context.Background()
@@ -247,24 +195,6 @@ func (s *ArangoDB) Write(collection string, document interface{}) (*driver.Docum
 	}
 
 	meta, err := col.CreateDocument(ctx, document)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	return &meta, nil
-}
-
-// Update update document by collection and key
-func (s *ArangoDB) Update(collection, key string, document interface{}) (*driver.DocumentMeta, error) {
-	ctx := context.Background()
-
-	col, err := s.Collection(collection)
-	if err != nil {
-		return nil, err
-	}
-
-	meta, err := col.UpdateDocument(ctx, key, document)
 	if err != nil {
 		log.Error(err)
 		return nil, err

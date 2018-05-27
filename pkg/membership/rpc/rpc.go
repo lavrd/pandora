@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/membership/distribution"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -15,107 +16,79 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type gRPC struct {
+type RPC struct {
+	master pb.MasterClient
 }
 
-func New() *gRPC {
-	return &gRPC{}
-}
-
-func (_ *gRPC) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
-	dist := &distribution.Distribution{
-		Storage: env.GetStorage(),
-		Runtime: env.GetRuntime(),
-	}
-
-	key, err := dist.AcceptCandidate(in)
+func New() (*RPC, error) {
+	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
 	if err != nil {
-		if err == errors.AlreadyExists {
-			return key, status.Error(codes.AlreadyExists, codes.AlreadyExists.String())
-		}
-		return &pb.PublicKey{}, err
+		log.Error(err)
+		return nil, err
 	}
 
+	discoveryCC, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	defer discoveryCC.Close()
+
+	discoveryC := pb.NewDiscoveryClient(discoveryCC)
+
+	ino, err := discoveryC.InitMembership(context.Background(), &pb.Endpoint{Endpoint: config.Viper.Membership.Endpoint})
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	masterCC, err := grpc.Dial(ino.Master, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	defer masterCC.Close()
+
+	masterC := pb.NewMasterClient(masterCC)
+
+	return &RPC{master: masterC}, nil
+}
+
+func (_ *RPC) ConfirmMember(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
+	key, err := distribution.New().ConfirmCandidate(in)
+	if err != nil {
+		return &pb.PublicKey{}, err
+	}
 	return key, nil
 }
 
-func (_ *gRPC) Node(ctx context.Context, in *pb.Candidate) (*pb.PublicKey, error) {
-	dist := &distribution.Distribution{
-		Storage: env.GetStorage(),
-		Runtime: env.GetRuntime(),
-	}
-
-	key, err := dist.AcceptCandidate(in)
-	if err != nil && err != errors.AlreadyExists {
-		return &pb.PublicKey{}, err
-	}
-
-	return key, nil
-}
-
-func (_ *gRPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
-	cert, err := distribution.New().Issue(in)
+func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+	cert, err := distribution.New().IssueCert(in)
 	if err != nil {
 		return &pb.Empty{}, err
 	}
 
-	if err := Issue(cert); err != nil {
+	if _, err := rpc.master.CommitCert(context.Background(), cert); err != nil {
+		log.Error(err)
 		return &pb.Empty{}, err
 	}
 
 	return &pb.Empty{}, nil
 }
 
-func (_ *gRPC) Issue(cert *pb.Cert) error {
-	creds, err := credentials.NewClientTLSFromFile("./contrib/cert.pem", "")
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
-	cc, err := grpc.Dial(config.Viper.Master.Endpoint, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		log.Error(err)
-	}
-	defer cc.Close()
-
-	c := pb.NewMasterClient(cc)
-
-	_, err = c.ConfirmCert(context.Background(), cert)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
-	return nil
-}
-
-func (_ *gRPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
-	dist := &distribution.Distribution{
-		Storage: env.GetStorage(),
-		Runtime: env.GetRuntime(),
-	}
-
-	acc, err := dist.AccountFetch(in)
+func (_ *RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
+	mem, err := distribution.New().MemberFetch(in)
 	if err != nil {
 		if err == errors.NotFound {
-			// todo may be nil? and in all place
 			return &pb.Member{}, status.Error(codes.NotFound, codes.NotFound.String())
 		}
 		return &pb.Member{}, err
 	}
-	return acc, nil
+	return mem, nil
 }
 
-func (_ *gRPC) Listen() error {
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Membership.Endpoint))
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	defer listen.Close()
-
-	creds, err := credentials.NewServerTLSFromFile("./contrib/cert.pem", "./contrib/key.pem")
+func (_ *RPC) Listen() error {
+	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -124,12 +97,28 @@ func (_ *gRPC) Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterMembershipServer(s, &server{})
+	pb.RegisterMembershipServer(s, &RPC{})
+
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Membership.Endpoint))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	defer listen.Close()
 
 	if err := s.Serve(listen); err != nil {
 		log.Error(err)
 		return err
 	}
 
+	return nil
+}
+
+func (rpc *RPC) Issue(cert *pb.Cert) error {
+	_, err := rpc.master.CommitCert(context.Background(), cert)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
 	return nil
 }

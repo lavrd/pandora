@@ -4,13 +4,13 @@ package pb;
 
 service discovery {
     rpc init_node (empty) returns (init_network_opts) {}
-    rpc init_master (endpoint) returns (empty) {}
-    rpc init_membership (endpoint) returns (empty) {}
+    rpc init_master (endpoint) returns (broker_opts) {}
+    rpc init_membership (endpoint) returns (init_network_opts) {}
 }
 
 service master {
-  rpc confirm_cert (cert) returns (empty) {}
-  rpc confirm_node (public_key) returns (master_chain) {}
+  rpc commit_cert (cert) returns (empty) {}
+  rpc init_node (public_key) returns (master_chain) {}
 }
 
 service membership {

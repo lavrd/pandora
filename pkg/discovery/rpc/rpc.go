@@ -9,17 +9,19 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/status"
 )
 
-type gRPC struct {
+type rpc struct {
 	master     string
 	membership string
 	broker     *pb.BrokerOpts
 }
 
-func New() *gRPC {
-	return &gRPC{
+func New() *rpc {
+	return &rpc{
 		broker: &pb.BrokerOpts{
 			Endpoint: config.Viper.Discovery.Broker.Endpoint,
 			User:     config.Viper.Discovery.Broker.User,
@@ -28,26 +30,37 @@ func New() *gRPC {
 	}
 }
 
-func (g *gRPC) InitMaster(ctx context.Context, in *pb.Endpoint) (*pb.Empty, error) {
-	g.master = in.Endpoint
-	return &pb.Empty{}, nil
+func (rpc *rpc) InitMaster(ctx context.Context, in *pb.Endpoint) (*pb.BrokerOpts, error) {
+	rpc.master = in.Endpoint
+	return rpc.broker, nil
 }
 
-func (g *gRPC) InitMembership(ctx context.Context, in *pb.Endpoint) (*pb.Empty, error) {
-	g.membership = in.Endpoint
-	return &pb.Empty{}, nil
-}
+func (rpc *rpc) InitMembership(ctx context.Context, in *pb.Endpoint) (*pb.InitNetworkOpts, error) {
+	rpc.membership = in.Endpoint
 
-func (g *gRPC) InitNode(ctx context.Context, in *pb.Endpoint) (*pb.InitNetworkOpts, error) {
-	// todo if master or membership not started, send message
+	if rpc.master == "" {
+		return &pb.InitNetworkOpts{}, status.Error(codes.Unavailable, codes.Unavailable.String())
+	}
+
 	return &pb.InitNetworkOpts{
-		Broker:     g.broker,
-		Master:     g.master,
-		Membership: g.membership,
+		Broker: rpc.broker,
+		Master: rpc.master,
 	}, nil
 }
 
-func (_ *gRPC) Listen() error {
+func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts, error) {
+	if rpc.master == "" || rpc.membership == "" {
+		return &pb.InitNetworkOpts{}, status.Error(codes.Unavailable, codes.Unavailable.String())
+	}
+
+	return &pb.InitNetworkOpts{
+		Broker:     rpc.broker,
+		Master:     rpc.master,
+		Membership: rpc.membership,
+	}, nil
+}
+
+func (_ *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
@@ -57,7 +70,7 @@ func (_ *gRPC) Listen() error {
 	s := grpc.NewServer(grpc.Creds(creds))
 	defer s.GracefulStop()
 
-	pb.RegisterDiscoveryServer(s, &gRPC{})
+	pb.RegisterDiscoveryServer(s, &rpc{})
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
 	if err != nil {

@@ -43,18 +43,3 @@ func New(key *pb.PublicKey) (*Runtime, error) {
 		lmb: len(mc.MasterChain) - 1,
 	}, nil
 }
-
-func (r *Runtime) AddMC(block *pb.MasterBlock) {
-	r.mc.MasterChain = append(r.mc.MasterChain, block)
-}
-
-func (r *Runtime) AddCC(block *pb.CertBlock) {
-
-	log.Debug(block.Block.PublicKey.PublicKey)
-
-	for i, mb := range r.mc.MasterChain {
-		if mb.Block.PublicKey.PublicKey == block.Block.PublicKey.PublicKey {
-			r.mc.MasterChain[i].CertChain.CertChain = append(r.mc.MasterChain[i].CertChain.CertChain, block)
-		}
-	}
-}

@@ -20,8 +20,8 @@ type Broker struct {
 	conn *nats.EncodedConn
 }
 
-// Connect connect to broker
-func Connect(endpoint, user, password string) (*Broker, error) {
+// New connect to broker
+func New(endpoint, user, password string) (*Broker, error) {
 	cert, err := tls.LoadX509KeyPair(config.Viper.TLS.Cert, config.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)

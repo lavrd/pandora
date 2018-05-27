@@ -23,11 +23,15 @@ func Daemon() bool {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	// todo master need get broker opts from discovery
-	brk, err := broker.Connect(
-		config.Viper.Discovery.Broker.Endpoint,
-		config.Viper.Discovery.Broker.User,
-		config.Viper.Discovery.Broker.Password,
+	r, brkOpts, err := rpc.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	brk, err := broker.New(
+		brkOpts.Endpoint,
+		brkOpts.User,
+		brkOpts.Password,
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -35,7 +39,7 @@ func Daemon() bool {
 	defer brk.Close()
 
 	go func() {
-		if err := rpc.New().Listen(); err != nil {
+		if err := r.Listen(); err != nil {
 			log.Fatal(err)
 		}
 	}()
