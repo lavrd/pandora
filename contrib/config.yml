@@ -5,8 +5,8 @@ runtime:
 
 # tls
 tls:
-  cert: ./contrib/cert.pem
-  key: ./contrib/key.pem
+  cert: ./contrib/tls/cert.pem
+  key: ./contrib/tls/key.pem
 
 # membership
 membership:

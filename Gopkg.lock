@@ -10,7 +10,7 @@
     "http",
     "util"
   ]
-  revision = "e07ca71bf1f39cb0a32627001a746ee76b4fd7e5"
+  revision = "e9be214401cefd40e7d4e1aea6e8dadbb6e7a659"
 
 [[projects]]
   branch = "master"
@@ -58,7 +58,7 @@
   branch = "master"
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "c85619274f5d55a67491010f883a91f568b3a9b0"
+  revision = "e0b5abaaae35242fa74372f26c24107711702a4e"
 
 [[projects]]
   branch = "master"
@@ -198,16 +198,11 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
-    "argon2",
-    "blake2b",
     "ed25519",
     "ed25519/internal/edwards25519",
-    "nacl/secretbox",
-    "poly1305",
-    "salsa20/salsa",
     "ssh/terminal"
   ]
-  revision = "a3beeb748656e13e54256fd2cde19e058f41f60f"
+  revision = "ab813273cd59e1333f7ae7bff5d027d4aadf528c"
 
 [[projects]]
   branch = "master"
@@ -227,7 +222,6 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = [
-    "cpu",
     "unix",
     "windows"
   ]
@@ -300,6 +294,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c49ed9b0ab7fadb228b277d8cc061a15f2dc91bc4b257651f16577b2b186d6b6"
+  inputs-digest = "99cbb3bc2f4684b908895d54bf4cdf11d4a2c5955e0912ea4b67017d41850361"
   solver-name = "gps-cdcl"
   solver-version = 1
