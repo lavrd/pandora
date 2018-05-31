@@ -38,11 +38,11 @@ func New() (*RPC, error) {
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
-	ino := &pb.InitNetworkOpts{}
-
-	tick := time.NewTicker(time.Millisecond * 500).C
-	timer := time.NewTimer(time.Second * 3).C
-
+	var (
+		ino   = &pb.InitNetworkOpts{}
+		tick  = time.NewTicker(time.Millisecond * 500).C
+		timer = time.NewTimer(time.Second * 3).C
+	)
 loop:
 	for {
 		select {
@@ -89,7 +89,7 @@ func (_ *RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicK
 func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	cert, err := distribution.New().SignCert(in)
 	if err != nil {
-		if err == errors.NotFound {
+		if err == errors.ErrNotFound {
 			return &pb.Empty{}, status.Error(codes.NotFound, codes.NotFound.String())
 		}
 		return &pb.Empty{}, err
@@ -106,7 +106,7 @@ func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 func (_ *RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
 	mem, err := distribution.New().MemberFetch(in)
 	if err != nil {
-		if err == errors.NotFound {
+		if err == errors.ErrNotFound {
 			return &pb.Member{}, status.Error(codes.NotFound, codes.NotFound.String())
 		}
 		return &pb.Member{}, err

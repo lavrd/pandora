@@ -29,7 +29,7 @@ func New() *Distribution {
 }
 
 func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
-	for _, mb := range d.bc.GetMasterChain().MasterChain {
+	for _, mb := range d.bc.MasterChain().MasterChain {
 		for _, cb := range mb.CertChain.CertChain {
 			if cb.Block.Tx == *opts.Id {
 				return true
@@ -48,7 +48,7 @@ func (d *Distribution) LoadCert(id string) (*pb.Cert, error) {
 }
 
 func (d *Distribution) MasterChain() *pb.MasterChain {
-	return env.GetBlockchain().GetMasterChain()
+	return env.GetBlockchain().MasterChain()
 }
 
 func (d *Distribution) ProposeMember(opts *request.Candidate) (*pb.PublicKey, error) {

@@ -9,6 +9,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
+const (
+	Discovery = "discovery"
+)
+
 func Daemon() bool {
 	log.Debug("start discovery daemon")
 

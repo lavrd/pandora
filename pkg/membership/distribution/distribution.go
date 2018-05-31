@@ -22,7 +22,7 @@ func New() *Distribution {
 
 func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	mem, err := d.storage.MemberFetchByEmail(candidate.Email)
-	if err != nil && err != errors.NotFound {
+	if err != nil && err != errors.ErrNotFound {
 		return nil, err
 	}
 	if mem != nil {

@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	AlreadyExists = New("already exists")
-	SendMailError = New("send mail error")
-	NotFound      = New("not found")
+	ErrAlreadyExists = New("error already exists")
+	ErrMail          = New("mail error")
+	ErrNotFound      = New("error not found")
 )
 
 // New returns new error

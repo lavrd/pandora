@@ -118,6 +118,7 @@ func (r *Response) Http(w http.ResponseWriter) {
 	}
 }
 
+// Http send http template
 func (t *Template) Http(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html")
 	if err := t.tpl.Execute(w, nil); err != nil {
@@ -125,6 +126,7 @@ func (t *Template) Http(w http.ResponseWriter) {
 	}
 }
 
+// Http send http error
 func (r *Error) Http(w http.ResponseWriter) {
 	w.WriteHeader(r.Code)
 	if err := json.NewEncoder(w).Encode(r); err != nil {

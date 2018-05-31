@@ -59,13 +59,13 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			bc.CommitMasterBlock(block)
+			bc.CommitMBlock(block)
 		case block, ok := <-e.chrCertBlock:
 			if !ok {
 				return nil
 			}
 
-			bc.CommitCertBlock(block)
+			bc.CommitCBlock(block)
 		}
 	}
 }

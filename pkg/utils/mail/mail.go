@@ -50,8 +50,8 @@ func send(to, subject, html string) error {
 		},
 		Subject: subject,
 		From: &email{
-			Name:  config.Viper.Membership.Mail.Name,
-			Email: config.Viper.Membership.Mail.Email,
+			Name:  "Pandira",
+			Email: "pandora@mail.sys",
 		},
 		Content: []*content{
 			{
@@ -67,7 +67,7 @@ func send(to, subject, html string) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, config.Viper.Membership.Mail.Endpoint, bytes.NewBuffer(buf))
+	req, err := http.NewRequest(http.MethodPost, "https://api.sendgrid.com/v3/mail/send", bytes.NewBuffer(buf))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -86,7 +86,7 @@ func send(to, subject, html string) error {
 
 	if res.StatusCode != http.StatusAccepted {
 		log.Errorf("mail doesn't send. http status: %d", res.StatusCode)
-		return errors.SendMailError
+		return errors.ErrMail
 	}
 
 	return nil

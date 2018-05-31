@@ -22,7 +22,7 @@ func MemberCreateH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := distribution.New().ProposeMember(opts); err != nil {
-		if err == errors.AlreadyExists {
+		if err == errors.ErrAlreadyExists {
 			response.AlreadyExists("member").Http(w)
 		} else {
 			response.InternalServerError().Http(w)
@@ -40,7 +40,7 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 	if mem, err := distribution.New().FetchMember(opts); err == nil {
 		response.Ok(mem).Http(w)
 	} else {
-		if err == errors.NotFound {
+		if err == errors.ErrNotFound {
 			response.NotFound("member").Http(w)
 		} else {
 			response.InternalServerError().Http(w)
@@ -56,7 +56,7 @@ func CertIssueH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := distribution.New().SignCert(opts); err != nil {
-		if err == errors.NotFound {
+		if err == errors.ErrNotFound {
 			response.NotFound("recipient").Http(w)
 		} else {
 			response.InternalServerError().Http(w)
@@ -74,7 +74,7 @@ func CertViewH(w http.ResponseWriter, r *http.Request) {
 	if cert, err := distribution.New().LoadCert(*opts.Id); err == nil {
 		response.Ok(cert).Http(w)
 	} else {
-		if err != errors.NotFound {
+		if err != errors.ErrNotFound {
 			response.NotFound("certificate").Http(w)
 		} else {
 			response.InternalServerError().Http(w)

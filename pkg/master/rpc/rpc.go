@@ -25,7 +25,7 @@ func (_ *rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 		bc  = env.GetBlockchain()
 	)
 
-	evt.PubCertBlock(bc.PrepareCertBlock(in))
+	evt.PubCertBlock(bc.PrepareCBlock(in))
 	evt.PubCert(in)
 
 	return &pb.Empty{}, nil
@@ -37,12 +37,12 @@ func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, 
 		bc  = env.GetBlockchain()
 	)
 
-	b := bc.PrepareMasterBlock(in)
-	bc.CommitMasterBlock(b)
+	b := bc.PrepareMBlock(in)
+	bc.CommitMBlock(b)
 
 	evt.PubMasterBlock(b)
 
-	return bc.GetMasterChain(), nil
+	return bc.MasterChain(), nil
 }
 
 func (rpc *rpc) Listen() error {

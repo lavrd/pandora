@@ -12,6 +12,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
+const (
+	Membership = "membership"
+)
+
 func Daemon() bool {
 	log.Debug("start membership daemon")
 

@@ -13,6 +13,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
+const (
+	Master = "master"
+)
+
 func Daemon() bool {
 	log.Debug("start master daemon")
 

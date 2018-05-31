@@ -170,7 +170,7 @@ func (s *ArangoDB) Exec(query string, vars map[string]interface{}, document inte
 	defer cursor.Close()
 
 	if cursor.Count() == 0 {
-		return nil, errors.NotFound
+		return nil, errors.ErrNotFound
 	}
 
 	for {

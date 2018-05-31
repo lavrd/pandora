@@ -8,7 +8,7 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
-func execute(email, subject, path string, data interface{}) error {
+func execute(to, subject, path string, data interface{}) error {
 	var buf bytes.Buffer
 
 	tpl, err := template.ParseFiles(path)
@@ -22,31 +22,31 @@ func execute(email, subject, path string, data interface{}) error {
 		return err
 	}
 
-	return send(email, subject, buf.String())
+	return send(to, subject, buf.String())
 }
 
-func SendCertificate(email string, cert *pb.Cert) error {
+func SendCertificate(to string, cert *pb.Cert) error {
 	const (
 		Subject  = "Certificate"
 		Template = "./pkg/utils/mail/templates/certificate.html"
 	)
 
 	return execute(
-		email,
+		to,
 		Subject,
 		Template,
 		cert,
 	)
 }
 
-func SendCredentials(email string, publicKey *pb.PublicKey) error {
+func SendCredentials(to string, publicKey *pb.PublicKey) error {
 	const (
 		Subject  = "Credentials"
 		Template = "./pkg/utils/mail/templates/credentials.html"
 	)
 
 	return execute(
-		email,
+		to,
 		Subject,
 		Template,
 		publicKey,

@@ -38,11 +38,11 @@ func New() (*RPC, error) {
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
-	ino := &pb.InitNetworkOpts{}
-
-	tick := time.NewTicker(time.Millisecond * 500).C
-	timer := time.NewTimer(time.Second * 3).C
-
+	var (
+		ino   = &pb.InitNetworkOpts{}
+		tick  = time.NewTicker(time.Millisecond * 500).C
+		timer = time.NewTimer(time.Second * 3).C
+	)
 loop:
 	for {
 		select {
@@ -99,12 +99,6 @@ func (rpc *RPC) Close() {
 func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	key, err := rpc.membership.ProposeMember(context.Background(), candidate);
 	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			if st.Code() == codes.AlreadyExists {
-				return key, errors.AlreadyExists
-			}
-		}
-
 		log.Error(err)
 		return nil, err
 	}
@@ -115,7 +109,7 @@ func (rpc *RPC) SignCert(cert *pb.Cert) error {
 	if _, err := rpc.membership.SignCert(context.Background(), cert); err != nil {
 		if st, ok := status.FromError(err); ok {
 			if st.Code() == codes.NotFound {
-				return errors.NotFound
+				return errors.ErrNotFound
 			}
 		}
 
@@ -130,7 +124,7 @@ func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 	if err != nil {
 		if st, ok := status.FromError(err); ok {
 			if st.Code() == codes.NotFound {
-				return nil, errors.NotFound
+				return nil, errors.ErrNotFound
 			}
 		}
 

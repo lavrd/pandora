@@ -13,11 +13,8 @@ var (
 		}
 		Membership struct {
 			Mail struct {
-				Send     bool
-				Token    string
-				Endpoint string
-				Email    string
-				Name     string
+				Send  bool
+				Token string
 			}
 			Database struct {
 				Endpoint string
@@ -28,9 +25,6 @@ var (
 			Endpoint string
 		}
 		Master struct {
-			Database struct {
-				FilePath string
-			}
 			Endpoint string
 		}
 		Node struct {
@@ -47,9 +41,6 @@ var (
 			Endpoint string
 		}
 		Discovery struct {
-			Database struct {
-				FilePath string
-			}
 			Broker struct {
 				Endpoint string
 				User     string

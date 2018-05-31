@@ -20,6 +20,10 @@ import (
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
+const (
+	Node = "node"
+)
+
 // Daemon start node daemon
 func Daemon() bool {
 	log.Debug("start node daemon")
@@ -48,7 +52,7 @@ func Daemon() bool {
 
 	key, err := distribution.New().ProposeMember(candidate)
 	if err != nil {
-		if err != errors.AlreadyExists {
+		if err != errors.ErrAlreadyExists {
 			log.Fatal(err)
 		}
 	}

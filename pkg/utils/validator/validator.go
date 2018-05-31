@@ -16,18 +16,6 @@ func IsEmail(email string) bool {
 	return matched
 }
 
-// IsSignature checking for valid signature
-func IsSignature(signature string) bool {
-	// todo how to check
-	return len(signature) == 512
-}
-
 func IsPublicKey(key string) bool {
-	// todo how to verify?
-	switch {
-	case len(key) == 0:
-		return false
-	default:
-		return true
-	}
+	return len(key) == 64
 }

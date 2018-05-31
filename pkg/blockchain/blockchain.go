@@ -14,7 +14,7 @@ type Blockchain struct {
 
 func New() *Blockchain {
 	bc := &Blockchain{limb: 0}
-	bc.mc = &pb.MasterChain{MasterChain: []*pb.MasterBlock{bc.GenesisMaster()}}
+	bc.mc = &pb.MasterChain{MasterChain: []*pb.MasterBlock{bc.genesisM()}}
 	return bc
 }
 
@@ -25,17 +25,17 @@ func Sync(mc *pb.MasterChain) *Blockchain {
 	}
 }
 
-func (bc *Blockchain) GetMasterChain() *pb.MasterChain {
+func (bc *Blockchain) MasterChain() *pb.MasterChain {
 	return bc.mc
 }
 
-func (bc *Blockchain) GenesisMaster() *pb.MasterBlock {
+func (bc *Blockchain) genesisM() *pb.MasterBlock {
 	b := &pb.MasterBlock{
 		Block: &pb.Block{
 			Timestamp: time.Now().UTC().Unix(),
 			PublicKey: &pb.PublicKey{},
 		},
-		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.GenesisCert(nil)}},
+		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.genesisC(nil)}},
 	}
 
 	hash := sha256.SumString(b.String())
@@ -44,7 +44,7 @@ func (bc *Blockchain) GenesisMaster() *pb.MasterBlock {
 	return b
 }
 
-func (bc *Blockchain) GenesisCert(key *pb.PublicKey) *pb.CertBlock {
+func (bc *Blockchain) genesisC(key *pb.PublicKey) *pb.CertBlock {
 	b := &pb.CertBlock{
 		Block: &pb.Block{
 			Timestamp: time.Now().UTC().Unix(),
@@ -58,7 +58,7 @@ func (bc *Blockchain) GenesisCert(key *pb.PublicKey) *pb.CertBlock {
 	return b
 }
 
-func (bc *Blockchain) PrepareCertBlock(cert *pb.Cert) *pb.CertBlock {
+func (bc *Blockchain) PrepareCBlock(cert *pb.Cert) *pb.CertBlock {
 	old := &pb.CertBlock{}
 	for _, mb := range bc.mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == cert.Issuer.PublicKey.PublicKey {
@@ -83,7 +83,7 @@ func (bc *Blockchain) PrepareCertBlock(cert *pb.Cert) *pb.CertBlock {
 	return b
 }
 
-func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
+func (bc *Blockchain) PrepareMBlock(key *pb.PublicKey) *pb.MasterBlock {
 	b := &pb.MasterBlock{
 		Block: &pb.Block{
 			Index:     bc.mc.MasterChain[bc.limb].Block.Index + 1,
@@ -91,7 +91,7 @@ func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
 			Timestamp: time.Now().UTC().Unix(),
 			PublicKey: key,
 		},
-		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.GenesisCert(key)}},
+		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.genesisC(key)}},
 	}
 
 	hash := sha256.SumString(b.String())
@@ -100,12 +100,12 @@ func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
 	return b
 }
 
-func (bc *Blockchain) CommitMasterBlock(b *pb.MasterBlock) {
+func (bc *Blockchain) CommitMBlock(b *pb.MasterBlock) {
 	bc.mc.MasterChain = append(bc.mc.MasterChain, b)
 	bc.limb++
 }
 
-func (bc *Blockchain) CommitCertBlock(b *pb.CertBlock) {
+func (bc *Blockchain) CommitCBlock(b *pb.CertBlock) {
 	for i, mb := range bc.mc.MasterChain {
 		if mb.Block.PublicKey.PublicKey == b.Block.PublicKey.PublicKey {
 			bc.mc.MasterChain[i].CertChain.CertChain = append(bc.mc.MasterChain[i].CertChain.CertChain, b)

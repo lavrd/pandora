@@ -13,9 +13,6 @@ membership:
   mail:
     send: true
     token: env
-    endpoint: https://api.sendgrid.com/v3/mail/send
-    email: pandora@mail.sys
-    name: Pandora
   database:
     endpoint: http://127.0.0.1:8529
     user: root
@@ -25,8 +22,6 @@ membership:
 
 # master
 master:
-  database:
-    filepath: ./contrib/master.db
   endpoint: 127.0.0.1:2002
 
 # node
@@ -42,8 +37,6 @@ node:
 
 # discovery
 discovery:
-  database:
-    filepath: ./contrib/discovery.db
   broker:
     endpoint: nats://127.0.0.1:4222
     user: root

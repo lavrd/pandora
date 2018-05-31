@@ -48,14 +48,14 @@ var (
 				apps    = make(chan bool)
 				wait    = 0
 				daemons = map[string]func() bool{
-					"node":       node.Daemon,
-					"master":     master.Daemon,
-					"discovery":  discovery.Daemon,
-					"membership": membership.Daemon,
+					node.Node:             node.Daemon,
+					master.Master:         master.Daemon,
+					discovery.Discovery:   discovery.Daemon,
+					membership.Membership: membership.Daemon,
 				}
 			)
 
-			components := []string{"node", "master", "discovery", "membership"}
+			components := []string{node.Node, master.Master, discovery.Discovery, membership.Membership}
 
 			if len(args) > 0 {
 				components = args
