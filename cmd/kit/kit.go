@@ -77,7 +77,6 @@ var (
 						wait--
 						if wait == 0 {
 							done <- true
-							return
 						}
 					}
 				}

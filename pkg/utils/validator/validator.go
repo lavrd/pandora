@@ -16,6 +16,7 @@ func IsEmail(email string) bool {
 	return matched
 }
 
+// IsPublicKey checking for valid public key
 func IsPublicKey(key string) bool {
 	return len(key) == 64
 }
