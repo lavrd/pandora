@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
@@ -65,7 +65,7 @@ func Listen(endpoint string, routes []Route, static string) error {
 		WriteTimeout:      time.Second * 5,
 	}
 
-	return srv.ListenAndServeTLS(config.Viper.TLS.Cert, config.Viper.TLS.Key)
+	return srv.ListenAndServeTLS(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
 }
 
 // DefaultHeaders add default headers

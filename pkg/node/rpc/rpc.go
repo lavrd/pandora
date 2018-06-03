@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -24,13 +24,13 @@ type RPC struct {
 }
 
 func New() (*RPC, error) {
-	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
+	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	discoveryCC, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	discoveryCC, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -48,7 +48,6 @@ loop:
 		select {
 		case <-tick:
 			if ino, err = discoveryC.InitNode(context.Background(), &pb.Empty{}); err != nil {
-				log.Error("request discovery to init node failed")
 				continue
 			}
 			break loop

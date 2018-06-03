@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
@@ -34,7 +34,7 @@ type email struct {
 }
 
 func send(to, subject, html string) error {
-	if !config.Viper.Membership.Mail.Send {
+	if !conf.Viper.Membership.Mail.Send {
 		return nil
 	}
 
@@ -74,7 +74,7 @@ func send(to, subject, html string) error {
 	}
 	defer req.Body.Close()
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.Viper.Membership.Mail.Token))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", conf.Viper.Membership.Mail.Token))
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := (&http.Client{}).Do(req)

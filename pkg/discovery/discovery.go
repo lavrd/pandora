@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Discovery = "discovery"
+	DISCOVERY = "discovery"
 )
 
 func Daemon() bool {

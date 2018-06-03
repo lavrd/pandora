@@ -5,14 +5,14 @@ import (
 
 	"github.com/nats-io/go-nats"
 	"github.com/nats-io/go-nats/encoders/protobuf"
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 )
 
 const (
-	SubMasterBlock = "SubMasterBlock"
-	SubCertBlock   = "SubCertBlock"
-	SubCert        = "SubCert"
+	SUB_MASTER_BLOCK = "SUB_MASTER_BLOCK"
+	SUB_CERT_BLOCK   = "SUB_CERT_BLOCK"
+	SUB_CERT         = "SUB_CERT"
 )
 
 // Broker
@@ -22,7 +22,7 @@ type Broker struct {
 
 // New connect to broker
 func New(endpoint, user, password string) (*Broker, error) {
-	cert, err := tls.LoadX509KeyPair(config.Viper.TLS.Cert, config.Viper.TLS.Key)
+	cert, err := tls.LoadX509KeyPair(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return nil, err

@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/membership/env"
 	"github.com/spacelavr/pandora/pkg/membership/rpc"
 	"github.com/spacelavr/pandora/pkg/storage/arangodb"
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Membership = "membership"
+	MEMBERSHIP = "membership"
 )
 
 func Daemon() bool {
@@ -26,10 +26,10 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	stg, err := arangodb.New(
-		config.Viper.Membership.Database.Endpoint,
-		config.Viper.Membership.Database.Database,
-		config.Viper.Membership.Database.User,
-		config.Viper.Membership.Database.Password,
+		conf.Viper.Membership.Database.Endpoint,
+		conf.Viper.Membership.Database.Database,
+		conf.Viper.Membership.Database.User,
+		conf.Viper.Membership.Database.Password,
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +50,7 @@ func Daemon() bool {
 	}()
 
 	defer func() {
-		if config.Viper.Runtime.Clean {
+		if conf.Viper.Runtime.Clean {
 			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}

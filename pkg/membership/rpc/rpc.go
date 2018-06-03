@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/membership/distribution"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -23,13 +23,13 @@ type RPC struct {
 }
 
 func New() (*RPC, error) {
-	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
+	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	discoveryCC, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	discoveryCC, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -49,9 +49,8 @@ loop:
 		case <-tick:
 			if ino, err = discoveryC.InitMembership(
 				context.Background(),
-				&pb.Endpoint{Endpoint: config.Viper.Membership.Endpoint},
+				&pb.Endpoint{Endpoint: conf.Viper.Membership.Endpoint},
 			); err != nil {
-				log.Error("request discovery to init membership failed")
 				continue
 			}
 			break loop
@@ -115,7 +114,7 @@ func (_ *RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, er
 }
 
 func (rpc *RPC) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -126,7 +125,7 @@ func (rpc *RPC) Listen() error {
 
 	pb.RegisterMembershipServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Membership.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Membership.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

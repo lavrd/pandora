@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spacelavr/pandora/pkg/utils/network"
@@ -23,9 +23,9 @@ type rpc struct {
 func New() *rpc {
 	return &rpc{
 		broker: &pb.BrokerOpts{
-			Endpoint: config.Viper.Discovery.Broker.Endpoint,
-			User:     config.Viper.Discovery.Broker.User,
-			Password: config.Viper.Discovery.Broker.Password,
+			Endpoint: conf.Viper.Discovery.Broker.Endpoint,
+			User:     conf.Viper.Discovery.Broker.User,
+			Password: conf.Viper.Discovery.Broker.Password,
 		},
 	}
 }
@@ -61,7 +61,7 @@ func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts
 }
 
 func (rpc *rpc) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -72,7 +72,7 @@ func (rpc *rpc) Listen() error {
 
 	pb.RegisterDiscoveryServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Discovery.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Discovery.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

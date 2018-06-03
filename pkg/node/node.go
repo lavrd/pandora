@@ -7,7 +7,7 @@ import (
 
 	"github.com/spacelavr/pandora/pkg/blockchain"
 	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/node/distribution"
 	"github.com/spacelavr/pandora/pkg/node/env"
 	"github.com/spacelavr/pandora/pkg/node/events"
@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	Node = "node"
+	NODE = "node"
 )
 
 // Daemon start node daemon
@@ -35,8 +35,8 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	candidate := &request.Candidate{
-		Name:  &config.Viper.Node.Meta.Name,
-		Email: &config.Viper.Node.Meta.Email,
+		Name:  &conf.Viper.Node.Meta.Name,
+		Email: &conf.Viper.Node.Meta.Email,
 	}
 	if err := candidate.Validate(); err != nil {
 		log.Fatal(err.Message)
@@ -72,14 +72,14 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
-	stg, err := leveldb.New(config.Viper.Node.Database.FilePath)
+	stg, err := leveldb.New(conf.Viper.Node.Database.FilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer func() {
 		stg.Close()
 
-		if config.Viper.Runtime.Clean {
+		if conf.Viper.Runtime.Clean {
 			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}
@@ -102,7 +102,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := http.Listen(config.Viper.Node.Endpoint, routes.Routes, "./dashboard/static/"); err != nil {
+		if err := http.Listen(conf.Viper.Node.Endpoint, routes.Routes, "./dashboard/static/"); err != nil {
 			log.Fatal(err)
 		}
 	}()

@@ -12,8 +12,8 @@ services:
     build: .
     ports:
       - 2004:2004
-    enviroments:
-      - membership.mail.token token
+    environment:
+      - membership.mail.token kvebek
     links:
       - nats
       - arangodb
@@ -25,5 +25,6 @@ services:
       - 8222:8222
       - 6222:6222
     volumes:
-      - ./contrib:/tls
+      - ${GOPATH}/src/github.com/spacelavr/pandora/contrib/tls:/tls
     command: --user root --pass root --tls --tlscert /tls/cert.pem --tlskey /tls/key.pem
+

@@ -18,15 +18,15 @@ func New(brk *broker.Broker) (*Events, error) {
 		chsCertBlock   = make(chan *pb.CertBlock)
 	)
 
-	if err := brk.Publish(broker.SubMasterBlock, chsMasterBlock); err != nil {
+	if err := brk.Publish(broker.SUB_MASTER_BLOCK, chsMasterBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Publish(broker.SubCertBlock, chsCertBlock); err != nil {
+	if err := brk.Publish(broker.SUB_CERT_BLOCK, chsCertBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Publish(broker.SubCert, chsCert); err != nil {
+	if err := brk.Publish(broker.SUB_CERT, chsCert); err != nil {
 		return nil, err
 	}
 

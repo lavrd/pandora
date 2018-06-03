@@ -20,15 +20,15 @@ func New(brk *broker.Broker) (*events, error) {
 		chrCertBlock   = make(chan *pb.CertBlock)
 	)
 
-	if err := brk.Subscribe(broker.SubCertBlock, chrCertBlock); err != nil {
+	if err := brk.Subscribe(broker.SUB_CERT_BLOCK, chrCertBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Subscribe(broker.SubCert, chrCert); err != nil {
+	if err := brk.Subscribe(broker.SUB_CERT, chrCert); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Subscribe(broker.SubMasterBlock, chrMasterBlock); err != nil {
+	if err := brk.Subscribe(broker.SUB_MASTER_BLOCK, chrMasterBlock); err != nil {
 		return nil, err
 	}
 

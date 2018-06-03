@@ -3,8 +3,9 @@ package main
 import (
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/discovery"
 	"github.com/spacelavr/pandora/pkg/master"
 	"github.com/spacelavr/pandora/pkg/membership"
@@ -35,11 +36,13 @@ var (
 				log.Fatal(err)
 			}
 
-			if err := viper.Unmarshal(config.Viper); err != nil {
+			if err := viper.Unmarshal(conf.Viper); err != nil {
 				log.Fatal(err)
 			}
 
-			log.SetVerbose(config.Viper.Runtime.Verbose)
+			log.Debug(conf.Viper.Membership.Mail.Token)
+
+			log.SetVerbose(conf.Viper.Runtime.Verbose)
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
@@ -48,14 +51,14 @@ var (
 				apps    = make(chan bool)
 				wait    = 0
 				daemons = map[string]func() bool{
-					node.Node:             node.Daemon,
-					master.Master:         master.Daemon,
-					discovery.Discovery:   discovery.Daemon,
-					membership.Membership: membership.Daemon,
+					node.NODE:             node.Daemon,
+					master.MASTER:         master.Daemon,
+					discovery.DISCOVERY:   discovery.Daemon,
+					membership.MEMBERSHIP: membership.Daemon,
 				}
 			)
 
-			components := []string{node.Node, master.Master, discovery.Discovery, membership.Membership}
+			components := []string{node.NODE, master.MASTER, discovery.DISCOVERY, membership.MEMBERSHIP}
 
 			if len(args) > 0 {
 				components = args
@@ -88,7 +91,9 @@ var (
 )
 
 func init() {
-	CLI.Flags().StringVarP(&cfg, "config", "c", "./contrib/config.yml", "/path/to/config.yml")
+	<-time.After(time.Second * 3)
+	log.Debug("HELLO!")
+	CLI.Flags().StringVarP(&cfg, "conf", "c", "./contrib/conf.yml", "/path/to/conf.yml")
 	viper.BindEnv("membership.mail.token")
 }
 

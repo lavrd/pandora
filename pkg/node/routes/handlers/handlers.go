@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/node/distribution"
 	"github.com/spacelavr/pandora/pkg/node/routes/request"
 	"github.com/spacelavr/pandora/pkg/utils/errors"
@@ -101,5 +101,5 @@ func BlockchainH(w http.ResponseWriter, _ *http.Request) {
 }
 
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
-	response.Execute(config.Viper.Node.Dashboard.Template).Http(w)
+	response.Execute(conf.Viper.Node.Dashboard.Template).Http(w)
 }

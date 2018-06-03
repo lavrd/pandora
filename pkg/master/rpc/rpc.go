@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/spacelavr/pandora/pkg/config"
+	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/master/env"
 	"github.com/spacelavr/pandora/pkg/pb"
 	"github.com/spacelavr/pandora/pkg/utils/log"
@@ -46,7 +46,7 @@ func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, 
 }
 
 func (rpc *rpc) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(config.Viper.TLS.Cert, config.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -57,7 +57,7 @@ func (rpc *rpc) Listen() error {
 
 	pb.RegisterMasterServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(config.Viper.Master.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Master.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -73,13 +73,13 @@ func (rpc *rpc) Listen() error {
 }
 
 func (_ *rpc) InitMaster() (*pb.BrokerOpts, error) {
-	creds, err := credentials.NewClientTLSFromFile(config.Viper.TLS.Cert, "")
+	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	cc, err := grpc.Dial(config.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	cc, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -88,7 +88,7 @@ func (_ *rpc) InitMaster() (*pb.BrokerOpts, error) {
 
 	c := pb.NewDiscoveryClient(cc)
 
-	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: config.Viper.Master.Endpoint})
+	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Viper.Master.Endpoint})
 	if err != nil {
 		log.Error(err)
 		return nil, err

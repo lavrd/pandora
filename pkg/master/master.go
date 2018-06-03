@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	Master = "master"
+	MASTER = "master"
 )
 
 func Daemon() bool {

@@ -1,7 +1,7 @@
-package config
+package conf
 
 var (
-	// Viper config struct
+	// Viper conf struct
 	Viper = &struct {
 		Runtime struct {
 			Verbose bool
