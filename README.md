@@ -3,6 +3,7 @@ Blockchain-based decentralized platform for issuing, viewing, and verifying cert
 
 ### Docker compose
 `docker-compose up -d --build`
+
 `docker-compose down`
 
 ### Docker images
