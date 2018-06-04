@@ -91,8 +91,6 @@ var (
 )
 
 func init() {
-	<-time.After(time.Second * 3)
-	log.Debug("HELLO!")
 	CLI.Flags().StringVarP(&cfg, "conf", "c", "./contrib/conf.yml", "/path/to/conf.yml")
 	viper.BindEnv("membership.mail.token")
 }
