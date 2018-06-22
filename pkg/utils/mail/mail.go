@@ -50,7 +50,7 @@ func send(to, subject, html string) error {
 		},
 		Subject: subject,
 		From: &email{
-			Name:  "Pandira",
+			Name:  "Pandora",
 			Email: "pandora@mail.sys",
 		},
 		Content: []*content{

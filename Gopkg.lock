@@ -10,7 +10,7 @@
     "http",
     "util"
   ]
-  revision = "e9be214401cefd40e7d4e1aea6e8dadbb6e7a659"
+  revision = "c2828acddac40a50d823f272764e7023bc165d44"
 
 [[projects]]
   branch = "master"
@@ -58,7 +58,7 @@
   branch = "master"
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "e0b5abaaae35242fa74372f26c24107711702a4e"
+  revision = "cb4698366aa625048f3b815af6a0dea8aef9280a"
 
 [[projects]]
   branch = "master"
@@ -104,7 +104,7 @@
     "encoders/protobuf",
     "util"
   ]
-  revision = "d4841f2d6a3ab7745d940768bfbc2fe9d60c65ed"
+  revision = "e6b892254db684ec8635455c5483688691646083"
 
 [[projects]]
   name = "github.com/nats-io/nuid"
@@ -115,8 +115,8 @@
 [[projects]]
   name = "github.com/pelletier/go-toml"
   packages = ["."]
-  revision = "acdc4509485b587f5e675510c4f2c63e90ff68a8"
-  version = "v1.1.0"
+  revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
@@ -128,7 +128,7 @@
   branch = "master"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "ea8897e79973357ba785ac2533559a6297e83c44"
+  revision = "75068beb13ada9c0ddde611f678523fda7352650"
 
 [[projects]]
   name = "github.com/spf13/afero"
@@ -136,8 +136,8 @@
     ".",
     "mem"
   ]
-  revision = "63644898a8da0bc22138abf860edaf5277b6102e"
-  version = "v1.1.0"
+  revision = "787d034dfe70e44075ccc060d346146ef53270ad"
+  version = "v1.1.1"
 
 [[projects]]
   name = "github.com/spf13/cast"
@@ -146,10 +146,10 @@
   version = "v1.2.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
-  version = "v0.0.3"
+  revision = "1e58aa3361fd650121dceeedc399e7189c05674a"
 
 [[projects]]
   branch = "master"
@@ -170,10 +170,10 @@
   revision = "15738813a09db5c8e5b60a19d67d3f9bd38da3a4"
 
 [[projects]]
-  branch = "master"
   name = "github.com/stretchr/testify"
   packages = ["assert"]
-  revision = "c679ae2cc0cb27ec3293fea7e254e47386f05d69"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   branch = "master"
@@ -192,7 +192,7 @@
     "leveldb/table",
     "leveldb/util"
   ]
-  revision = "5d6fca44a948d2be89a9702de7717f0168403d3d"
+  revision = "0d5a0ceb10cf9ab89fdd744cc8c50a83134f6697"
 
 [[projects]]
   branch = "master"
@@ -202,7 +202,7 @@
     "ed25519/internal/edwards25519",
     "ssh/terminal"
   ]
-  revision = "ab813273cd59e1333f7ae7bff5d027d4aadf528c"
+  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
 
 [[projects]]
   branch = "master"
@@ -216,7 +216,7 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "dfa909b99c79129e1100513e5cd36307665e5723"
+  revision = "afe8f62b1d6bbd81f31868121a50b06d8188e1f9"
 
 [[projects]]
   branch = "master"
@@ -225,7 +225,7 @@
     "unix",
     "windows"
   ]
-  revision = "c11f84a56e43e20a78cee75a7c034031ecf57d1f"
+  revision = "63fc586f45fe72d95d5240a5d5eb95e6503907d3"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -252,7 +252,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "694d95ba50e67b2e363f3483057db5d4910c18f9"
+  revision = "80063a038e333bbe006c878e4c5ce4c74d055498"
 
 [[projects]]
   branch = "master"
@@ -262,15 +262,16 @@
     "balancer",
     "balancer/base",
     "balancer/roundrobin",
-    "channelz",
     "codes",
     "connectivity",
     "credentials",
     "encoding",
     "encoding/proto",
-    "grpclb/grpc_lb_v1/messages",
     "grpclog",
     "internal",
+    "internal/backoff",
+    "internal/channelz",
+    "internal/grpcrand",
     "keepalive",
     "metadata",
     "naming",
@@ -283,7 +284,7 @@
     "tap",
     "transport"
   ]
-  revision = "1fa3750c9a209f5efbdc2722d40f2657885af5e5"
+  revision = "ba63e52faf1676ef8bb26b6e0ba5acf78ff3b8e8"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"

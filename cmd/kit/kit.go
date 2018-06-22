@@ -3,7 +3,6 @@ package main
 import (
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/spacelavr/pandora/pkg/conf"
 	"github.com/spacelavr/pandora/pkg/discovery"
