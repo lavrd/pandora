@@ -39,8 +39,6 @@ var (
 				log.Fatal(err)
 			}
 
-			log.Debug(conf.Viper.Membership.Mail.Token)
-
 			log.SetVerbose(conf.Viper.Runtime.Verbose)
 		},
 
