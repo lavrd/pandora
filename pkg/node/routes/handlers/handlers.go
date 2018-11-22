@@ -9,6 +9,7 @@ import (
 	"pandora/pkg/node/routes/request"
 	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/http/response"
+	"pandora/pkg/utils/log"
 )
 
 // MemberCreateH
@@ -19,13 +20,18 @@ func MemberCreateH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := distribution.New().ProposeMember(opts); err != nil {
-		if err == errors.ErrAlreadyExists {
-			response.AlreadyExists("member").HTTP(w)
-		} else {
-			response.InternalServerError().HTTP(w)
-		}
+	_, err := distribution.New().ProposeMember(opts)
+	if err == errors.ErrAlreadyExists {
+		response.AlreadyExists("member").HTTP(w)
+		return
 	}
+	if err != nil {
+		log.Error(err)
+		response.InternalServerError().HTTP(w)
+		return
+	}
+
+	response.OK().HTTP(w)
 }
 
 // MemberFetchH
@@ -36,15 +42,18 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if mem, err := distribution.New().FetchMember(opts); err == nil {
-		response.JSON(mem).HTTP(w)
-	} else {
-		if err == errors.ErrNotFound {
-			response.NotFound("member").HTTP(w)
-		} else {
-			response.InternalServerError().HTTP(w)
-		}
+	mem, err := distribution.New().FetchMember(opts)
+	if err == errors.ErrNotFound {
+		response.NotFound("member").HTTP(w)
+		return
 	}
+	if err == nil {
+		log.Error(err)
+		response.InternalServerError().HTTP(w)
+		return
+	}
+
+	response.JSON(mem).HTTP(w)
 }
 
 // CertIssueH
@@ -55,13 +64,18 @@ func CertIssueH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := distribution.New().SignCert(opts); err != nil {
-		if err == errors.ErrNotFound {
-			response.NotFound("recipient").HTTP(w)
-		} else {
-			response.InternalServerError().HTTP(w)
-		}
+	err := distribution.New().SignCert(opts)
+	if err == errors.ErrNotFound {
+		response.NotFound("recipient").HTTP(w)
+		return
 	}
+	if err != nil {
+		log.Error(err)
+		response.InternalServerError().HTTP(w)
+		return
+	}
+
+	response.OK().HTTP(w)
 }
 
 // CertViewH
@@ -72,15 +86,19 @@ func CertViewH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cert, err := distribution.New().LoadCert(*opts.Id); err == nil {
-		response.JSON(cert).HTTP(w)
-	} else {
-		if err != errors.ErrNotFound {
-			response.NotFound("certificate").HTTP(w)
-		} else {
-			response.InternalServerError().HTTP(w)
-		}
+	cert, err := distribution.New().LoadCert(*opts.Id)
+	if err != errors.ErrNotFound {
+		response.NotFound("certificate").HTTP(w)
+		return
 	}
+	if err == nil {
+		log.Error(err)
+		response.InternalServerError().HTTP(w)
+		return
+	}
+
+	response.JSON(cert).HTTP(w)
+
 }
 
 // CertVerifyH
@@ -91,8 +109,9 @@ func CertVerifyH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ok := distribution.New().VerifyCert(opts); ok {
-		response.JSON(nil).HTTP(w)
+	ok := distribution.New().VerifyCert(opts)
+	if ok {
+		response.OK().HTTP(w)
 	} else {
 		response.InternalServerError().HTTP(w)
 	}

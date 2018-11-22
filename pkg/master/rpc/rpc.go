@@ -10,7 +10,7 @@ import (
 	"pandora/pkg/conf"
 	"pandora/pkg/master/env"
 	"pandora/pkg/pb"
-	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/network"
 )
 
@@ -53,8 +53,7 @@ func (*rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, er
 func (rpc *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	s := grpc.NewServer(grpc.Creds(creds))
@@ -64,14 +63,12 @@ func (rpc *rpc) Listen() error {
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Master.Endpoint))
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	defer listen.Close()
 
 	if err := s.Serve(listen); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -81,14 +78,12 @@ func (rpc *rpc) Listen() error {
 func (*rpc) InitMaster() (*pb.BrokerOpts, error) {
 	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	cc, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer cc.Close()
 
@@ -96,8 +91,7 @@ func (*rpc) InitMaster() (*pb.BrokerOpts, error) {
 
 	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Conf.Master.Endpoint})
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return opts, nil

@@ -13,9 +13,9 @@ var (
 
 	// CertRoutes
 	CertRoutes = http.Routes{
-		{Path: "/issue", Method: http.Post, Middleware: nil, Handler: MemberFetchH},
-		{Path: "/view", Method: http.Post, Middleware: nil, Handler: MemberFetchH},
-		{Path: "/verify", Method: http.Post, Middleware: nil, Handler: MemberFetchH},
+		{Path: "/issue", Method: http.Post, Middleware: nil, Handler: CertIssueH},
+		{Path: "/view", Method: http.Post, Middleware: nil, Handler: CertViewH},
+		{Path: "/verify", Method: http.Post, Middleware: nil, Handler: CertVerifyH},
 	}
 
 	// DashboardRoutes

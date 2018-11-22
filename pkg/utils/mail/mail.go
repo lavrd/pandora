@@ -63,14 +63,12 @@ func send(to, subject, html string) error {
 
 	buf, err := json.Marshal(mail)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	req, err := http.NewRequest(http.MethodPost, "https://api.sendgrid.com/v3/mail/send", bytes.NewBuffer(buf))
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	defer req.Body.Close()
 
@@ -79,8 +77,7 @@ func send(to, subject, html string) error {
 
 	res, err := (&http.Client{}).Do(req)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	defer res.Body.Close()
 

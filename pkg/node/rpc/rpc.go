@@ -29,14 +29,12 @@ type RPC struct {
 func New() (*RPC, error) {
 	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	discoveryCC, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
@@ -55,23 +53,20 @@ loop:
 			}
 			break loop
 		case <-timer:
-			log.Error(err)
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 	}
 
 	membershipCC, err := grpc.Dial(ino.Membership, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	membershipC := pb.NewMembershipClient(membershipCC)
 
 	masterCC, err := grpc.Dial(ino.Master, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	masterC := pb.NewMasterClient(masterCC)
@@ -89,13 +84,13 @@ loop:
 // Close close rpc connection with other rpc
 func (rpc *RPC) Close() {
 	if err := rpc.membershipCC.Close(); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
 	}
 	if err := rpc.discoveryCC.Close(); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
 	}
 	if err := rpc.masterCC.Close(); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
 	}
 }
 
@@ -103,8 +98,7 @@ func (rpc *RPC) Close() {
 func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	key, err := rpc.membership.ProposeMember(context.Background(), candidate);
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	return key, nil
 }
@@ -118,8 +112,7 @@ func (rpc *RPC) SignCert(cert *pb.Cert) error {
 			}
 		}
 
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	return nil
 }
@@ -134,8 +127,7 @@ func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 			}
 		}
 
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return r, nil
@@ -145,14 +137,12 @@ func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 func (rpc *RPC) InitNode(key *pb.PublicKey) (*pb.MasterChain, *pb.BrokerOpts, error) {
 	ino, err := rpc.discovery.InitNode(context.Background(), &pb.Empty{})
 	if err != nil {
-		log.Error(err)
-		return nil, nil, err
+		return nil, nil, errors.WithStack(err)
 	}
 
 	mc, err := rpc.master.InitNode(context.Background(), key)
 	if err != nil {
-		log.Error(err)
-		return nil, nil, err
+		return nil, nil, errors.WithStack(err)
 	}
 
 	return mc, ino.Broker, nil

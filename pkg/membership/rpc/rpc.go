@@ -28,14 +28,12 @@ type RPC struct {
 func New() (*RPC, error) {
 	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	discoveryCC, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer discoveryCC.Close()
 
@@ -58,15 +56,13 @@ loop:
 			}
 			break loop
 		case <-timer:
-			log.Error(err)
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 	}
 
 	masterCC, err := grpc.Dial(ino.Master, grpc.WithTransportCredentials(creds))
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	masterC := pb.NewMasterClient(masterCC)
@@ -77,7 +73,7 @@ loop:
 // Close close connection with others rpc
 func (rpc *RPC) Close() {
 	if err := rpc.masterCC.Close(); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
 	}
 }
 
@@ -97,12 +93,11 @@ func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 		if err == errors.ErrNotFound {
 			return &pb.Empty{}, status.Error(codes.NotFound, codes.NotFound.String())
 		}
-		return &pb.Empty{}, err
+		return &pb.Empty{}, errors.WithStack(err)
 	}
 
 	if _, err := rpc.master.ProposeCert(context.Background(), cert); err != nil {
-		log.Error(err)
-		return &pb.Empty{}, err
+		return &pb.Empty{}, errors.WithStack(err)
 	}
 
 	return &pb.Empty{}, nil
@@ -124,8 +119,7 @@ func (*RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, erro
 func (rpc *RPC) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	s := grpc.NewServer(grpc.Creds(creds))
@@ -135,14 +129,12 @@ func (rpc *RPC) Listen() error {
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Membership.Endpoint))
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	defer listen.Close()
 
 	if err := s.Serve(listen); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil

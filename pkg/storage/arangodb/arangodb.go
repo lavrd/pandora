@@ -7,7 +7,6 @@ import (
 	"github.com/arangodb/go-driver/http"
 
 	"pandora/pkg/utils/errors"
-	"pandora/pkg/utils/log"
 )
 
 // Arangodb
@@ -22,8 +21,7 @@ func New(endpoint, database, user, password string) (*Arangodb, error) {
 		Endpoints: []string{endpoint},
 	})
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	client, err := driver.NewClient(driver.ClientConfig{
@@ -31,14 +29,13 @@ func New(endpoint, database, user, password string) (*Arangodb, error) {
 		Authentication: driver.BasicAuthentication(user, password),
 	})
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	storage := &Arangodb{database: database, client: client}
 
 	if err = storage.Init(); err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return storage, nil
@@ -67,14 +64,12 @@ func (s *Arangodb) InitDatabase(db *driver.Database) error {
 
 	ok, err := s.client.DatabaseExists(ctx, s.database)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	if !ok {
 		*db, err = s.client.CreateDatabase(ctx, s.database, nil)
 		if err != nil {
-			log.Error(err)
-			return err
+			return errors.WithStack(err)
 		}
 	} else {
 		*db, err = s.Database()
@@ -92,14 +87,12 @@ func (s *Arangodb) InitCollections(db *driver.Database) error {
 
 	ok, err := (*db).CollectionExists(ctx, CollectionMember)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	if !ok {
 		_, err = (*db).CreateCollection(ctx, CollectionMember, nil)
 		if err != nil {
-			log.Error(err)
-			return err
+			return errors.WithStack(err)
 		}
 	}
 
@@ -117,8 +110,7 @@ func (s *Arangodb) Clean() error {
 
 	err = db.Remove(ctx)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -130,8 +122,7 @@ func (s *Arangodb) Database() (driver.Database, error) {
 
 	db, err := s.client.Database(ctx, s.database)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return db, nil
@@ -148,8 +139,7 @@ func (s *Arangodb) Collection(name string) (driver.Collection, error) {
 
 	col, err := db.Collection(ctx, name)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return col, nil
@@ -166,8 +156,7 @@ func (s *Arangodb) Exec(query string, vars map[string]interface{}, document inte
 
 	cursor, err := db.Query(driver.WithQueryCount(ctx), query, vars)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer cursor.Close()
 
@@ -181,8 +170,7 @@ func (s *Arangodb) Exec(query string, vars map[string]interface{}, document inte
 			if driver.IsNoMoreDocuments(err) {
 				return &meta, nil
 			}
-			log.Error(err)
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 	}
 }
@@ -198,8 +186,7 @@ func (s *Arangodb) Write(collection string, document interface{}) (*driver.Docum
 
 	meta, err := col.CreateDocument(ctx, document)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &meta, nil

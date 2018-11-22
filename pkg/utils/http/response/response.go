@@ -22,6 +22,12 @@ type Template struct {
 	tpl *template.Template
 }
 
+// ContentResponse
+type ContentResponse struct {
+	Data        []byte
+	ContentType string
+}
+
 // Execute execute template
 func Execute(files string) *Template {
 	tpl, err := template.ParseFiles(files)
@@ -35,12 +41,6 @@ func AlreadyExists(message string) *Response {
 		Status:  http.StatusText(http.StatusConflict),
 		Message: message,
 	}
-}
-
-// ContentResponse
-type ContentResponse struct {
-	Data        []byte
-	ContentType string
 }
 
 // BadParameter returns bad parameter response
@@ -57,15 +57,6 @@ func NotFound(message string) *Response {
 	return &Response{
 		Code:    http.StatusNotFound,
 		Status:  http.StatusText(http.StatusNotFound),
-		Message: message,
-	}
-}
-
-// Forbidden returns forbidden response
-func Forbidden(message string) *Response {
-	return &Response{
-		Code:    http.StatusForbidden,
-		Status:  http.StatusText(http.StatusForbidden),
 		Message: message,
 	}
 }
@@ -89,15 +80,6 @@ func JSON(data interface{}) *ContentResponse {
 	}
 }
 
-// Unauthorized returns unauthorized response
-func Unauthorized() *Response {
-	return &Response{
-		Code:    http.StatusUnauthorized,
-		Status:  http.StatusText(http.StatusUnauthorized),
-		Message: "You are not logged in. Please log in",
-	}
-}
-
 // InternalServerError returns interval server error response
 func InternalServerError() *Response {
 	return &Response{
@@ -116,7 +98,6 @@ func InvalidJSON(message string) *Response {
 	}
 }
 
-// HTTP send http content response
 func (r *ContentResponse) HTTP(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", r.ContentType)
 	w.WriteHeader(http.StatusOK)

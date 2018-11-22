@@ -12,6 +12,7 @@ import (
 	"pandora/pkg/master"
 	"pandora/pkg/membership"
 	"pandora/pkg/node"
+	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/log"
 )
 
@@ -23,7 +24,7 @@ var (
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			abs, err := filepath.Abs(cfg)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal(errors.WithStack(err))
 			}
 
 			base := filepath.Base(abs)
@@ -33,11 +34,11 @@ var (
 			viper.AddConfigPath(path)
 
 			if err := viper.ReadInConfig(); err != nil {
-				log.Fatal(err)
+				log.Fatal(errors.WithStack(err))
 			}
 
 			if err := viper.Unmarshal(conf.Conf); err != nil {
-				log.Fatal(err)
+				log.Fatal(errors.WithStack(err))
 			}
 
 			log.SetVerbose(conf.Conf.Runtime.Verbose)
@@ -94,6 +95,6 @@ func init() {
 
 func main() {
 	if err := CLI.Execute(); err != nil {
-		log.Fatal(err)
+		log.Fatal(errors.WithStack(err))
 	}
 }

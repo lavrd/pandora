@@ -7,7 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 
 	"pandora/pkg/pb"
-	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
 )
 
 const (
@@ -20,13 +20,11 @@ func (ldb *Leveldb) Put(cert *pb.Cert) error {
 
 	buf, err := proto.Marshal(cert)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	if err := ldb.db.Put(k, buf, nil); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -38,15 +36,13 @@ func (ldb *Leveldb) Load(id string) (*pb.Cert, error) {
 
 	buf, err := ldb.db.Get(k, nil)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	cert := &pb.Cert{}
 
 	if err := proto.Unmarshal(buf, cert); err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return cert, nil

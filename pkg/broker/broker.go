@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/go-nats/encoders/protobuf"
 
 	"pandora/pkg/conf"
-	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
 )
 
 const (
@@ -25,8 +25,7 @@ type Broker struct {
 func New(endpoint, user, password string) (*Broker, error) {
 	cert, err := tls.LoadX509KeyPair(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	tlsConfig := &tls.Config{
@@ -41,14 +40,12 @@ func New(endpoint, user, password string) (*Broker, error) {
 		nats.Secure(tlsConfig),
 	)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	conn, err := nats.NewEncodedConn(c, protobuf.PROTOBUF_ENCODER)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &Broker{conn}, nil
@@ -62,8 +59,7 @@ func (b *Broker) Close() {
 // Subscribe bind receive channel to subject
 func (b *Broker) Subscribe(subject string, ch interface{}) error {
 	if _, err := b.conn.BindRecvChan(subject, ch); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	return nil
 }
@@ -71,8 +67,7 @@ func (b *Broker) Subscribe(subject string, ch interface{}) error {
 // Publish bind send channel to subject
 func (b *Broker) Publish(subject string, ch interface{}) error {
 	if err := b.conn.BindSendChan(subject, ch); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	return nil
 }

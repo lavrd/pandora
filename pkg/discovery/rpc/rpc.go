@@ -11,7 +11,7 @@ import (
 
 	"pandora/pkg/conf"
 	"pandora/pkg/pb"
-	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/network"
 )
 
@@ -69,8 +69,7 @@ func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts
 func (rpc *rpc) Listen() error {
 	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	s := grpc.NewServer(grpc.Creds(creds))
@@ -80,14 +79,12 @@ func (rpc *rpc) Listen() error {
 
 	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Discovery.Endpoint))
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 	defer listen.Close()
 
 	if err := s.Serve(listen); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil

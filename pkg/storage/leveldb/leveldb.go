@@ -5,6 +5,7 @@ import (
 
 	"github.com/syndtr/goleveldb/leveldb"
 
+	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/log"
 )
 
@@ -18,8 +19,7 @@ type Leveldb struct {
 func New(filepath string) (*Leveldb, error) {
 	db, err := leveldb.OpenFile(filepath, nil)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &Leveldb{
@@ -31,15 +31,14 @@ func New(filepath string) (*Leveldb, error) {
 // Close close conn with leveldb
 func (ldb *Leveldb) Close() {
 	if err := ldb.db.Close(); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
 	}
 }
 
 // Clean clean leveldb
 func (ldb *Leveldb) Clean() error {
 	if err := os.RemoveAll(ldb.filepath); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return nil

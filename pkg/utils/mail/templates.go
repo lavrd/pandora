@@ -5,7 +5,7 @@ import (
 	"html/template"
 
 	"pandora/pkg/pb"
-	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
 )
 
 func execute(to, subject, path string, data interface{}) error {
@@ -13,13 +13,11 @@ func execute(to, subject, path string, data interface{}) error {
 
 	tpl, err := template.ParseFiles(path)
 	if err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	if err = tpl.Execute(&buf, data); err != nil {
-		log.Error(err)
-		return err
+		return errors.WithStack(err)
 	}
 
 	return send(to, subject, buf.String())
