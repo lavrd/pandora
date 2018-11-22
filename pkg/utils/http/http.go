@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"pandora/pkg/conf"
 	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/log"
 )
@@ -49,6 +50,8 @@ func Listen(endpoint string, subRoutes SubRoutes, static string) error {
 		}
 	}
 
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(static))))
+
 	var h http.Handler
 	h = handlers.LoggingHandler(os.Stdout, r)
 
@@ -61,8 +64,8 @@ func Listen(endpoint string, subRoutes SubRoutes, static string) error {
 		WriteTimeout:      time.Second * 5,
 	}
 
-	log.Debugf("listen http server on %s", endpoint)
-	return errors.WithStack(srv.ListenAndServe())
+	log.Debugf("listen https server on %s", endpoint)
+	return errors.WithStack(srv.ListenAndServeTLS(conf.Conf.TLS.Cert, conf.Conf.TLS.Key))
 }
 
 func handle(h http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {

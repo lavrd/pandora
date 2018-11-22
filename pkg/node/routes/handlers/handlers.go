@@ -47,7 +47,7 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 		response.NotFound("member").HTTP(w)
 		return
 	}
-	if err == nil {
+	if err != nil {
 		log.Error(err)
 		response.InternalServerError().HTTP(w)
 		return
@@ -87,11 +87,11 @@ func CertViewH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cert, err := distribution.New().LoadCert(*opts.Id)
-	if err != errors.ErrNotFound {
+	if err == errors.ErrNotFound {
 		response.NotFound("certificate").HTTP(w)
 		return
 	}
-	if err == nil {
+	if err != nil {
 		log.Error(err)
 		response.InternalServerError().HTTP(w)
 		return

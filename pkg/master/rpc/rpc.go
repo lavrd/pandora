@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -89,9 +90,24 @@ func (*rpc) InitMaster() (*pb.BrokerOpts, error) {
 
 	c := pb.NewDiscoveryClient(cc)
 
-	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Conf.Master.Endpoint})
-	if err != nil {
-		return nil, errors.WithStack(err)
+	var (
+		opts  = &pb.BrokerOpts{}
+		tick  = time.NewTicker(time.Millisecond * 500).C
+		timer = time.NewTimer(time.Second * 3).C
+	)
+
+loop:
+	for {
+		select {
+		case <-tick:
+			opts, err = c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Conf.Master.Endpoint})
+			if err != nil {
+				continue
+			}
+			break loop
+		case <-timer:
+			return nil, errors.WithStack(err)
+		}
 	}
 
 	return opts, nil

@@ -4,7 +4,7 @@ services:
     container_name: pandora-arangodb
     image: arangodb
     ports:
-      - 28015:28015
+      - 8529:8529
     environment:
       - ARANGO_ROOT_PASSWORD=$ARANGO_ROOT_PASSWORD
     networks:

@@ -72,7 +72,10 @@ func OK() *Response {
 
 // JSON returns json response
 func JSON(data interface{}) *ContentResponse {
-	buf, _ := json.Marshal(data)
+	buf, err := json.Marshal(data)
+	if err != nil {
+		log.Error(errors.WithStack(err))
+	}
 
 	return &ContentResponse{
 		Data:        buf,

@@ -16,12 +16,12 @@ sendgrid:
 arangodb:
   endpoint: http://localhost:8529
   user: root
-  password: pandora
+  password: arbuz
   database: pandora
 
 # membership
 membership:
-  endpoint: 127.0.0.1:200s3
+  endpoint: 127.0.0.1:2003
 
 # master
 master:
@@ -39,8 +39,8 @@ node:
 # nats:
 nats:
   endpoint: nats://127.0.0.1:4222
-  user: root
-  password: root
+  user: pandora
+  password: arbuz
 
 # discovery
 discovery:

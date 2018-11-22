@@ -96,10 +96,27 @@ func (rpc *RPC) Close() {
 
 // ProposeMember propose member over rpc
 func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
-	key, err := rpc.membership.ProposeMember(context.Background(), candidate);
-	if err != nil {
-		return nil, errors.WithStack(err)
+	var (
+		err   error
+		key   = &pb.PublicKey{}
+		tick  = time.NewTicker(time.Millisecond * 500).C
+		timer = time.NewTimer(time.Second * 3).C
+	)
+
+loop:
+	for {
+		select {
+		case <-tick:
+			key, err = rpc.membership.ProposeMember(context.Background(), candidate);
+			if err != nil {
+				continue
+			}
+			break loop
+		case <-timer:
+			return nil, errors.WithStack(err)
+		}
 	}
+
 	return key, nil
 }
 
