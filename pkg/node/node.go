@@ -5,19 +5,19 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/blockchain"
-	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/node/distribution"
-	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/node/events"
-	"github.com/spacelavr/pandora/pkg/node/routes"
-	"github.com/spacelavr/pandora/pkg/node/routes/request"
-	"github.com/spacelavr/pandora/pkg/node/rpc"
-	"github.com/spacelavr/pandora/pkg/storage/leveldb"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/http"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/blockchain"
+	"pandora/pkg/broker"
+	"pandora/pkg/conf"
+	"pandora/pkg/node/distribution"
+	"pandora/pkg/node/env"
+	"pandora/pkg/node/events"
+	"pandora/pkg/node/routes"
+	"pandora/pkg/node/routes/request"
+	"pandora/pkg/node/rpc"
+	"pandora/pkg/storage/leveldb"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/http"
+	"pandora/pkg/utils/log"
 )
 
 const (
@@ -35,11 +35,11 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	candidate := &request.Candidate{
-		Name:  &conf.Viper.Node.Meta.Name,
-		Email: &conf.Viper.Node.Meta.Email,
+		Name:  &conf.Conf.Node.Meta.Name,
+		Email: &conf.Conf.Node.Meta.Email,
 	}
 	if err := candidate.Validate(); err != nil {
-		log.Fatal(err.Message)
+		log.Fatal(errors.New(err.Message))
 	}
 
 	r, err := rpc.New()
@@ -72,14 +72,14 @@ func Daemon() bool {
 	}
 	defer brk.Close()
 
-	stg, err := leveldb.New(conf.Viper.Node.Database.FilePath)
+	stg, err := leveldb.New(conf.Conf.Node.Leveldb)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer func() {
 		stg.Close()
 
-		if conf.Viper.Runtime.Clean {
+		if conf.Conf.Runtime.Clean {
 			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}
@@ -102,7 +102,7 @@ func Daemon() bool {
 	}()
 
 	go func() {
-		if err := http.Listen(conf.Viper.Node.Endpoint, routes.Routes, "./dashboard/static/"); err != nil {
+		if err := http.Listen(conf.Conf.Node.Endpoint, routes.SubRoutes, "./dashboard/static/"); err != nil {
 			log.Fatal(err)
 		}
 	}()

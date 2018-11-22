@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/log"
 )
 
 func execute(to, subject, path string, data interface{}) error {
@@ -25,6 +25,7 @@ func execute(to, subject, path string, data interface{}) error {
 	return send(to, subject, buf.String())
 }
 
+// SendCertificate send certificate mail
 func SendCertificate(to string, cert *pb.Cert) error {
 	const (
 		Subject  = "Certificate"
@@ -39,6 +40,7 @@ func SendCertificate(to string, cert *pb.Cert) error {
 	)
 }
 
+// SendCredentials send credentials mail
 func SendCredentials(to string, publicKey *pb.PublicKey) error {
 	const (
 		Subject  = "Credentials"

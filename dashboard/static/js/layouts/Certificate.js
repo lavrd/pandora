@@ -5,18 +5,18 @@ class CertLayout extends React.Component {
       state: STATE.FETCH,
       pending: false,
       error: null,
-      success: '',
+      success: "",
       data: this.EMPTY_DATA,
       cert: null,
-      verifyStatus: VERIFY_STATUS.NONE
+      verifyStatus: CERT_STATUS.NONE
     };
   }
 
   EMPTY_DATA = {
-    title: '',
-    description: '',
-    publicKey: '',
-    id: ''
+    title: "",
+    description: "",
+    publicKey: "",
+    id: ""
   };
 
   handleState = (e, key) => {
@@ -31,15 +31,21 @@ class CertLayout extends React.Component {
     this.setState({data: {...this.state.data, [name]: value}});
   };
 
-  handleCreate = () => {
-    api.CertCreate({
-      public_Key: this.state.data.publicKey,
-      title: this.state.data.title,
-      description: this.state.data.description
-    })
-      .then(() => this.setState({success: 'Certificate successfully confirmed', pending: false}))
-      .catch((error) => this.setState({error: error, pending: false}));
+  handleCreate = async () => {
     this.setState({pending: true});
+
+    try {
+      await api.CertCreate({
+        public_Key: this.state.data.publicKey,
+        title: this.state.data.title,
+        description: this.state.data.description
+      });
+      this.setState({success: "Certificate successfully confirmed"});
+    } catch (e) {
+      this.setState({error: e});
+    }
+
+    this.setState({pending: false});
   };
 
   handleClose = () => {
@@ -47,25 +53,35 @@ class CertLayout extends React.Component {
       cert: null,
       error: null,
       success: null,
-      verifyStatus: VERIFY_STATUS.NONE,
+      verifyStatus: CERT_STATUS.NONE,
       data: this.EMPTY_DATA
     });
   };
 
-  handleVerify = () => {
-    api.CertVerify({id: this.state.cert.id})
-      .then(() => this.setState({verifyStatus: VERIFY_STATUS.VERIFIED, pending: false}))
-      .catch(() => this.setState({verifyStatus: VERIFY_STATUS.FAILED, pending: false}));
+  handleVerify = async () => {
     this.setState({pending: true});
+
+    try {
+      await api.CertVerify({id: this.state.cert.id});
+      this.setState({verifyStatus: CERT_STATUS.VERIFIED});
+    } catch (e) {
+      this.setState({verifyStatus: CERT_STATUS.FAILED});
+    }
+
+    this.setState({pending: false});
   };
 
-  handleFetch = () => {
-    api.CertFetch({
-      id: this.state.data.id
-    })
-      .then((cert) => this.setState({cert: cert, pending: false}))
-      .catch((error) => this.setState({error: error, pending: false}));
+  handleFetch = async () => {
     this.setState({pending: true});
+
+    try {
+      const cert = await api.CertFetch({id: this.state.data.id});
+      this.setState({cert: cert, pending: false});
+    } catch (e) {
+      this.setState({error: e, pending: false});
+    }
+
+    this.setState({pending: false});
   };
 
   render() {
@@ -86,7 +102,7 @@ class CertLayout extends React.Component {
                   key={index}
                 >
                   <a
-                    className={`nav-link ${this.state.state === key && 'active'}`}
+                    className={`nav-link ${this.state.state === key && "active"}`}
                     onClick={(e) => this.handleState(e, key)}
                     href="#"
                   >
@@ -163,8 +179,8 @@ const CertCard = ({cert, close, verify, verifyStatus}) => (
     <div className="card-footer d-flex align-items-center justify-content-between">
       <button
         onClick={verify}
-        className={`btn float-left ${verifyStatus === VERIFY_STATUS.NONE ?
-          'btn-primary' : verifyStatus === VERIFY_STATUS.VERIFIED ? 'btn-success' : 'btn-danger' }`}
+        className={`btn float-left ${verifyStatus === CERT_STATUS.NONE ?
+          "btn-primary" : verifyStatus === CERT_STATUS.VERIFIED ? "btn-success" : "btn-danger"}`}
       >
         <i className="fas fa-check"/>
       </button>

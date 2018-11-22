@@ -8,17 +8,20 @@ tls:
   cert: ./contrib/tls/cert.pem
   key: ./contrib/tls/key.pem
 
+# mail
+sendgrid:
+  active: true
+  token: token
+
+arangodb:
+  endpoint: http://localhost:8529
+  user: root
+  password: pandora
+  database: pandora
+
 # membership
 membership:
-  mail:
-    send: true
-    token: env
-  database:
-    endpoint: http://127.0.0.1:8529
-    user: root
-    password: root
-    database: pandora
-  endpoint: 127.0.0.1:2003
+  endpoint: 127.0.0.1:200s3
 
 # master
 master:
@@ -26,19 +29,19 @@ master:
 
 # node
 node:
-  database:
-    filepath: ./contrib/node.db
-  dashboard:
-    template: ./dashboard/index.html
+  leveldb: ./contrib/node.db
+  dashboard: ./dashboard/index.html
   meta:
     name: Pandora university
     email: pandora@mail.sys
   endpoint: 127.0.0.1:2004
 
+# nats:
+nats:
+  endpoint: nats://127.0.0.1:4222
+  user: root
+  password: root
+
 # discovery
 discovery:
-  broker:
-    endpoint: nats://127.0.0.1:4222
-    user: root
-    password: root
   endpoint: 127.0.0.1:2001

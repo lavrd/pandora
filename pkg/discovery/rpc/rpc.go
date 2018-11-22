@@ -4,14 +4,15 @@ import (
 	"context"
 	"net"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/log"
-	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
+
+	"pandora/pkg/conf"
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/network"
 )
 
 type rpc struct {
@@ -20,21 +21,24 @@ type rpc struct {
 	broker     *pb.BrokerOpts
 }
 
+// New returns new discovery rpc
 func New() *rpc {
 	return &rpc{
 		broker: &pb.BrokerOpts{
-			Endpoint: conf.Viper.Discovery.Broker.Endpoint,
-			User:     conf.Viper.Discovery.Broker.User,
-			Password: conf.Viper.Discovery.Broker.Password,
+			Endpoint: conf.Conf.NATS.Endpoint,
+			User:     conf.Conf.NATS.User,
+			Password: conf.Conf.NATS.Password,
 		},
 	}
 }
 
+// InitMaster init master service
 func (rpc *rpc) InitMaster(ctx context.Context, in *pb.Endpoint) (*pb.BrokerOpts, error) {
 	rpc.master = in.Endpoint
 	return rpc.broker, nil
 }
 
+// InitMembership init membership service
 func (rpc *rpc) InitMembership(ctx context.Context, in *pb.Endpoint) (*pb.InitNetworkOpts, error) {
 	rpc.membership = in.Endpoint
 
@@ -48,6 +52,7 @@ func (rpc *rpc) InitMembership(ctx context.Context, in *pb.Endpoint) (*pb.InitNe
 	}, nil
 }
 
+// InitNode init node services
 func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts, error) {
 	if rpc.master == "" || rpc.membership == "" {
 		return &pb.InitNetworkOpts{}, status.Error(codes.Unavailable, codes.Unavailable.String())
@@ -60,8 +65,9 @@ func (rpc *rpc) InitNode(ctx context.Context, in *pb.Empty) (*pb.InitNetworkOpts
 	}, nil
 }
 
+// Listen listen for rpc requests
 func (rpc *rpc) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -72,7 +78,7 @@ func (rpc *rpc) Listen() error {
 
 	pb.RegisterDiscoveryServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Discovery.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Discovery.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

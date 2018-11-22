@@ -1,7 +1,7 @@
 package env
 
 import (
-	"github.com/spacelavr/pandora/pkg/storage/arangodb"
+	"pandora/pkg/storage/arangodb"
 )
 
 var (
@@ -9,13 +9,15 @@ var (
 )
 
 type env struct {
-	storage *arangodb.ArangoDB
+	storage *arangodb.Arangodb
 }
 
-func SetStorage(stg *arangodb.ArangoDB) {
+// SetStorage set storage to env
+func SetStorage(stg *arangodb.Arangodb) {
 	e.storage = stg
 }
 
-func GetStorage() *arangodb.ArangoDB {
+// GetStorage get storage from env
+func GetStorage() *arangodb.Arangodb {
 	return e.storage
 }

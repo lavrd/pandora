@@ -3,38 +3,44 @@ package leveldb
 import (
 	"os"
 
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/syndtr/goleveldb/leveldb"
+
+	"pandora/pkg/utils/log"
 )
 
-type LevelDB struct {
+// Leveldb
+type Leveldb struct {
 	filepath string
 	db       *leveldb.DB
 }
 
-func New(filepath string) (*LevelDB, error) {
+// New returns new leveldb
+func New(filepath string) (*Leveldb, error) {
 	db, err := leveldb.OpenFile(filepath, nil)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	return &LevelDB{
+	return &Leveldb{
 		db:       db,
 		filepath: filepath,
 	}, nil
 }
 
-func (ldb *LevelDB) Close() {
+// Close close conn with leveldb
+func (ldb *Leveldb) Close() {
 	if err := ldb.db.Close(); err != nil {
 		log.Error(err)
 	}
 }
 
-func (ldb *LevelDB) Clean() error {
+// Clean clean leveldb
+func (ldb *Leveldb) Clean() error {
 	if err := os.RemoveAll(ldb.filepath); err != nil {
 		log.Error(err)
 		return err
 	}
+
 	return nil
 }

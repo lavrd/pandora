@@ -3,23 +3,26 @@ package distribution
 import (
 	"encoding/hex"
 
-	"github.com/spacelavr/pandora/pkg/membership/env"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/storage/arangodb"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/ed25519"
-	"github.com/spacelavr/pandora/pkg/utils/crypto/sha256"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/mail"
+	"pandora/pkg/membership/env"
+	"pandora/pkg/pb"
+	"pandora/pkg/storage/arangodb"
+	"pandora/pkg/utils/crypto/ed25519"
+	"pandora/pkg/utils/crypto/sha256"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/mail"
 )
 
+// Distribution
 type Distribution struct {
-	storage *arangodb.ArangoDB
+	storage *arangodb.Arangodb
 }
 
+// New returns new membership distribution
 func New() *Distribution {
 	return &Distribution{storage: env.GetStorage()}
 }
 
+// ConfirmMember confirm member
 func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	mem, err := d.storage.MemberFetchByEmail(candidate.Email)
 	if err != nil && err != errors.ErrNotFound {
@@ -51,10 +54,12 @@ func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, e
 	return mem.PublicKey, nil
 }
 
+// MemberFetch fetch member
 func (d *Distribution) MemberFetch(key *pb.PublicKey) (*pb.Member, error) {
 	return d.storage.MemberFetchByPublic(key)
 }
 
+// SignCert sign cert
 func (d *Distribution) SignCert(cert *pb.Cert) (*pb.Cert, error) {
 	recipient, err := d.storage.MemberFetchByPublic(cert.Recipient.PublicKey)
 	if err != nil {

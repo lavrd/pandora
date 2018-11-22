@@ -3,7 +3,7 @@ package validator
 import (
 	"regexp"
 
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/utils/log"
 )
 
 // IsEmail checking for valid email

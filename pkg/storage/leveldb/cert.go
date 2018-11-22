@@ -5,16 +5,18 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/log"
 )
 
 const (
 	PrefixCert = "cert-"
 )
 
-func (ldb *LevelDB) Put(cert *pb.Cert) error {
-	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, cert.Id))
+// Put put cert in leveldb
+func (ldb *Leveldb) Put(cert *pb.Cert) error {
+	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, cert.ID))
 
 	buf, err := proto.Marshal(cert)
 	if err != nil {
@@ -30,7 +32,8 @@ func (ldb *LevelDB) Put(cert *pb.Cert) error {
 	return nil
 }
 
-func (ldb *LevelDB) Load(id string) (*pb.Cert, error) {
+// Load load cert from leveldb
+func (ldb *Leveldb) Load(id string) (*pb.Cert, error) {
 	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, id))
 
 	buf, err := ldb.db.Get(k, nil)

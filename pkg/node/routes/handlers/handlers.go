@@ -3,103 +3,107 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/node/distribution"
-	"github.com/spacelavr/pandora/pkg/node/routes/request"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/http/response"
+	"pandora/pkg/conf"
+	"pandora/pkg/node/distribution"
+	"pandora/pkg/node/env"
+	"pandora/pkg/node/routes/request"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/http/response"
 )
 
-func HealthH(w http.ResponseWriter, _ *http.Request) {
-	response.NotImplemented().Http(w)
-}
-
+// MemberCreateH
 func MemberCreateH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.Candidate{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
-		err.Http(w)
+		err.HTTP(w)
 		return
 	}
 
 	if _, err := distribution.New().ProposeMember(opts); err != nil {
 		if err == errors.ErrAlreadyExists {
-			response.AlreadyExists("member").Http(w)
+			response.AlreadyExists("member").HTTP(w)
 		} else {
-			response.InternalServerError().Http(w)
+			response.InternalServerError().HTTP(w)
 		}
 	}
 }
 
+// MemberFetchH
 func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.MemberFetch{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
-		err.Http(w)
+		err.HTTP(w)
 		return
 	}
 
 	if mem, err := distribution.New().FetchMember(opts); err == nil {
-		response.Ok(mem).Http(w)
+		response.JSON(mem).HTTP(w)
 	} else {
 		if err == errors.ErrNotFound {
-			response.NotFound("member").Http(w)
+			response.NotFound("member").HTTP(w)
 		} else {
-			response.InternalServerError().Http(w)
+			response.InternalServerError().HTTP(w)
 		}
 	}
 }
 
+// CertIssueH
 func CertIssueH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.CertIssue{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
-		err.Http(w)
+		err.HTTP(w)
 		return
 	}
 
 	if err := distribution.New().SignCert(opts); err != nil {
 		if err == errors.ErrNotFound {
-			response.NotFound("recipient").Http(w)
+			response.NotFound("recipient").HTTP(w)
 		} else {
-			response.InternalServerError().Http(w)
+			response.InternalServerError().HTTP(w)
 		}
 	}
 }
 
+// CertViewH
 func CertViewH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.CertView{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
-		err.Http(w)
+		err.HTTP(w)
 		return
 	}
 
 	if cert, err := distribution.New().LoadCert(*opts.Id); err == nil {
-		response.Ok(cert).Http(w)
+		response.JSON(cert).HTTP(w)
 	} else {
 		if err != errors.ErrNotFound {
-			response.NotFound("certificate").Http(w)
+			response.NotFound("certificate").HTTP(w)
 		} else {
-			response.InternalServerError().Http(w)
+			response.InternalServerError().HTTP(w)
 		}
 	}
 }
 
+// CertVerifyH
 func CertVerifyH(w http.ResponseWriter, r *http.Request) {
 	opts := &request.CertVerify{}
 	if err := opts.DecodeAndValidate(r.Body); err != nil {
-		err.Http(w)
+		err.HTTP(w)
 		return
 	}
 
 	if ok := distribution.New().VerifyCert(opts); ok {
-		response.Ok(nil).Http(w)
+		response.JSON(nil).HTTP(w)
 	} else {
-		response.InternalServerError().Http(w)
+		response.InternalServerError().HTTP(w)
 	}
 }
 
+// BlockchainH
 func BlockchainH(w http.ResponseWriter, _ *http.Request) {
-	response.Ok(distribution.New().MasterChain()).Http(w)
+	response.JSON(env.GetBlockchain().GetMasterChain()).HTTP(w)
 }
 
+// DashboardH
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
-	response.Execute(conf.Viper.Node.Dashboard.Template).Http(w)
+	response.Execute(conf.Conf.Node.Dashboard).HTTP(w)
 }

@@ -1,25 +1,23 @@
-const endpoint = 'https://127.0.0.1:2004';
-const route_cert = 'cert';
-const route_member = 'member';
+const endpoint = "https://127.0.0.1:2004";
 
 class api {
   static MemberCreate(data) {
-    return request('POST', `${endpoint}/${route_member}/create`, data);
+    return request("POST", `${endpoint}/member/create`, data);
   }
 
   static MemberFetch(data) {
-    return request('POST', `${endpoint}/${route_member}/fetch`, data);
+    return request("POST", `${endpoint}/member/fetch`, data);
   }
 
   static CertCreate(data) {
-    return request('POST', `${endpoint}/${route_cert}/issue`, data);
+    return request("POST", `${endpoint}/cert/issue`, data);
   }
 
   static CertFetch(data) {
-    return request('POST', `${endpoint}/${route_cert}/view`, data);
+    return request("POST", `${endpoint}/cert/view`, data);
   }
 
   static CertVerify(data) {
-    return request('POST', `${endpoint}/${route_cert}/verify`, data);
+    return request("POST", `${endpoint}/cert/verify`, data);
   }
 }

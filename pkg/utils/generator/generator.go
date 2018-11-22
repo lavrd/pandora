@@ -4,7 +4,8 @@ import (
 	"math/rand"
 )
 
-func Id() string {
+// ID returns new 12 len id for smth
+func ID() string {
 	const (
 		length = 12
 	)

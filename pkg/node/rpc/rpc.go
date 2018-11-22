@@ -4,16 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
+
+	"pandora/pkg/conf"
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
 )
 
+// RPC
 type RPC struct {
 	master       pb.MasterClient
 	membership   pb.MembershipClient
@@ -23,14 +25,15 @@ type RPC struct {
 	masterCC     *grpc.ClientConn
 }
 
+// New returns new rpc
 func New() (*RPC, error) {
-	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
+	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	discoveryCC, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	discoveryCC, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -83,6 +86,7 @@ loop:
 	}, nil
 }
 
+// Close close rpc connection with other rpc
 func (rpc *RPC) Close() {
 	if err := rpc.membershipCC.Close(); err != nil {
 		log.Error(err)
@@ -95,6 +99,7 @@ func (rpc *RPC) Close() {
 	}
 }
 
+// ProposeMember propose member over rpc
 func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	key, err := rpc.membership.ProposeMember(context.Background(), candidate);
 	if err != nil {
@@ -104,6 +109,7 @@ func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
 	return key, nil
 }
 
+// SignCert sign cert over rpc
 func (rpc *RPC) SignCert(cert *pb.Cert) error {
 	if _, err := rpc.membership.SignCert(context.Background(), cert); err != nil {
 		if st, ok := status.FromError(err); ok {
@@ -118,6 +124,7 @@ func (rpc *RPC) SignCert(cert *pb.Cert) error {
 	return nil
 }
 
+// FetchMember fetch member over rpc
 func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 	r, err := rpc.membership.FetchMember(context.Background(), key)
 	if err != nil {
@@ -134,6 +141,7 @@ func (rpc *RPC) FetchMember(key *pb.PublicKey) (*pb.Member, error) {
 	return r, nil
 }
 
+// InitNode init node in discovery service
 func (rpc *RPC) InitNode(key *pb.PublicKey) (*pb.MasterChain, *pb.BrokerOpts, error) {
 	ino, err := rpc.discovery.InitNode(context.Background(), &pb.Empty{})
 	if err != nil {

@@ -2,11 +2,14 @@ package http
 
 import (
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
 )
 
 // Route
@@ -16,48 +19,41 @@ type Route struct {
 	Middleware []Middleware
 	Method     string
 }
+type Routes []Route
+
+// SubRoute
+type SubRoute struct {
+	Prefix     string
+	Routes     Routes
+	Middleware []Middleware
+}
+type SubRoutes []SubRoute
 
 // Middleware
 type Middleware func(http.HandlerFunc) http.HandlerFunc
 
-var (
-	GET  = http.MethodGet
-	POST = http.MethodPost
+const (
+	Post = http.MethodPost
+	Get  = http.MethodGet
 )
 
-// Handle prepare handler
-func Handle(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
-	headers := func(h http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			DefaultHeaders(w, r)
-			h.ServeHTTP(w, r)
+// Listen start listen http requests
+func Listen(endpoint string, subRoutes SubRoutes, static string) error {
+	var r = mux.NewRouter()
+	for _, subRoute := range subRoutes {
+		s := r.PathPrefix(subRoute.Prefix).Subrouter()
+
+		for _, route := range subRoute.Routes {
+			middlewares := append(subRoute.Middleware, route.Middleware...)
+			s.Handle(route.Path, handle(route.Handler, middlewares...)).Methods(route.Method)
 		}
 	}
 
-	h = headers(h)
-	for _, m := range middleware {
-		h = m(h)
-	}
-
-	return h
-}
-
-// Listen start listen http requests
-func Listen(endpoint string, routes []Route, static string) error {
-	log.Debugf("listen http server on %s", endpoint)
-
-	r := mux.NewRouter()
-
-	if static != "" {
-		r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(static))))
-	}
-
-	for _, route := range routes {
-		r.Handle(route.Path, Handle(route.Handler, route.Middleware...)).Methods(route.Method)
-	}
+	var h http.Handler
+	h = handlers.LoggingHandler(os.Stdout, r)
 
 	srv := &http.Server{
-		Handler:           r,
+		Handler:           h,
 		Addr:              endpoint,
 		ReadHeaderTimeout: time.Second * 5,
 		IdleTimeout:       time.Second * 5,
@@ -65,10 +61,25 @@ func Listen(endpoint string, routes []Route, static string) error {
 		WriteTimeout:      time.Second * 5,
 	}
 
-	return srv.ListenAndServeTLS(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
+	log.Debugf("listen http server on %s", endpoint)
+	return errors.WithStack(srv.ListenAndServe())
 }
 
-// DefaultHeaders add default headers
-func DefaultHeaders(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+func handle(h http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	headers := func(h http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			defaultHeaders(w, r)
+			h.ServeHTTP(w, r)
+		}
+	}
+
+	h = headers(h)
+
+	for i := len(middlewares) - 1; i >= 0; i-- {
+		h = middlewares[i](h)
+	}
+
+	return h
 }
+
+func defaultHeaders(_ http.ResponseWriter, _ *http.Request) {}

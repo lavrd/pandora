@@ -1,7 +1,7 @@
 const request = (method, endpoint, body) => {
   let headers = {};
   if (!!body) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
   }
 
   let opts = {};
@@ -30,13 +30,13 @@ String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
-const VERIFY_STATUS = {
-  NONE: 'NONE',
-  VERIFIED: 'VERIFIED',
-  FAILED: 'FAILED'
+const CERT_STATUS = {
+  NONE: "NONE",
+  VERIFIED: "VERIFIED",
+  FAILED: "FAILED"
 };
 
 const STATE = {
-  FETCH: 'FETCH',
-  CREATE: 'CREATE'
+  FETCH: "FETCH",
+  CREATE: "CREATE"
 };

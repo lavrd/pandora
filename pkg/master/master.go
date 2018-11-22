@@ -5,18 +5,19 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/blockchain"
-	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/master/env"
-	"github.com/spacelavr/pandora/pkg/master/events"
-	"github.com/spacelavr/pandora/pkg/master/rpc"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/blockchain"
+	"pandora/pkg/broker"
+	"pandora/pkg/master/env"
+	"pandora/pkg/master/events"
+	"pandora/pkg/master/rpc"
+	"pandora/pkg/utils/log"
 )
 
 const (
 	MASTER = "master"
 )
 
+// Daemon start master daemon
 func Daemon() bool {
 	log.Debug("start master daemon")
 

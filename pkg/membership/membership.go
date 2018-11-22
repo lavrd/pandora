@@ -5,17 +5,18 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/membership/env"
-	"github.com/spacelavr/pandora/pkg/membership/rpc"
-	"github.com/spacelavr/pandora/pkg/storage/arangodb"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/conf"
+	"pandora/pkg/membership/env"
+	"pandora/pkg/membership/rpc"
+	"pandora/pkg/storage/arangodb"
+	"pandora/pkg/utils/log"
 )
 
 const (
 	MEMBERSHIP = "membership"
 )
 
+// Daemon start daemon service
 func Daemon() bool {
 	log.Debug("start membership daemon")
 
@@ -26,10 +27,10 @@ func Daemon() bool {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	stg, err := arangodb.New(
-		conf.Viper.Membership.Database.Endpoint,
-		conf.Viper.Membership.Database.Database,
-		conf.Viper.Membership.Database.User,
-		conf.Viper.Membership.Database.Password,
+		conf.Conf.Arangodb.Endpoint,
+		conf.Conf.Arangodb.Database,
+		conf.Conf.Arangodb.User,
+		conf.Conf.Arangodb.Password,
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +51,7 @@ func Daemon() bool {
 	}()
 
 	defer func() {
-		if conf.Viper.Runtime.Clean {
+		if conf.Conf.Runtime.Clean {
 			if err := stg.Clean(); err != nil {
 				log.Error(err)
 			}

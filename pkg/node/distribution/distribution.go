@@ -3,22 +3,24 @@ package distribution
 import (
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/blockchain"
-	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/node/routes/request"
-	"github.com/spacelavr/pandora/pkg/node/rpc"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/storage/leveldb"
-	"github.com/spacelavr/pandora/pkg/utils/generator"
+	"pandora/pkg/blockchain"
+	"pandora/pkg/node/env"
+	"pandora/pkg/node/routes/request"
+	"pandora/pkg/node/rpc"
+	"pandora/pkg/pb"
+	"pandora/pkg/storage/leveldb"
+	"pandora/pkg/utils/generator"
 )
 
+// Distribution
 type Distribution struct {
-	storage *leveldb.LevelDB
+	storage *leveldb.Leveldb
 	rpc     *rpc.RPC
 	key     *pb.PublicKey
 	bc      *blockchain.Blockchain
 }
 
+// New returns new distribution
 func New() *Distribution {
 	return &Distribution{
 		storage: env.GetStorage(),
@@ -28,8 +30,9 @@ func New() *Distribution {
 	}
 }
 
+// VerifyCert verify cert
 func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
-	for _, mb := range d.bc.MasterChain().MasterChain {
+	for _, mb := range d.bc.GetMasterChain().MasterChain {
 		for _, cb := range mb.CertChain.CertChain {
 			if cb.Block.Tx == *opts.Id {
 				return true
@@ -39,18 +42,17 @@ func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
 	return false
 }
 
+// SaveCert save cert to storage
 func (d *Distribution) SaveCert(cert *pb.Cert) error {
 	return d.storage.Put(cert)
 }
 
+// LoadCert load cert from storage
 func (d *Distribution) LoadCert(id string) (*pb.Cert, error) {
 	return d.storage.Load(id)
 }
 
-func (d *Distribution) MasterChain() *pb.MasterChain {
-	return env.GetBlockchain().MasterChain()
-}
-
+// ProposeMember propose member
 func (d *Distribution) ProposeMember(opts *request.Candidate) (*pb.PublicKey, error) {
 	key, err := d.rpc.ProposeMember(&pb.MemberMeta{
 		Name:  *opts.Name,
@@ -62,6 +64,7 @@ func (d *Distribution) ProposeMember(opts *request.Candidate) (*pb.PublicKey, er
 	return key, nil
 }
 
+// FetchMember fetch member
 func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error) {
 	mem, err := d.rpc.FetchMember(&pb.PublicKey{
 		PublicKey: *opts.PublicKey,
@@ -72,9 +75,10 @@ func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error
 	return mem, nil
 }
 
+// SignCert sign cert
 func (d *Distribution) SignCert(opts *request.CertIssue) error {
 	return d.rpc.SignCert(&pb.Cert{
-		Id: generator.Id(),
+		ID: generator.ID(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().UnixNano() / 1000000,
 			Description: *opts.Description,

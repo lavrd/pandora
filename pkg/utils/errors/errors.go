@@ -1,7 +1,7 @@
 package errors
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -10,7 +10,12 @@ var (
 	ErrNotFound      = New("error not found")
 )
 
-// New returns new error
-func New(text string) error {
-	return errors.New(text)
+// WithStack return new error with stack trace
+func WithStack(err error) error {
+	return errors.WithStack(err)
+}
+
+// New creates new error with stack trace
+func New(message string) error {
+	return errors.WithStack(errors.New(message))
 }

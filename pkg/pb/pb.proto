@@ -50,7 +50,7 @@ message master_chain {
 }
 
 message cert {
-  string id = 2;
+  string ID = 2;
   cert_meta meta = 3;
   participant issuer = 4;
   participant recipient = 5;

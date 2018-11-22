@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/conf"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
 )
 
 // Mail
@@ -34,7 +34,7 @@ type email struct {
 }
 
 func send(to, subject, html string) error {
-	if !conf.Viper.Membership.Mail.Send {
+	if !conf.Conf.SendGrid.Active {
 		return nil
 	}
 
@@ -74,7 +74,7 @@ func send(to, subject, html string) error {
 	}
 	defer req.Body.Close()
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", conf.Viper.Membership.Mail.Token))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", conf.Conf.SendGrid.Token))
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := (&http.Client{}).Do(req)
@@ -85,7 +85,7 @@ func send(to, subject, html string) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusAccepted {
-		log.Errorf("mail doesn't send. http status: %d", res.StatusCode)
+		log.Error(errors.New(fmt.Sprintf("mail doesn't send. http status: %d", res.StatusCode)))
 		return errors.ErrMail
 	}
 

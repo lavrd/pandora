@@ -5,31 +5,34 @@ import (
 	"net"
 	"time"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/membership/distribution"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/log"
-	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
+
+	"pandora/pkg/conf"
+	"pandora/pkg/membership/distribution"
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/network"
 )
 
+// RPC
 type RPC struct {
 	master   pb.MasterClient
 	masterCC *grpc.ClientConn
 }
 
+// New returns mew membership rpc
 func New() (*RPC, error) {
-	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
+	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	discoveryCC, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	discoveryCC, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -49,7 +52,7 @@ loop:
 		case <-tick:
 			if ino, err = discoveryC.InitMembership(
 				context.Background(),
-				&pb.Endpoint{Endpoint: conf.Viper.Membership.Endpoint},
+				&pb.Endpoint{Endpoint: conf.Conf.Membership.Endpoint},
 			); err != nil {
 				continue
 			}
@@ -71,13 +74,15 @@ loop:
 	return &RPC{master: masterC, masterCC: masterCC}, nil
 }
 
+// Close close connection with others rpc
 func (rpc *RPC) Close() {
 	if err := rpc.masterCC.Close(); err != nil {
 		log.Error(err)
 	}
 }
 
-func (_ *RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicKey, error) {
+// ProposeMember propose member over rpc
+func (*RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicKey, error) {
 	key, err := distribution.New().ConfirmMember(in)
 	if err != nil {
 		return &pb.PublicKey{}, err
@@ -85,6 +90,7 @@ func (_ *RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicK
 	return key, nil
 }
 
+// SignCert sign cert over rpc
 func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	cert, err := distribution.New().SignCert(in)
 	if err != nil {
@@ -102,7 +108,8 @@ func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	return &pb.Empty{}, nil
 }
 
-func (_ *RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
+// FetchMember fetch member over rpc
+func (*RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
 	mem, err := distribution.New().MemberFetch(in)
 	if err != nil {
 		if err == errors.ErrNotFound {
@@ -113,8 +120,9 @@ func (_ *RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, er
 	return mem, nil
 }
 
+// Listen listen for rpc requests
 func (rpc *RPC) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -125,7 +133,7 @@ func (rpc *RPC) Listen() error {
 
 	pb.RegisterMembershipServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Membership.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Membership.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err

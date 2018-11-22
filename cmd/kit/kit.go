@@ -4,14 +4,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/discovery"
-	"github.com/spacelavr/pandora/pkg/master"
-	"github.com/spacelavr/pandora/pkg/membership"
-	"github.com/spacelavr/pandora/pkg/node"
-	"github.com/spacelavr/pandora/pkg/utils/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"pandora/pkg/conf"
+	"pandora/pkg/discovery"
+	"pandora/pkg/master"
+	"pandora/pkg/membership"
+	"pandora/pkg/node"
+	"pandora/pkg/utils/log"
 )
 
 var (
@@ -35,11 +36,11 @@ var (
 				log.Fatal(err)
 			}
 
-			if err := viper.Unmarshal(conf.Viper); err != nil {
+			if err := viper.Unmarshal(conf.Conf); err != nil {
 				log.Fatal(err)
 			}
 
-			log.SetVerbose(conf.Viper.Runtime.Verbose)
+			log.SetVerbose(conf.Conf.Runtime.Verbose)
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {
@@ -89,7 +90,6 @@ var (
 
 func init() {
 	CLI.Flags().StringVarP(&cfg, "conf", "c", "./contrib/conf.yml", "/path/to/conf.yml")
-	viper.BindEnv("membership.mail.token")
 }
 
 func main() {

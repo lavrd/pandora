@@ -6,130 +6,138 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
 )
 
+// Response
 type Response struct {
-	code int
-	data interface{}
-}
-
-type Template struct {
-	tpl *template.Template
-}
-
-type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Status  string `json:"status"`
 }
 
+// Template
+type Template struct {
+	tpl *template.Template
+}
+
+// Execute execute template
 func Execute(files string) *Template {
 	tpl, err := template.ParseFiles(files)
 	return &Template{tpl: template.Must(tpl, err)}
 }
 
-// Ok returns Ok response
-func Ok(data interface{}) *Response {
-	return &Response{code: http.StatusOK, data: data}
-}
-
-func Created() *Response {
-	return &Response{code: http.StatusCreated}
-}
-
-// NotImplemented returns not implemented response
-func NotImplemented() *Error {
-	return &Error{
-		Code:    http.StatusNotImplemented,
-		Status:  http.StatusText(http.StatusNotImplemented),
-		Message: http.StatusText(http.StatusNotImplemented),
+// AlreadyExists returns already exists response
+func AlreadyExists(message string) *Response {
+	return &Response{
+		Code:    http.StatusConflict,
+		Status:  http.StatusText(http.StatusConflict),
+		Message: message,
 	}
 }
 
-// Unauthorized returns unauthorized response
-func Unauthorized() *Error {
-	return &Error{
-		Code:    http.StatusUnauthorized,
-		Status:  http.StatusText(http.StatusUnauthorized),
-		Message: http.StatusText(http.StatusUnauthorized),
-	}
+// ContentResponse
+type ContentResponse struct {
+	Data        []byte
+	ContentType string
 }
 
-// InvalidJSON returns invalid json response
-func InvalidJSON() *Error {
-	return &Error{
+// BadParameter returns bad parameter response
+func BadParameter(message string) *Response {
+	return &Response{
 		Code:    http.StatusUnprocessableEntity,
 		Status:  http.StatusText(http.StatusUnprocessableEntity),
-		Message: "invalid json",
-	}
-}
-
-// Forbidden returns forbidden response
-func Forbidden() *Error {
-	return &Error{
-		Code:    http.StatusForbidden,
-		Status:  http.StatusText(http.StatusForbidden),
-		Message: http.StatusText(http.StatusForbidden),
+		Message: fmt.Sprintf("You passed the wrong parameter. %s", message),
 	}
 }
 
 // NotFound returns not found response
-func NotFound(what string) *Error {
-	return &Error{
+func NotFound(message string) *Response {
+	return &Response{
 		Code:    http.StatusNotFound,
 		Status:  http.StatusText(http.StatusNotFound),
-		Message: fmt.Sprintf("%s not found", what),
+		Message: message,
 	}
 }
 
-// AlreadyExists returns already exists response
-func AlreadyExists(what string) *Error {
-	return &Error{
-		Code:    http.StatusConflict,
-		Status:  http.StatusText(http.StatusConflict),
-		Message: fmt.Sprintf("%s already exists", what),
+// Forbidden returns forbidden response
+func Forbidden(message string) *Response {
+	return &Response{
+		Code:    http.StatusForbidden,
+		Status:  http.StatusText(http.StatusForbidden),
+		Message: message,
 	}
 }
 
-// InternalServerError returns internal server error response
-func InternalServerError() *Error {
-	return &Error{
+// OK returns ok response
+func OK() *Response {
+	return &Response{
+		Message: http.StatusText(http.StatusOK),
+		Status:  http.StatusText(http.StatusOK),
+		Code:    http.StatusOK,
+	}
+}
+
+// JSON returns json response
+func JSON(data interface{}) *ContentResponse {
+	buf, _ := json.Marshal(data)
+
+	return &ContentResponse{
+		Data:        buf,
+		ContentType: "application/json",
+	}
+}
+
+// Unauthorized returns unauthorized response
+func Unauthorized() *Response {
+	return &Response{
+		Code:    http.StatusUnauthorized,
+		Status:  http.StatusText(http.StatusUnauthorized),
+		Message: "You are not logged in. Please log in",
+	}
+}
+
+// InternalServerError returns interval server error response
+func InternalServerError() *Response {
+	return &Response{
 		Code:    http.StatusInternalServerError,
 		Status:  http.StatusText(http.StatusInternalServerError),
-		Message: http.StatusText(http.StatusInternalServerError),
+		Message: "Oops, something went wrong",
 	}
 }
 
-// BadParameter returns bad parameter response
-func BadParameter(parameter string) *Error {
-	return &Error{
-		Code:    http.StatusUnprocessableEntity,
-		Status:  http.StatusText(http.StatusUnprocessableEntity),
-		Message: fmt.Sprintf("bad %s parameter", parameter),
+// InvalidJSON returns invalid json response
+func InvalidJSON(message string) *Response {
+	return &Response{
+		Code:    http.StatusUnsupportedMediaType,
+		Status:  http.StatusText(http.StatusUnsupportedMediaType),
+		Message: fmt.Sprintf("You need one of these parameters: %s", message),
 	}
 }
 
-// Http send http response
-func (r *Response) Http(w http.ResponseWriter) {
-	w.WriteHeader(r.code)
-	if err := json.NewEncoder(w).Encode(r.data); err != nil {
-		log.Error(err)
+// HTTP send http content response
+func (r *ContentResponse) HTTP(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", r.ContentType)
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(r.Data); err != nil {
+		log.Error(errors.WithStack(err))
 	}
 }
 
-// Http send http template
-func (t *Template) Http(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "text/html")
-	if err := t.tpl.Execute(w, nil); err != nil {
-		InternalServerError().Http(w)
-	}
-}
-
-// Http send http error
-func (r *Error) Http(w http.ResponseWriter) {
+// HTTP send http response
+func (r *Response) HTTP(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(r.Code)
 	if err := json.NewEncoder(w).Encode(r); err != nil {
-		log.Error(err)
+		log.Error(errors.WithStack(err))
+	}
+}
+
+// HTTP send template
+func (t *Template) HTTP(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "text/html")
+	if err := t.tpl.Execute(w, nil); err != nil {
+		InternalServerError().HTTP(w)
 	}
 }

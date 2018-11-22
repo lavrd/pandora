@@ -1,10 +1,10 @@
 package events
 
 import (
-	"github.com/spacelavr/pandora/pkg/broker"
-	"github.com/spacelavr/pandora/pkg/node/distribution"
-	"github.com/spacelavr/pandora/pkg/node/env"
-	"github.com/spacelavr/pandora/pkg/pb"
+	"pandora/pkg/broker"
+	"pandora/pkg/node/distribution"
+	"pandora/pkg/node/env"
+	"pandora/pkg/pb"
 )
 
 type events struct {
@@ -13,6 +13,7 @@ type events struct {
 	chrCert        chan *pb.Cert
 }
 
+// New returns new events
 func New(brk *broker.Broker) (*events, error) {
 	var (
 		chrCert        = make(chan *pb.Cert)
@@ -39,6 +40,7 @@ func New(brk *broker.Broker) (*events, error) {
 	}, nil
 }
 
+// Listen listen for events
 func (e *events) Listen() error {
 	var (
 		bc = env.GetBlockchain()
@@ -59,13 +61,13 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			bc.CommitMBlock(block)
+			bc.CommitMasterBlock(block)
 		case block, ok := <-e.chrCertBlock:
 			if !ok {
 				return nil
 			}
 
-			bc.CommitCBlock(block)
+			bc.CommitCertBlock(block)
 		}
 	}
 }

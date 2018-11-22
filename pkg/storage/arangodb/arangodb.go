@@ -5,17 +5,19 @@ import (
 
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
-	"github.com/spacelavr/pandora/pkg/utils/errors"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+
+	"pandora/pkg/utils/errors"
+	"pandora/pkg/utils/log"
 )
 
-type ArangoDB struct {
+// Arangodb
+type Arangodb struct {
 	database string
 	client   driver.Client
 }
 
-// New connect to database
-func New(endpoint, database, user, password string) (*ArangoDB, error) {
+// New connect to arangodb
+func New(endpoint, database, user, password string) (*Arangodb, error) {
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{endpoint},
 	})
@@ -33,7 +35,7 @@ func New(endpoint, database, user, password string) (*ArangoDB, error) {
 		return nil, err
 	}
 
-	storage := &ArangoDB{database: database, client: client}
+	storage := &Arangodb{database: database, client: client}
 
 	if err = storage.Init(); err != nil {
 		return nil, err
@@ -43,7 +45,7 @@ func New(endpoint, database, user, password string) (*ArangoDB, error) {
 }
 
 // Init initialize database and collections
-func (s *ArangoDB) Init() error {
+func (s *Arangodb) Init() error {
 	var (
 		db driver.Database
 	)
@@ -60,7 +62,7 @@ func (s *ArangoDB) Init() error {
 }
 
 // InitDatabase init database
-func (s *ArangoDB) InitDatabase(db *driver.Database) error {
+func (s *Arangodb) InitDatabase(db *driver.Database) error {
 	ctx := context.Background()
 
 	ok, err := s.client.DatabaseExists(ctx, s.database)
@@ -85,7 +87,7 @@ func (s *ArangoDB) InitDatabase(db *driver.Database) error {
 }
 
 // InitCollections init collections
-func (s *ArangoDB) InitCollections(db *driver.Database) error {
+func (s *Arangodb) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
 	ok, err := (*db).CollectionExists(ctx, CollectionMember)
@@ -105,7 +107,7 @@ func (s *ArangoDB) InitCollections(db *driver.Database) error {
 }
 
 // Clean clean database
-func (s *ArangoDB) Clean() error {
+func (s *Arangodb) Clean() error {
 	ctx := context.Background()
 
 	db, err := s.Database()
@@ -123,7 +125,7 @@ func (s *ArangoDB) Clean() error {
 }
 
 // Database returns database
-func (s *ArangoDB) Database() (driver.Database, error) {
+func (s *Arangodb) Database() (driver.Database, error) {
 	ctx := context.Background()
 
 	db, err := s.client.Database(ctx, s.database)
@@ -136,7 +138,7 @@ func (s *ArangoDB) Database() (driver.Database, error) {
 }
 
 // Collection returns collection
-func (s *ArangoDB) Collection(name string) (driver.Collection, error) {
+func (s *Arangodb) Collection(name string) (driver.Collection, error) {
 	ctx := context.Background()
 
 	db, err := s.Database()
@@ -154,7 +156,7 @@ func (s *ArangoDB) Collection(name string) (driver.Collection, error) {
 }
 
 // Exec exec query and returns document meta
-func (s *ArangoDB) Exec(query string, vars map[string]interface{}, document interface{}) (*driver.DocumentMeta, error) {
+func (s *Arangodb) Exec(query string, vars map[string]interface{}, document interface{}) (*driver.DocumentMeta, error) {
 	ctx := context.Background()
 
 	db, err := s.Database()
@@ -186,7 +188,7 @@ func (s *ArangoDB) Exec(query string, vars map[string]interface{}, document inte
 }
 
 // Write write document to collection
-func (s *ArangoDB) Write(collection string, document interface{}) (*driver.DocumentMeta, error) {
+func (s *Arangodb) Write(collection string, document interface{}) (*driver.DocumentMeta, error) {
 	ctx := context.Background()
 
 	col, err := s.Collection(collection)

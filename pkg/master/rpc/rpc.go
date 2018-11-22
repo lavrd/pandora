@@ -4,49 +4,54 @@ import (
 	"context"
 	"net"
 
-	"github.com/spacelavr/pandora/pkg/conf"
-	"github.com/spacelavr/pandora/pkg/master/env"
-	"github.com/spacelavr/pandora/pkg/pb"
-	"github.com/spacelavr/pandora/pkg/utils/log"
-	"github.com/spacelavr/pandora/pkg/utils/network"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	"pandora/pkg/conf"
+	"pandora/pkg/master/env"
+	"pandora/pkg/pb"
+	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/network"
 )
 
 type rpc struct{}
 
+// New return new master rpc
 func New() *rpc {
 	return &rpc{}
 }
 
-func (_ *rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
+// ProposeCert propose cert
+func (*rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 	var (
 		evt = env.GetEvents()
 		bc  = env.GetBlockchain()
 	)
 
-	evt.PubCertBlock(bc.PrepareCBlock(in))
+	evt.PubCertBlock(bc.PrepareCertBlock(in))
 	evt.PubCert(in)
 
 	return &pb.Empty{}, nil
 }
 
-func (_ *rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
+// InitNode init service node with blockchain
+func (*rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
 	var (
 		evt = env.GetEvents()
 		bc  = env.GetBlockchain()
 	)
 
-	b := bc.PrepareMBlock(in)
-	bc.CommitMBlock(b)
+	b := bc.PrepareMasterBlock(in)
+	bc.CommitMasterBlock(b)
 
 	evt.PubMasterBlock(b)
 
-	return bc.MasterChain(), nil
+	return bc.GetMasterChain(), nil
 }
 
+// Listen listen for rpc requests
 func (rpc *rpc) Listen() error {
-	creds, err := credentials.NewServerTLSFromFile(conf.Viper.TLS.Cert, conf.Viper.TLS.Key)
+	creds, err := credentials.NewServerTLSFromFile(conf.Conf.TLS.Cert, conf.Conf.TLS.Key)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -57,7 +62,7 @@ func (rpc *rpc) Listen() error {
 
 	pb.RegisterMasterServer(s, rpc)
 
-	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Viper.Master.Endpoint))
+	listen, err := net.Listen(network.TCP, network.PortWithSemicolon(conf.Conf.Master.Endpoint))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -72,14 +77,15 @@ func (rpc *rpc) Listen() error {
 	return nil
 }
 
-func (_ *rpc) InitMaster() (*pb.BrokerOpts, error) {
-	creds, err := credentials.NewClientTLSFromFile(conf.Viper.TLS.Cert, "")
+// InitMaster init master rpc by discovery service
+func (*rpc) InitMaster() (*pb.BrokerOpts, error) {
+	creds, err := credentials.NewClientTLSFromFile(conf.Conf.TLS.Cert, "")
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	cc, err := grpc.Dial(conf.Viper.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
+	cc, err := grpc.Dial(conf.Conf.Discovery.Endpoint, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -88,7 +94,7 @@ func (_ *rpc) InitMaster() (*pb.BrokerOpts, error) {
 
 	c := pb.NewDiscoveryClient(cc)
 
-	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Viper.Master.Endpoint})
+	opts, err := c.InitMaster(context.Background(), &pb.Endpoint{Endpoint: conf.Conf.Master.Endpoint})
 	if err != nil {
 		log.Error(err)
 		return nil, err

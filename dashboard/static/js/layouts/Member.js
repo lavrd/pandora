@@ -12,9 +12,9 @@ class MemberLayout extends React.Component {
   }
 
   EMPTY_DATA = {
-    name: '',
-    email: '',
-    publicKey: ''
+    name: "",
+    email: "",
+    publicKey: ""
   };
 
   handleState = (e, key) => {
@@ -29,27 +29,34 @@ class MemberLayout extends React.Component {
     this.setState({data: {...this.state.data, [name]: value}});
   };
 
-  handleCreate = () => {
-    api.MemberCreate({
-      name: this.state.data.name,
-      email: this.state.data.email
-    })
-      .then(() => this.setState({success: 'Member successfully confirmed', pending: false}))
-      .catch((error) => this.setState({error: error, pending: false}));
+  handleCreate = async () => {
     this.setState({pending: true});
+
+    try {
+      await api.MemberCreate({name: this.state.data.name, email: this.state.data.email});
+      this.setState({success: "Member successfully confirmed"});
+    } catch (e) {
+      this.setState({error: e});
+    }
+
+    this.setState({pending: false});
   };
 
   handleClose = () => {
     this.setState({member: null, error: null, success: null, data: this.EMPTY_DATA});
   };
 
-  handleFetch = () => {
-    api.MemberFetch({
-      public_key: this.state.data.publicKey
-    })
-      .then((member) => this.setState({member: member, pending: false}))
-      .catch((error) => this.setState({error: error, pending: false}));
+  handleFetch = async () => {
     this.setState({pending: true});
+
+    try {
+      const member = await api.MemberFetch({public_key: this.state.data.publicKey});
+      this.setState({member: member, pending: false});
+    } catch (e) {
+      this.setState({error: e, pending: false});
+    }
+
+    this.setState({pending: false});
   };
 
   render() {
@@ -69,7 +76,7 @@ class MemberLayout extends React.Component {
                   key={index}
                 >
                   <a
-                    className={`nav-link ${this.state.state === key && 'active'}`}
+                    className={`nav-link ${this.state.state === key && "active"}`}
                     onClick={(e) => this.handleState(e, key)}
                     href="#"
                   >

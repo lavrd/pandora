@@ -3,14 +3,15 @@ package arangodb
 import (
 	"fmt"
 
-	"github.com/spacelavr/pandora/pkg/pb"
+	"pandora/pkg/pb"
 )
 
 const (
 	CollectionMember = "member"
 )
 
-func (s *ArangoDB) MemberFetchByEmail(email string) (*pb.Member, error) {
+// MemberFetchByEmail fetch member by email
+func (s *Arangodb) MemberFetchByEmail(email string) (*pb.Member, error) {
 	var (
 		mem   = &pb.Member{}
 		query = fmt.Sprintf(
@@ -29,7 +30,8 @@ func (s *ArangoDB) MemberFetchByEmail(email string) (*pb.Member, error) {
 	return mem, nil
 }
 
-func (s *ArangoDB) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
+// MemberFetchByPublic fetch member by public key
+func (s *Arangodb) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
 	var (
 		mem   = &pb.Member{}
 		query = fmt.Sprintf(
@@ -48,10 +50,12 @@ func (s *ArangoDB) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
 	return mem, nil
 }
 
-func (s *ArangoDB) MemberSave(mem *pb.Member) error {
+// MemberSave save member
+func (s *Arangodb) MemberSave(mem *pb.Member) error {
 	_, err := s.Write(CollectionMember, mem)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

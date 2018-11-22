@@ -1,23 +1,26 @@
 package log
 
 import (
-	"fmt"
-	"io"
+	"log"
 	"path/filepath"
 	"runtime"
+	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	ufp "github.com/spacelavr/pandora/pkg/utils/filepath"
 )
 
-var (
-	// CommonLogFormat http request log format
-	// 127.0.0.1 - - [Sun, 08 Apr 2018 06:50:15 +0000] "GET /health HTTP/1.1" 501 40 1.0019ms curl
-	CommonLogFormat = "%s %s %s [%s] \"%s %s %v\" %d %d %s %s\n"
+const (
+	StackTraceFormat = "%v%+v"
 )
+
+// StackTracer
+type StackTracer interface {
+	StackTrace() errors.StackTrace
+}
 
 func init() {
-	logrus.SetLevel(logrus.ErrorLevel)
+	logrus.SetLevel(logrus.PanicLevel)
 }
 
 // SetVerbose set verbose output
@@ -27,51 +30,38 @@ func SetVerbose(verbose bool) {
 	}
 }
 
-// SetOut set output stream
-func SetOut(out io.Writer) {
-	logrus.SetOutput(out)
-}
-
 // Debug print debug log
 func Debug(args ...interface{}) {
-	prepare().Debug(args...)
+	caller().Debug(args...)
 }
 
 // Debugf print formatted debug log
 func Debugf(format string, args ...interface{}) {
-	prepare().Debugf(format, args...)
-}
-
-// Errorf print formatted error log
-func Errorf(format string, args ...interface{}) {
-	prepare().Errorf(format, args...)
+	caller().Debugf(format, args...)
 }
 
 // Error print error log
-func Error(args ...interface{}) {
-	prepare().Error(args...)
+func Error(err error) {
+	log.Printf(StackTraceFormat, err, stackTrace(err))
 }
 
 // Fatal print fatal log
-func Fatal(args ...interface{}) {
-	prepare().Fatal(args...)
+func Fatal(err error) {
+	log.Fatalf(StackTraceFormat, err, stackTrace(err))
 }
 
-// Http print http log in common log format to out stream
-func Http(out io.Writer, ip, time, method, route, proto, duration, userAgent string, code, size int) {
-	fmt.Fprintf(out, CommonLogFormat, ip, "-", "-", time, method, route, proto, code, size, duration, userAgent)
+func stackTrace(err error) errors.StackTrace {
+	st, _ := err.(StackTracer)
+	return st.StackTrace()[1:]
 }
 
-func prepare() *logrus.Entry {
+func caller() *logrus.Entry {
 	if pc, file, line, ok := runtime.Caller(2); ok {
-		fname := runtime.FuncForPC(pc).Name()
-
 		return logrus.WithFields(logrus.Fields{
-			"file":  ufp.PKG(file),
-			"fname": filepath.Base(fname),
+			"file":  file[strings.Index(file, "/pkg")+len("/pkg"):],
+			"fname": filepath.Base(runtime.FuncForPC(pc).Name()),
 			"line":  line,
 		})
 	}
-
 	return logrus.WithFields(logrus.Fields{})
 }

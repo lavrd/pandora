@@ -1,5 +1,8 @@
+# idea
 .idea
 
-vendor/
-contrib/pandora.db
-contrib/pandora.db.lock
+# config
+/contrib/conf.yml
+
+# env
+/contrib/docker/.env

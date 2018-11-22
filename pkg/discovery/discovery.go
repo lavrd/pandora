@@ -5,14 +5,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/pandora/pkg/discovery/rpc"
-	"github.com/spacelavr/pandora/pkg/utils/log"
+	"pandora/pkg/discovery/rpc"
+	"pandora/pkg/utils/log"
 )
 
 const (
 	DISCOVERY = "discovery"
 )
 
+// Daemon start discovery daemon
 func Daemon() bool {
 	log.Debug("start discovery daemon")
 
