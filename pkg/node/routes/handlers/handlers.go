@@ -98,7 +98,6 @@ func CertViewH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(cert).HTTP(w)
-
 }
 
 // CertVerifyH

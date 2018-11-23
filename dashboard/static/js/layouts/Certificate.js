@@ -62,7 +62,7 @@ class CertLayout extends React.Component {
     this.setState({pending: true});
 
     try {
-      await api.CertVerify({id: this.state.cert.id});
+      await api.CertVerify({id: this.state.cert.ID});
       this.setState({verifyStatus: CERT_STATUS.VERIFIED});
     } catch (e) {
       this.setState({verifyStatus: CERT_STATUS.FAILED});

@@ -42,14 +42,24 @@ func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
 	return false
 }
 
+// SaveCertBlock save cert block to storage
+func (d *Distribution) SaveCertBlock(cb *pb.CertBlock) error {
+	return d.storage.PutCertBlock(cb)
+}
+
+// SaveMasterBlock save master block to storage
+func (d *Distribution) SaveMasterBlock(mb *pb.MasterBlock) error {
+	return d.storage.PutMasterBlock(mb)
+}
+
 // SaveCert save cert to storage
 func (d *Distribution) SaveCert(cert *pb.Cert) error {
-	return d.storage.Put(cert)
+	return d.storage.PutCert(cert)
 }
 
 // LoadCert load cert from storage
 func (d *Distribution) LoadCert(id string) (*pb.Cert, error) {
-	return d.storage.Load(id)
+	return d.storage.LoadCert(id)
 }
 
 // ProposeMember propose member

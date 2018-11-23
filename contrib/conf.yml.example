@@ -10,7 +10,7 @@ tls:
 
 # mail
 sendgrid:
-  active: true
+  active: false
   token: token
 
 arangodb:

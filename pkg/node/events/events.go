@@ -61,10 +61,18 @@ func (e *events) Listen() error {
 				return nil
 			}
 
+			if err := distribution.New().SaveMasterBlock(block); err != nil {
+				return err
+			}
+
 			bc.CommitMasterBlock(block)
 		case block, ok := <-e.chrCertBlock:
 			if !ok {
 				return nil
+			}
+
+			if err := distribution.New().SaveCertBlock(block); err != nil {
+				return err
 			}
 
 			bc.CommitCertBlock(block)
