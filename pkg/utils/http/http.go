@@ -54,6 +54,7 @@ func Listen(endpoint string, subRoutes SubRoutes, static string) error {
 
 	var h http.Handler
 	h = handlers.LoggingHandler(os.Stdout, r)
+	h = handlers.CORS(handlers.AllowedOrigins([]string{conf.Conf.Node.Endpoint}))(h)
 
 	srv := &http.Server{
 		Handler:           h,
