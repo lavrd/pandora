@@ -1,7 +1,6 @@
 @import "bootstrap.min.css";
 @import "fa-svg-with-js.min.css";
 @import url('https://fonts.googleapis.com/css?family=Roboto');
-@import "spinner.css";
 
 body {
   font-family: 'Roboto', sans-serif

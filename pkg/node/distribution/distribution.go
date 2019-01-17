@@ -3,13 +3,14 @@ package distribution
 import (
 	"time"
 
+	"github.com/satori/go.uuid"
+
 	"pandora/pkg/blockchain"
 	"pandora/pkg/node/env"
 	"pandora/pkg/node/routes/request"
 	"pandora/pkg/node/rpc"
 	"pandora/pkg/pb"
 	"pandora/pkg/storage/leveldb"
-	"pandora/pkg/utils/generator"
 )
 
 // Distribution
@@ -88,7 +89,7 @@ func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error
 // SignCert sign cert
 func (d *Distribution) SignCert(opts *request.CertIssue) error {
 	return d.rpc.SignCert(&pb.Cert{
-		ID: generator.ID(),
+		ID: uuid.NewV1().String(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().UnixNano() / 1000000,
 			Description: *opts.Description,

@@ -1,4 +1,4 @@
-.PHONY: start-services stop-services, gen-proto
+.PHONY: start-services stop-services gen-proto
 
 start-services:
 	cd ./docker && docker-compose -f ./services-compose.yml up -d

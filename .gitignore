@@ -4,5 +4,5 @@
 # config
 /contrib/conf.yml
 
-# env
+# .env
 /contrib/docker/.env

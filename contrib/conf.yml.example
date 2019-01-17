@@ -8,7 +8,7 @@ tls:
   cert: ./contrib/tls/cert.pem
   key: ./contrib/tls/key.pem
 
-# mail
+# sendgrid
 sendgrid:
   active: false
   token: token

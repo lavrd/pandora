@@ -1,7 +1,6 @@
 const Preloader = () => (
-  <div className="lds-ripple">
-    <div/>
-    <div/>
+  <div className="spinner-border text-primary" role="status">
+    <span className="sr-only">Loading...</span>
   </div>
 );
 
