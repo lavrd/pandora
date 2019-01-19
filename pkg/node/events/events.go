@@ -2,7 +2,7 @@ package events
 
 import (
 	"pandora/pkg/broker"
-	"pandora/pkg/node/distribution"
+	"pandora/pkg/distribution"
 	"pandora/pkg/node/env"
 	"pandora/pkg/pb"
 )
@@ -43,7 +43,8 @@ func New(brk *broker.Broker) (*events, error) {
 // Listen listen for events
 func (e *events) Listen() error {
 	var (
-		bc = env.GetBlockchain()
+		bc   = env.GetBlockchain()
+		dist = distribution.NewNode()
 	)
 
 	for {
@@ -53,7 +54,7 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			if err := distribution.New().SaveCert(cert); err != nil {
+			if err := dist.SaveCert(cert); err != nil {
 				return err
 			}
 		case block, ok := <-e.chrMasterBlock:
@@ -61,7 +62,7 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			if err := distribution.New().SaveMasterBlock(block); err != nil {
+			if err := dist.SaveMasterBlock(block); err != nil {
 				return err
 			}
 
@@ -71,7 +72,7 @@ func (e *events) Listen() error {
 				return nil
 			}
 
-			if err := distribution.New().SaveCertBlock(block); err != nil {
+			if err := dist.SaveCertBlock(block); err != nil {
 				return err
 			}
 

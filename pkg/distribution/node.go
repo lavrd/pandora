@@ -13,27 +13,17 @@ import (
 	"pandora/pkg/storage/leveldb"
 )
 
-// Distribution
-type Distribution struct {
+// Node
+type Node struct {
 	storage *leveldb.Leveldb
 	rpc     *rpc.RPC
 	key     *pb.PublicKey
 	bc      *blockchain.Blockchain
 }
 
-// New returns new distribution
-func New() *Distribution {
-	return &Distribution{
-		storage: env.GetStorage(),
-		key:     env.GetKey(),
-		rpc:     env.GetRPC(),
-		bc:      env.GetBlockchain(),
-	}
-}
-
 // VerifyCert verify cert
-func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
-	for _, mb := range d.bc.GetMasterChain().MasterChain {
+func (n *Node) VerifyCert(opts *request.CertVerify) bool {
+	for _, mb := range n.bc.GetMasterChain().MasterChain {
 		for _, cb := range mb.CertChain.CertChain {
 			if cb.Block.Tx == *opts.Id {
 				return true
@@ -44,28 +34,28 @@ func (d *Distribution) VerifyCert(opts *request.CertVerify) bool {
 }
 
 // SaveCertBlock save cert block to storage
-func (d *Distribution) SaveCertBlock(cb *pb.CertBlock) error {
-	return d.storage.PutCertBlock(cb)
+func (n *Node) SaveCertBlock(cb *pb.CertBlock) error {
+	return n.storage.PutCertBlock(cb)
 }
 
 // SaveMasterBlock save master block to storage
-func (d *Distribution) SaveMasterBlock(mb *pb.MasterBlock) error {
-	return d.storage.PutMasterBlock(mb)
+func (n *Node) SaveMasterBlock(mb *pb.MasterBlock) error {
+	return n.storage.PutMasterBlock(mb)
 }
 
 // SaveCert save cert to storage
-func (d *Distribution) SaveCert(cert *pb.Cert) error {
-	return d.storage.PutCert(cert)
+func (n *Node) SaveCert(cert *pb.Cert) error {
+	return n.storage.PutCert(cert)
 }
 
 // LoadCert load cert from storage
-func (d *Distribution) LoadCert(id string) (*pb.Cert, error) {
-	return d.storage.LoadCert(id)
+func (n *Node) LoadCert(id string) (*pb.Cert, error) {
+	return n.storage.LoadCert(id)
 }
 
 // ProposeMember propose member
-func (d *Distribution) ProposeMember(opts *request.Candidate) (*pb.PublicKey, error) {
-	key, err := d.rpc.ProposeMember(&pb.MemberMeta{
+func (n *Node) ProposeMember(opts *request.Candidate) (*pb.PublicKey, error) {
+	key, err := n.rpc.ProposeMember(&pb.MemberMeta{
 		Name:  *opts.Name,
 		Email: *opts.Email,
 	})
@@ -76,8 +66,8 @@ func (d *Distribution) ProposeMember(opts *request.Candidate) (*pb.PublicKey, er
 }
 
 // FetchMember fetch member
-func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error) {
-	mem, err := d.rpc.FetchMember(&pb.PublicKey{
+func (n *Node) FetchMember(opts *request.MemberFetch) (*pb.Member, error) {
+	mem, err := n.rpc.FetchMember(&pb.PublicKey{
 		PublicKey: *opts.PublicKey,
 	})
 	if err != nil {
@@ -87,8 +77,8 @@ func (d *Distribution) FetchMember(opts *request.MemberFetch) (*pb.Member, error
 }
 
 // SignCert sign cert
-func (d *Distribution) SignCert(opts *request.CertIssue) error {
-	return d.rpc.SignCert(&pb.Cert{
+func (n *Node) SignCert(opts *request.CertIssue) error {
+	return n.rpc.SignCert(&pb.Cert{
 		ID: uuid.NewV1().String(),
 		Meta: &pb.CertMeta{
 			Timestamp:   time.Now().UTC().UnixNano() / 1000000,
@@ -102,8 +92,18 @@ func (d *Distribution) SignCert(opts *request.CertIssue) error {
 		},
 		Issuer: &pb.Participant{
 			PublicKey: &pb.PublicKey{
-				PublicKey: d.key.PublicKey,
+				PublicKey: n.key.PublicKey,
 			},
 		},
 	})
+}
+
+// New returns new node distribution
+func NewNode() *Node {
+	return &Node{
+		storage: env.GetStorage(),
+		key:     env.GetKey(),
+		rpc:     env.GetRPC(),
+		bc:      env.GetBlockchain(),
+	}
 }

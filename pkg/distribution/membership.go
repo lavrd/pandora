@@ -12,19 +12,14 @@ import (
 	"pandora/pkg/utils/mail"
 )
 
-// Distribution
-type Distribution struct {
+// Membership
+type Membership struct {
 	storage *arangodb.Arangodb
 }
 
-// New returns new membership distribution
-func New() *Distribution {
-	return &Distribution{storage: env.GetStorage()}
-}
-
 // ConfirmMember confirm member
-func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
-	mem, err := d.storage.MemberFetchByEmail(candidate.Email)
+func (m *Membership) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
+	mem, err := m.storage.MemberFetchByEmail(candidate.Email)
 	if err != nil && err != errors.ErrNotFound {
 		return nil, err
 	}
@@ -43,7 +38,7 @@ func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, e
 		PrivateKey: privateKey,
 	}
 
-	if err := d.storage.MemberSave(mem); err != nil {
+	if err := m.storage.MemberSave(mem); err != nil {
 		return nil, err
 	}
 
@@ -55,18 +50,18 @@ func (d *Distribution) ConfirmMember(candidate *pb.MemberMeta) (*pb.PublicKey, e
 }
 
 // MemberFetch fetch member
-func (d *Distribution) MemberFetch(key *pb.PublicKey) (*pb.Member, error) {
-	return d.storage.MemberFetchByPublic(key)
+func (m *Membership) MemberFetch(key *pb.PublicKey) (*pb.Member, error) {
+	return m.storage.MemberFetchByPublic(key)
 }
 
 // SignCert sign cert
-func (d *Distribution) SignCert(cert *pb.Cert) (*pb.Cert, error) {
-	recipient, err := d.storage.MemberFetchByPublic(cert.Recipient.PublicKey)
+func (m *Membership) SignCert(cert *pb.Cert) (*pb.Cert, error) {
+	recipient, err := m.storage.MemberFetchByPublic(cert.Recipient.PublicKey)
 	if err != nil {
 		return nil, err
 	}
 
-	issuer, err := d.storage.MemberFetchByPublic(cert.Issuer.PublicKey)
+	issuer, err := m.storage.MemberFetchByPublic(cert.Issuer.PublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -87,4 +82,9 @@ func (d *Distribution) SignCert(cert *pb.Cert) (*pb.Cert, error) {
 	}
 
 	return cert, nil
+}
+
+// New returns new membership distribution
+func NewMembership() *Membership {
+	return &Membership{storage: env.GetStorage()}
 }

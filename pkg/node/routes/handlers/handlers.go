@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"pandora/pkg/conf"
-	"pandora/pkg/node/distribution"
+	"pandora/pkg/distribution"
 	"pandora/pkg/node/env"
 	"pandora/pkg/node/routes/request"
 	"pandora/pkg/utils/errors"
@@ -20,7 +20,7 @@ func MemberCreateH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := distribution.New().ProposeMember(opts)
+	_, err := distribution.NewNode().ProposeMember(opts)
 	if err == errors.ErrAlreadyExists {
 		response.AlreadyExists("member").HTTP(w)
 		return
@@ -42,7 +42,7 @@ func MemberFetchH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mem, err := distribution.New().FetchMember(opts)
+	mem, err := distribution.NewNode().FetchMember(opts)
 	if err == errors.ErrNotFound {
 		response.NotFound("member").HTTP(w)
 		return
@@ -64,7 +64,7 @@ func CertIssueH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := distribution.New().SignCert(opts)
+	err := distribution.NewNode().SignCert(opts)
 	if err == errors.ErrNotFound {
 		response.NotFound("recipient").HTTP(w)
 		return
@@ -86,7 +86,7 @@ func CertViewH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cert, err := distribution.New().LoadCert(*opts.Id)
+	cert, err := distribution.NewNode().LoadCert(*opts.Id)
 	if err == errors.ErrNotFound {
 		response.NotFound("certificate").HTTP(w)
 		return
@@ -108,7 +108,7 @@ func CertVerifyH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok := distribution.New().VerifyCert(opts)
+	ok := distribution.NewNode().VerifyCert(opts)
 	if ok {
 		response.OK().HTTP(w)
 	} else {

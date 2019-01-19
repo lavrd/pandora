@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"pandora/pkg/conf"
-	"pandora/pkg/membership/distribution"
+	"pandora/pkg/distribution"
 	"pandora/pkg/pb"
 	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/log"
@@ -79,7 +79,7 @@ func (rpc *RPC) Close() {
 
 // ProposeMember propose member over rpc
 func (*RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicKey, error) {
-	key, err := distribution.New().ConfirmMember(in)
+	key, err := distribution.NewMembership().ConfirmMember(in)
 	if err != nil {
 		return &pb.PublicKey{}, err
 	}
@@ -88,7 +88,7 @@ func (*RPC) ProposeMember(ctx context.Context, in *pb.MemberMeta) (*pb.PublicKey
 
 // SignCert sign cert over rpc
 func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
-	cert, err := distribution.New().SignCert(in)
+	cert, err := distribution.NewMembership().SignCert(in)
 	if err != nil {
 		if err == errors.ErrNotFound {
 			return &pb.Empty{}, status.Error(codes.NotFound, codes.NotFound.String())
@@ -105,7 +105,7 @@ func (rpc *RPC) SignCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 
 // FetchMember fetch member over rpc
 func (*RPC) FetchMember(ctx context.Context, in *pb.PublicKey) (*pb.Member, error) {
-	mem, err := distribution.New().MemberFetch(in)
+	mem, err := distribution.NewMembership().MemberFetch(in)
 	if err != nil {
 		if err == errors.ErrNotFound {
 			return &pb.Member{}, status.Error(codes.NotFound, codes.NotFound.String())

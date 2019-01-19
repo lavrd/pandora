@@ -8,7 +8,7 @@ import (
 	"pandora/pkg/blockchain"
 	"pandora/pkg/broker"
 	"pandora/pkg/conf"
-	"pandora/pkg/node/distribution"
+	"pandora/pkg/distribution"
 	"pandora/pkg/node/env"
 	"pandora/pkg/node/events"
 	"pandora/pkg/node/routes"
@@ -50,7 +50,7 @@ func Daemon() bool {
 
 	env.SetRPC(r)
 
-	key, err := distribution.New().ProposeMember(candidate)
+	key, err := distribution.NewNode().ProposeMember(candidate)
 	if err != nil {
 		if err != errors.ErrAlreadyExists {
 			log.Fatal(err)
