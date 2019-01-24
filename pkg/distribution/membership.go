@@ -66,7 +66,7 @@ func (m *Membership) SignCert(cert *pb.Cert) (*pb.Cert, error) {
 		return nil, err
 	}
 
-	hash := sha256.SumBytes(cert.String())
+	hash := sha256.CalcToBytes(cert.String())
 
 	ISignature := ed25519.Sign(hash, issuer.PrivateKey)
 	RSignature := ed25519.Sign(hash, recipient.PrivateKey)

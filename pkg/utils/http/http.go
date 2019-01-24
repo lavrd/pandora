@@ -50,11 +50,13 @@ func Listen(endpoint string, subRoutes SubRoutes, static string) error {
 		}
 	}
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(static))))
+	if static != "" {
+		r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(static))))
+	}
 
 	var h http.Handler
 	h = handlers.LoggingHandler(os.Stdout, r)
-	h = handlers.CORS(handlers.AllowedOrigins([]string{conf.Conf.Node.Endpoint}))(h)
+	h = handlers.CORS(handlers.AllowedOrigins([]string{endpoint}))(h)
 
 	srv := &http.Server{
 		Handler:           h,
@@ -79,8 +81,8 @@ func handle(h http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 
 	h = headers(h)
 
-	for i := len(middlewares) - 1; i >= 0; i-- {
-		h = middlewares[i](h)
+	for _, m := range middlewares {
+		h = m(h)
 	}
 
 	return h

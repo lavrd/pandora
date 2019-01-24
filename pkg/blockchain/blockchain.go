@@ -43,8 +43,7 @@ func (bc *Blockchain) genesisMaster() *pb.MasterBlock {
 		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.genesisCert(nil)}},
 	}
 
-	hash := sha256.SumString(b.String())
-	b.Block.Hash = hash
+	b.Block.Hash = sha256.CalcToString(b.String())
 
 	return b
 }
@@ -58,8 +57,7 @@ func (bc *Blockchain) genesisCert(key *pb.PublicKey) *pb.CertBlock {
 		},
 	}
 
-	hash := sha256.SumString(b.String())
-	b.Block.Hash = hash
+	b.Block.Hash = sha256.CalcToString(b.String())
 
 	return b
 }
@@ -84,8 +82,7 @@ func (bc *Blockchain) PrepareCertBlock(cert *pb.Cert) *pb.CertBlock {
 		},
 	}
 
-	hash := sha256.SumString(b.String())
-	b.Block.Hash = hash
+	b.Block.Hash = sha256.CalcToString(b.String())
 
 	return b
 }
@@ -102,7 +99,7 @@ func (bc *Blockchain) PrepareMasterBlock(key *pb.PublicKey) *pb.MasterBlock {
 		CertChain: &pb.CertChain{CertChain: []*pb.CertBlock{bc.genesisCert(key)}},
 	}
 
-	hash := sha256.SumString(b.String())
+	hash := sha256.CalcToString(b.String())
 	b.Block.Hash = hash
 
 	return b

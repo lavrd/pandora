@@ -85,12 +85,12 @@ func (s *Arangodb) InitDatabase(db *driver.Database) error {
 func (s *Arangodb) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
-	ok, err := (*db).CollectionExists(ctx, CollectionMember)
+	ok, err := (*db).CollectionExists(ctx, COLLECTION_MEMBER)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	if !ok {
-		_, err = (*db).CreateCollection(ctx, CollectionMember, nil)
+		_, err = (*db).CreateCollection(ctx, COLLECTION_MEMBER, nil)
 		if err != nil {
 			return errors.WithStack(err)
 		}

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	CollectionMember = "member"
+	COLLECTION_MEMBER = "member"
 )
 
 // MemberFetchByEmail fetch member by email
@@ -16,7 +16,7 @@ func (s *Arangodb) MemberFetchByEmail(email string) (*pb.Member, error) {
 		mem   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for m in %s filter m.meta.email == @email return m",
-			CollectionMember,
+			COLLECTION_MEMBER,
 		)
 		vars = map[string]interface{}{
 			"email": email,
@@ -36,7 +36,7 @@ func (s *Arangodb) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
 		mem   = &pb.Member{}
 		query = fmt.Sprintf(
 			"for m in %s filter m.public_key.public_key == @public return m",
-			CollectionMember,
+			COLLECTION_MEMBER,
 		)
 		vars = map[string]interface{}{
 			"public": key.PublicKey,
@@ -46,13 +46,12 @@ func (s *Arangodb) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
 	if _, err := s.Exec(query, vars, mem); err != nil {
 		return nil, err
 	}
-
 	return mem, nil
 }
 
 // MemberSave save member
 func (s *Arangodb) MemberSave(mem *pb.Member) error {
-	_, err := s.Write(CollectionMember, mem)
+	_, err := s.Write(COLLECTION_MEMBER, mem)
 	if err != nil {
 		return err
 	}

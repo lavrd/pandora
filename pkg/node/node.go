@@ -77,7 +77,9 @@ func Daemon() bool {
 		log.Fatal(err)
 	}
 	defer func() {
-		stg.Close()
+		if err := stg.Close(); err != nil {
+			log.Error(err)
+		}
 
 		if conf.Conf.Runtime.Clean {
 			if err := stg.Clean(); err != nil {

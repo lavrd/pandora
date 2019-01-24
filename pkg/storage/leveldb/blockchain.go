@@ -18,14 +18,14 @@ const (
 
 // PutCertBlock put cert block in leveldb
 func (l *Leveldb) PutCertBlock(block *pb.CertBlock) error {
-	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_CERT_BLOCK, block.Block.Hash))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_CERT_BLOCK, block.Block.Hash))
 
 	buf, err := proto.Marshal(block)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	if err := l.db.Put(k, buf, nil); err != nil {
+	if err := l.db.Put(key, buf, nil); err != nil {
 		return errors.WithStack(err)
 	}
 
@@ -34,14 +34,14 @@ func (l *Leveldb) PutCertBlock(block *pb.CertBlock) error {
 
 // PutMasterBlock put master block in leveldb
 func (l *Leveldb) PutMasterBlock(block *pb.MasterBlock) error {
-	k, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_MASTER_BLOCK, block.Block.Hash))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_MASTER_BLOCK, block.Block.Hash))
 
 	buf, err := proto.Marshal(block)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	if err := l.db.Put(k, buf, nil); err != nil {
+	if err := l.db.Put(key, buf, nil); err != nil {
 		return errors.WithStack(err)
 	}
 
