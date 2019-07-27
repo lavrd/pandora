@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Endpoint struct {
 	Endpoint             string   `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
@@ -887,6 +889,20 @@ type DiscoveryServer interface {
 	InitMembership(context.Context, *Endpoint) (*InitNetworkOpts, error)
 }
 
+// UnimplementedDiscoveryServer can be embedded to have forward compatible implementations.
+type UnimplementedDiscoveryServer struct {
+}
+
+func (*UnimplementedDiscoveryServer) InitNode(ctx context.Context, req *Empty) (*InitNetworkOpts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitNode not implemented")
+}
+func (*UnimplementedDiscoveryServer) InitMaster(ctx context.Context, req *Endpoint) (*BrokerOpts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitMaster not implemented")
+}
+func (*UnimplementedDiscoveryServer) InitMembership(ctx context.Context, req *Endpoint) (*InitNetworkOpts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitMembership not implemented")
+}
+
 func RegisterDiscoveryServer(s *grpc.Server, srv DiscoveryServer) {
 	s.RegisterService(&_Discovery_serviceDesc, srv)
 }
@@ -1006,6 +1022,17 @@ type MasterServer interface {
 	InitNode(context.Context, *PublicKey) (*MasterChain, error)
 }
 
+// UnimplementedMasterServer can be embedded to have forward compatible implementations.
+type UnimplementedMasterServer struct {
+}
+
+func (*UnimplementedMasterServer) ProposeCert(ctx context.Context, req *Cert) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeCert not implemented")
+}
+func (*UnimplementedMasterServer) InitNode(ctx context.Context, req *PublicKey) (*MasterChain, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitNode not implemented")
+}
+
 func RegisterMasterServer(s *grpc.Server, srv MasterServer) {
 	s.RegisterService(&_Master_serviceDesc, srv)
 }
@@ -1112,6 +1139,20 @@ type MembershipServer interface {
 	ProposeMember(context.Context, *MemberMeta) (*PublicKey, error)
 	FetchMember(context.Context, *PublicKey) (*Member, error)
 	SignCert(context.Context, *Cert) (*Empty, error)
+}
+
+// UnimplementedMembershipServer can be embedded to have forward compatible implementations.
+type UnimplementedMembershipServer struct {
+}
+
+func (*UnimplementedMembershipServer) ProposeMember(ctx context.Context, req *MemberMeta) (*PublicKey, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeMember not implemented")
+}
+func (*UnimplementedMembershipServer) FetchMember(ctx context.Context, req *PublicKey) (*Member, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchMember not implemented")
+}
+func (*UnimplementedMembershipServer) SignCert(ctx context.Context, req *Cert) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignCert not implemented")
 }
 
 func RegisterMembershipServer(s *grpc.Server, srv MembershipServer) {

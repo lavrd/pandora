@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   arangodb:
     container_name: pandora-arangodb
@@ -11,11 +12,12 @@ services:
       - pandora
     env_file:
       - .env
+
   kit:
     container_name: pandora-kit
     build:
       context: ../../
-      dockerfile: .
+      dockerfile: ./contrib/docker/Dockerfile
     ports:
       - 2004:2004
     links:
@@ -23,6 +25,7 @@ services:
       - arangodb
     networks:
       - pandora
+
   nats:
     container_name: pandora-nats
     image: nats

@@ -13,6 +13,7 @@ sendgrid:
   active: false
   token: token
 
+# arangodb
 arangodb:
   endpoint: http://localhost:8529
   user: root

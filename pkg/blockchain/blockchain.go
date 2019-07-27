@@ -9,7 +9,8 @@ import (
 
 // Blockchain
 type Blockchain struct {
-	mc   *pb.MasterChain
+	mc *pb.MasterChain
+	// last index master block
 	limb int
 }
 

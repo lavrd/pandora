@@ -11,12 +11,12 @@ import (
 )
 
 const (
-	PREFIX_CERT = "cert-"
+	PrefixCert = "cert-"
 )
 
 // PutCert put cert in leveldb
 func (l *Leveldb) PutCert(cert *pb.Cert) error {
-	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_CERT, cert.ID))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, cert.ID))
 
 	buf, err := proto.Marshal(cert)
 	if err != nil {
@@ -28,14 +28,15 @@ func (l *Leveldb) PutCert(cert *pb.Cert) error {
 
 // LoadCert load cert from leveldb
 func (l *Leveldb) LoadCert(id string) (*pb.Cert, error) {
-	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_CERT, id))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCert, id))
 
 	buf, err := l.db.Get(key, nil)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	var cert = &pb.Cert{}
+	cert := &pb.Cert{}
+
 	if err := proto.Unmarshal(buf, cert); err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -1,15 +1,12 @@
 package membership
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
-
 	"pandora/pkg/conf"
 	"pandora/pkg/membership/env"
 	"pandora/pkg/membership/rpc"
 	"pandora/pkg/storage/arangodb"
 	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/signalutils"
 )
 
 const (
@@ -19,12 +16,6 @@ const (
 // Daemon start daemon service
 func Daemon() bool {
 	log.Debug("start membership daemon")
-
-	var (
-		sig = make(chan os.Signal)
-	)
-
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	stg, err := arangodb.New(
 		conf.Conf.Arangodb.Endpoint,
@@ -58,7 +49,6 @@ func Daemon() bool {
 		}
 	}()
 
-	<-sig
-	log.Debug("handle SIGINT and SIGTERM")
+	signalutils.NotifyInterrupt()
 	return true
 }

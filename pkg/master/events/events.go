@@ -14,21 +14,19 @@ type Events struct {
 
 // New returns new events
 func New(brk *broker.Broker) (*Events, error) {
-	var (
-		chsCert        = make(chan *pb.Cert)
-		chsMasterBlock = make(chan *pb.MasterBlock)
-		chsCertBlock   = make(chan *pb.CertBlock)
-	)
+	chsCert := make(chan *pb.Cert)
+	chsMasterBlock := make(chan *pb.MasterBlock)
+	chsCertBlock := make(chan *pb.CertBlock)
 
-	if err := brk.Publish(broker.SUB_MASTER_BLOCK, chsMasterBlock); err != nil {
+	if err := brk.Publish(broker.SubMasterBlock, chsMasterBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Publish(broker.SUB_CERT_BLOCK, chsCertBlock); err != nil {
+	if err := brk.Publish(broker.SubCertBlock, chsCertBlock); err != nil {
 		return nil, err
 	}
 
-	if err := brk.Publish(broker.SUB_CERT, chsCert); err != nil {
+	if err := brk.Publish(broker.SubCert, chsCert); err != nil {
 		return nil, err
 	}
 

@@ -81,7 +81,9 @@ func (rpc *rpc) Listen() error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	defer listen.Close()
+	defer func() {
+		_ = listen.Close()
+	}()
 
 	if err := s.Serve(listen); err != nil {
 		return errors.WithStack(err)

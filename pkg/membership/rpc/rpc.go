@@ -35,15 +35,16 @@ func New() (*RPC, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	defer discoveryCC.Close()
+	defer func() {
+		_ = discoveryCC.Close()
+	}()
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
-	var (
-		ino   = &pb.InitNetworkOpts{}
-		tick  = time.NewTicker(time.Millisecond * 500).C
-		timer = time.NewTimer(time.Second * 3).C
-	)
+	ino := &pb.InitNetworkOpts{}
+	tick := time.NewTicker(time.Millisecond * 500).C
+	timer := time.NewTimer(time.Second * 3).C
+
 loop:
 	for {
 		select {
@@ -131,7 +132,9 @@ func (rpc *RPC) Listen() error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	defer listen.Close()
+	defer func() {
+		_ = listen.Close()
+	}()
 
 	if err := s.Serve(listen); err != nil {
 		return errors.WithStack(err)

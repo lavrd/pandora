@@ -43,9 +43,7 @@ func New(endpoint, database, user, password string) (*Arangodb, error) {
 
 // Init initialize database and collections
 func (s *Arangodb) Init() error {
-	var (
-		db driver.Database
-	)
+	var db driver.Database
 
 	if err := s.InitDatabase(&db); err != nil {
 		return err
@@ -85,12 +83,12 @@ func (s *Arangodb) InitDatabase(db *driver.Database) error {
 func (s *Arangodb) InitCollections(db *driver.Database) error {
 	ctx := context.Background()
 
-	ok, err := (*db).CollectionExists(ctx, COLLECTION_MEMBER)
+	ok, err := (*db).CollectionExists(ctx, CollectionMember)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	if !ok {
-		_, err = (*db).CreateCollection(ctx, COLLECTION_MEMBER, nil)
+		_, err = (*db).CreateCollection(ctx, CollectionMember, nil)
 		if err != nil {
 			return errors.WithStack(err)
 		}
@@ -158,7 +156,9 @@ func (s *Arangodb) Exec(query string, vars map[string]interface{}, document inte
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	defer cursor.Close()
+	defer func() {
+		_ = cursor.Close()
+	}()
 
 	if cursor.Count() == 0 {
 		return nil, errors.ErrNotFound

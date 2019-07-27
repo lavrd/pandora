@@ -39,11 +39,10 @@ func New() (*RPC, error) {
 
 	discoveryC := pb.NewDiscoveryClient(discoveryCC)
 
-	var (
-		ino   = &pb.InitNetworkOpts{}
-		tick  = time.NewTicker(time.Millisecond * 500).C
-		timer = time.NewTimer(time.Second * 3).C
-	)
+	ino := &pb.InitNetworkOpts{}
+	tick := time.NewTicker(time.Millisecond * 500).C
+	timer := time.NewTimer(time.Second * 3).C
+
 loop:
 	for {
 		select {
@@ -96,18 +95,16 @@ func (rpc *RPC) Close() {
 
 // ProposeMember propose member over rpc
 func (rpc *RPC) ProposeMember(candidate *pb.MemberMeta) (*pb.PublicKey, error) {
-	var (
-		err   error
-		key   = &pb.PublicKey{}
-		tick  = time.NewTicker(time.Millisecond * 500).C
-		timer = time.NewTimer(time.Second * 3).C
-	)
+	var err error
+	key := &pb.PublicKey{}
+	tick := time.NewTicker(time.Millisecond * 500).C
+	timer := time.NewTimer(time.Second * 3).C
 
 loop:
 	for {
 		select {
 		case <-tick:
-			key, err = rpc.membership.ProposeMember(context.Background(), candidate);
+			key, err = rpc.membership.ProposeMember(context.Background(), candidate)
 			if err != nil {
 				continue
 			}

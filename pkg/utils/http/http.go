@@ -40,7 +40,7 @@ const (
 
 // Listen start listen http requests
 func Listen(endpoint string, subRoutes SubRoutes, static string) error {
-	var r = mux.NewRouter()
+	r := mux.NewRouter()
 	for _, subRoute := range subRoutes {
 		s := r.PathPrefix(subRoute.Prefix).Subrouter()
 

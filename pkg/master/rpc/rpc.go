@@ -24,10 +24,8 @@ func New() *rpc {
 
 // ProposeCert propose cert
 func (*rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
-	var (
-		evt = env.GetEvents()
-		bc  = env.GetBlockchain()
-	)
+	evt := env.GetEvents()
+	bc := env.GetBlockchain()
 
 	evt.PubCertBlock(bc.PrepareCertBlock(in))
 	evt.PubCert(in)
@@ -37,10 +35,8 @@ func (*rpc) ProposeCert(ctx context.Context, in *pb.Cert) (*pb.Empty, error) {
 
 // InitNode init service node with blockchain
 func (*rpc) InitNode(ctx context.Context, in *pb.PublicKey) (*pb.MasterChain, error) {
-	var (
-		evt = env.GetEvents()
-		bc  = env.GetBlockchain()
-	)
+	evt := env.GetEvents()
+	bc := env.GetBlockchain()
 
 	b := bc.PrepareMasterBlock(in)
 	bc.CommitMasterBlock(b)
@@ -66,7 +62,9 @@ func (rpc *rpc) Listen() error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	defer listen.Close()
+	defer func() {
+		_ = listen.Close()
+	}()
 
 	if err := s.Serve(listen); err != nil {
 		return errors.WithStack(err)
@@ -86,15 +84,15 @@ func (*rpc) InitMaster() (*pb.BrokerOpts, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	defer cc.Close()
+	defer func() {
+		_ = cc.Close()
+	}()
 
 	c := pb.NewDiscoveryClient(cc)
 
-	var (
-		opts  = &pb.BrokerOpts{}
-		tick  = time.NewTicker(time.Millisecond * 500).C
-		timer = time.NewTimer(time.Second * 3).C
-	)
+	opts := &pb.BrokerOpts{}
+	tick := time.NewTicker(time.Millisecond * 500).C
+	timer := time.NewTimer(time.Second * 3).C
 
 loop:
 	for {

@@ -1,5 +1,7 @@
 version: '3.7'
+
 services:
+
   arangodb:
     container_name: pandora-arangodb
     image: arangodb
@@ -11,6 +13,7 @@ services:
       - pandora
     env_file:
       - .env
+
   nats:
     container_name: pandora-nats
     image: nats

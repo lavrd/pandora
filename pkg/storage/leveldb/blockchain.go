@@ -12,13 +12,13 @@ import (
 )
 
 const (
-	PREFIX_MASTER_BLOCK = "master_block-"
-	PREFIX_CERT_BLOCK   = "cert_block-"
+	PrefixMasterBlock = "master_block-"
+	PrefixCertBlock   = "cert_block-"
 )
 
 // PutCertBlock put cert block in leveldb
 func (l *Leveldb) PutCertBlock(block *pb.CertBlock) error {
-	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_CERT_BLOCK, block.Block.Hash))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixCertBlock, block.Block.Hash))
 
 	buf, err := proto.Marshal(block)
 	if err != nil {
@@ -34,7 +34,7 @@ func (l *Leveldb) PutCertBlock(block *pb.CertBlock) error {
 
 // PutMasterBlock put master block in leveldb
 func (l *Leveldb) PutMasterBlock(block *pb.MasterBlock) error {
-	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PREFIX_MASTER_BLOCK, block.Block.Hash))
+	key, _ := hex.DecodeString(fmt.Sprintf("%s%s", PrefixMasterBlock, block.Block.Hash))
 
 	buf, err := proto.Marshal(block)
 	if err != nil {
@@ -50,19 +50,15 @@ func (l *Leveldb) PutMasterBlock(block *pb.MasterBlock) error {
 
 // LoadBlockchain load blockchain from leveldb
 func (l *Leveldb) LoadBlockchain() (*pb.MasterChain, error) {
-	var (
-		mc = &pb.MasterChain{}
-	)
+	mc := &pb.MasterChain{}
 
-	iterator := l.db.NewIterator(util.BytesPrefix([]byte(PREFIX_MASTER_BLOCK)), nil)
+	iterator := l.db.NewIterator(util.BytesPrefix([]byte(PrefixMasterBlock)), nil)
 	for iterator.Next() {
 		if err := iterator.Error(); err != nil {
 			return nil, errors.WithStack(err)
 		}
 
-		var (
-			mb = &pb.MasterBlock{}
-		)
+		mb := &pb.MasterBlock{}
 
 		if err := proto.Unmarshal(iterator.Value(), mb); err != nil {
 			return nil, errors.WithStack(err)
@@ -73,15 +69,13 @@ func (l *Leveldb) LoadBlockchain() (*pb.MasterChain, error) {
 
 	iterator.Release()
 
-	iterator = l.db.NewIterator(util.BytesPrefix([]byte(PREFIX_CERT_BLOCK)), nil)
+	iterator = l.db.NewIterator(util.BytesPrefix([]byte(PrefixCertBlock)), nil)
 	for iterator.Next() {
 		if err := iterator.Error(); err != nil {
 			return nil, errors.WithStack(err)
 		}
 
-		var (
-			cb = &pb.CertBlock{}
-		)
+		cb := &pb.CertBlock{}
 
 		if err := proto.Unmarshal(iterator.Value(), cb); err != nil {
 			return nil, errors.WithStack(err)

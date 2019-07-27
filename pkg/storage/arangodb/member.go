@@ -7,21 +7,19 @@ import (
 )
 
 const (
-	COLLECTION_MEMBER = "member"
+	CollectionMember = "member"
 )
 
 // MemberFetchByEmail fetch member by email
 func (s *Arangodb) MemberFetchByEmail(email string) (*pb.Member, error) {
-	var (
-		mem   = &pb.Member{}
-		query = fmt.Sprintf(
-			"for m in %s filter m.meta.email == @email return m",
-			COLLECTION_MEMBER,
-		)
-		vars = map[string]interface{}{
-			"email": email,
-		}
+	mem := &pb.Member{}
+	query := fmt.Sprintf(
+		"for m in %s filter m.meta.email == @email return m",
+		CollectionMember,
 	)
+	vars := map[string]interface{}{
+		"email": email,
+	}
 
 	if _, err := s.Exec(query, vars, mem); err != nil {
 		return nil, err
@@ -32,16 +30,14 @@ func (s *Arangodb) MemberFetchByEmail(email string) (*pb.Member, error) {
 
 // MemberFetchByPublic fetch member by public key
 func (s *Arangodb) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
-	var (
-		mem   = &pb.Member{}
-		query = fmt.Sprintf(
-			"for m in %s filter m.public_key.public_key == @public return m",
-			COLLECTION_MEMBER,
-		)
-		vars = map[string]interface{}{
-			"public": key.PublicKey,
-		}
+	mem := &pb.Member{}
+	query := fmt.Sprintf(
+		"for m in %s filter m.public_key.public_key == @public return m",
+		CollectionMember,
 	)
+	vars := map[string]interface{}{
+		"public": key.PublicKey,
+	}
 
 	if _, err := s.Exec(query, vars, mem); err != nil {
 		return nil, err
@@ -51,10 +47,6 @@ func (s *Arangodb) MemberFetchByPublic(key *pb.PublicKey) (*pb.Member, error) {
 
 // MemberSave save member
 func (s *Arangodb) MemberSave(mem *pb.Member) error {
-	_, err := s.Write(COLLECTION_MEMBER, mem)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err := s.Write(CollectionMember, mem)
+	return err
 }

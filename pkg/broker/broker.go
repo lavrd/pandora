@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	SUB_MASTER_BLOCK = "SUB_MASTER_BLOCK"
-	SUB_CERT_BLOCK   = "SUB_CERT_BLOCK"
-	SUB_CERT         = "SUB_CERT"
+	SubMasterBlock = "MASTER_BLOCK"
+	SubCertBlock   = "CERT_BLOCK"
+	SubCert        = "CERT"
 )
 
 // Broker

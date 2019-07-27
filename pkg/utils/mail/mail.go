@@ -70,7 +70,9 @@ func send(to, subject, html string) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	defer req.Body.Close()
+	defer func() {
+		_ = req.Body.Close()
+	}()
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", conf.Conf.SendGrid.Token))
 	req.Header.Add("Content-Type", "application/json")
@@ -79,7 +81,9 @@ func send(to, subject, html string) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		_ = res.Body.Close()
+	}()
 
 	if res.StatusCode != http.StatusAccepted {
 		log.Error(errors.New(fmt.Sprintf("mail doesn't send. http status: %d", res.StatusCode)))

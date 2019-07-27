@@ -1,10 +1,6 @@
 package node
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
-
 	"pandora/pkg/blockchain"
 	"pandora/pkg/broker"
 	"pandora/pkg/conf"
@@ -18,6 +14,7 @@ import (
 	"pandora/pkg/utils/errors"
 	"pandora/pkg/utils/http"
 	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/signalutils"
 )
 
 const (
@@ -27,12 +24,6 @@ const (
 // Daemon start node daemon
 func Daemon() bool {
 	log.Debug("start node daemon")
-
-	var (
-		sig = make(chan os.Signal)
-	)
-
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	candidate := &request.Candidate{
 		Name:  &conf.Conf.Node.Meta.Name,
@@ -109,7 +100,6 @@ func Daemon() bool {
 		}
 	}()
 
-	<-sig
-	log.Debug("handle SIGINT and SIGTERM")
+	signalutils.NotifyInterrupt()
 	return true
 }

@@ -1,16 +1,13 @@
 package master
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
-
 	"pandora/pkg/blockchain"
 	"pandora/pkg/broker"
 	"pandora/pkg/master/env"
 	"pandora/pkg/master/events"
 	"pandora/pkg/master/rpc"
 	"pandora/pkg/utils/log"
+	"pandora/pkg/utils/signalutils"
 )
 
 const (
@@ -20,12 +17,6 @@ const (
 // Daemon start master daemon
 func Daemon() bool {
 	log.Debug("start master daemon")
-
-	var (
-		sig = make(chan os.Signal)
-	)
-
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	r := rpc.New()
 
@@ -58,7 +49,6 @@ func Daemon() bool {
 		}
 	}()
 
-	<-sig
-	log.Debug("handle SIGINT and SIGTERM")
+	signalutils.NotifyInterrupt()
 	return true
 }
